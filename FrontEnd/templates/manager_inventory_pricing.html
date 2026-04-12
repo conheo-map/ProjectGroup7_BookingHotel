@@ -51,9 +51,18 @@
             </select>
         </div>
         <div class="col-md-3">
-            <label class="form-label-clean">Mã loại phòng / ID phòng</label>
-            <input type="text" name="target_id" class="form-control form-control-clean"
-                   placeholder="VD: DLXKING hoặc 5" required>
+            <label class="form-label-clean" id="targetLabel">Chọn Loại phòng</label>
+            <div id="typeSelector">
+                <select name="target_id" class="form-select form-control-clean">
+                    <option value="">-- Chọn Loại phòng --</option>
+                    {% for rt in inventory %}
+                    <option value="{{ rt.room_type_code }}">{{ rt.room_type_code }} ({{ rt.hotel_name }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div id="roomSelector" style="display: none;">
+                <input type="number" name="target_id_manual" class="form-control form-control-clean" placeholder="Nhập ID phòng (VD: 101)">
+            </div>
         </div>
         <div class="col-md-2">
             <label class="form-label-clean">Từ ngày</label>
@@ -174,4 +183,41 @@
     <p>Chưa có dữ liệu kho phòng.</p>
 </div>
 {% endif %}
+
+{% block extra_scripts %}
+<script>
+document.querySelector('select[name="mode"]').addEventListener('change', function() {
+    const mode = this.value;
+    const label = document.getElementById('targetLabel');
+    const typeDiv = document.getElementById('typeSelector');
+    const roomDiv = document.getElementById('roomSelector');
+    
+    const typeSelect = typeDiv.querySelector('select');
+    const roomInput = roomDiv.querySelector('input');
+
+    if (mode === 'type') {
+        label.innerText = 'Chọn Loại khách sạn';
+        typeDiv.style.display = 'block';
+        roomDiv.style.display = 'none';
+        
+        typeSelect.setAttribute('name', 'target_id');
+        typeSelect.setAttribute('required', 'required');
+        
+        roomInput.removeAttribute('name');
+        roomInput.removeAttribute('required');
+    } else {
+        label.innerText = 'Nhập ID phòng thực tế';
+        typeDiv.style.display = 'none';
+        roomDiv.style.display = 'block';
+        
+        roomInput.setAttribute('name', 'target_id');
+        roomInput.setAttribute('required', 'required');
+        
+        typeSelect.removeAttribute('name');
+        typeSelect.removeAttribute('required');
+    }
+});
+</script>
+{% endblock %}
+
 {% endblock %}
