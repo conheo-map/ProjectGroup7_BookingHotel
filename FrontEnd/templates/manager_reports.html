@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}Báo cáo tổng hợp - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Báo cáo tổng hợp</h2>
+        <p class="text-muted small mb-0">Phân tích doanh thu, công suất và funnel chuyển đổi.</p>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <a href="/analytics" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-chart-bar me-1"></i>Analytics chi tiết
+        </a>
+        <a href="/manager" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Summary KPIs -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-booking">{{ summary.total_bookings or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Tổng đặt phòng</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-success">{{ summary.total_revenue|vnd if summary.total_revenue else '0đ' }}</div>
+            <div class="extra-small text-muted text-uppercase">Tổng doanh thu</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-warning">
+                {{ "%.0f"|format((summary.avg_occupancy_rate or 0) * 100) }}%
+            </div>
+            <div class="extra-small text-muted text-uppercase">Công suất TB</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-info">{{ summary.total_nights or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Đêm lưu trú</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Monthly chart -->
+    <div class="col-lg-8">
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2">
+                <i class="fas fa-chart-bar me-2 text-primary"></i>Doanh thu theo tháng (năm hiện tại)
+            </h6>
+            {% if monthly_data %}
+            <canvas id="monthlyChart" height="120"></canvas>
+            {% else %}
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-chart-bar fa-3x opacity-25 mb-2 d-block"></i>
+                <p class="small">Chưa có dữ liệu theo tháng.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Funnel conversion -->
+    <div class="col-lg-4">
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2">
+                <i class="fas fa-funnel-dollar me-2 text-success"></i>Conversion Funnel (30 ngày)
+            </h6>
+            {% if conversion %}
+            {% set search = conversion.search_performed or 0 %}
+            {% set cart = conversion.add_to_cart or 0 %}
+            {% set checkout = conversion.checkout_success or 0 %}
+            {% set booked = conversion.booking_success or 0 %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small text-muted">Tìm kiếm</span>
+                    <span class="fw-bold small">{{ search }}</span>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar bg-primary" style="width:100%"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small text-muted">Thêm vào giỏ</span>
+                    <span class="fw-bold small">{{ cart }}
+                        {% if search > 0 %}
+                        <span class="text-muted extra-small">({{ "%.0f"|format(cart / search * 100 if search else 0) }}%)</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar bg-info"
+                         style="width:{{ "%.0f"|format(cart / search * 100 if search > 0 else 0) }}%"></div>
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small text-muted">Thanh toán</span>
+                    <span class="fw-bold small">{{ checkout }}
+                        {% if search > 0 %}
+                        <span class="text-muted extra-small">({{ "%.0f"|format(checkout / search * 100 if search else 0) }}%)</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar bg-warning"
+                         style="width:{{ "%.0f"|format(checkout / search * 100 if search > 0 else 0) }}%"></div>
+                </div>
+            </div>
+            <div class="mb-0">
+                <div class="d-flex justify-content-between mb-1">
+                    <span class="small text-muted">Đặt phòng thành công</span>
+                    <span class="fw-bold small text-success">{{ booked }}
+                        {% if search > 0 %}
+                        <span class="text-muted extra-small">({{ "%.0f"|format(booked / search * 100 if search else 0) }}%)</span>
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar bg-success"
+                         style="width:{{ "%.0f"|format(booked / search * 100 if search > 0 else 0) }}%"></div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-muted small">Chưa có dữ liệu funnel.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- By hotel -->
+{% if by_hotel %}
+<div class="main-card p-0 overflow-hidden mb-4">
+    <div class="card-header-clean px-4 py-3">
+        <span class="fw-bold"><i class="fas fa-hotel me-2"></i>Doanh thu theo khách sạn</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table-clean">
+            <thead>
+                <tr>
+                    <th>Khách sạn</th>
+                    <th>Đặt phòng</th>
+                    <th>Đêm lưu trú</th>
+                    <th>Doanh thu</th>
+                    <th>Công suất TB</th>
+                    <th>Doanh thu TB/đêm</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in by_hotel %}
+                <tr>
+                    <td class="fw-bold">{{ h.hotel_name or '—' }}</td>
+                    <td>{{ h.total_bookings or 0 }}</td>
+                    <td>{{ h.total_nights or 0 }}</td>
+                    <td class="fw-bold text-booking">{{ h.total_revenue|vnd if h.total_revenue else '0đ' }}</td>
+                    <td>{{ "%.0f"|format((h.avg_occupancy_rate or 0) * 100) }}%</td>
+                    <td>
+                        {% if h.total_nights and h.total_nights > 0 and h.total_revenue %}
+                        {{ (h.total_revenue / h.total_nights)|vnd }}
+                        {% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<!-- Monthly data table -->
+{% if monthly_data %}
+<div class="main-card p-0 overflow-hidden">
+    <div class="card-header-clean px-4 py-3">
+        <span class="fw-bold"><i class="fas fa-calendar-alt me-2"></i>Chi tiết theo tháng</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table-clean">
+            <thead>
+                <tr>
+                    <th>Tháng</th>
+                    <th>Đặt phòng</th>
+                    <th>Đêm lưu trú</th>
+                    <th>Doanh thu</th>
+                    <th>Công suất</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for m in monthly_data %}
+                <tr>
+                    <td class="fw-bold">{{ m.period or m.month or '—' }}</td>
+                    <td>{{ m.total_bookings or 0 }}</td>
+                    <td>{{ m.total_nights or 0 }}</td>
+                    <td class="fw-bold text-booking">{{ m.total_revenue|vnd if m.total_revenue else '0đ' }}</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="progress flex-grow-1" style="height:5px;">
+                                <div class="progress-bar bg-success"
+                                     style="width:{{ "%.0f"|format((m.avg_occupancy_rate or 0) * 100) }}%"></div>
+                            </div>
+                            <span class="extra-small text-muted">{{ "%.0f"|format((m.avg_occupancy_rate or 0) * 100) }}%</span>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% if monthly_data %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script type="application/json" id="manager-reports-data">
+{
+    "labels": {{ monthly_data | map(attribute='period') | list | default([]) | tojson }},
+    "revenues": {{ monthly_data | map(attribute='total_revenue') | list | default([]) | tojson }},
+    "bookings": {{ monthly_data | map(attribute='total_bookings') | list | default([]) | tojson }}
+}
+</script>
+<script src="{{ url_for('static', filename='js/pages/manager_reports.js') }}"></script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Chi tiết giá phòng theo ngày - Hotel Booking{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/manager_room_pricing_detailed.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Lịch giá phòng chi tiết</h2>
+        <p class="text-muted small mb-0">Quản lý giá ghi đè cho từng phòng vật lý trong 7 ngày tới.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/manager/inventory-pricing" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-th-list me-1"></i>Về Kho phòng
+        </a>
+    </div>
+</div>
+
+<!-- Filter -->
+<div class="main-card p-3 mb-4">
+    <form action="/manager/room-pricing-detailed" method="GET" class="row g-2 align-items-end">
+        <input type="hidden" name="start_date" value="{{ start_date }}">
+        <div class="col-md-4">
+            <label class="form-label-clean">Chọn khách sạn</label>
+            <select name="hotel_id" class="form-select form-control-clean">
+                <option value="">-- Tất cả khách sạn --</option>
+                {% for h in hotels %}
+                <option value="{{ h.hotel_id }}" {% if selected_hotel == h.hotel_id %}selected{% endif %}>
+                    {{ h.hotel_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-blue-booking px-4 py-2">
+                <i class="fas fa-search me-1"></i>Xem lịch
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- Date Navigation -->
+<div class="d-flex justify-content-between align-items-center mb-4 p-3 main-card bg-light bg-opacity-50">
+    <div class="d-flex align-items-center gap-3">
+        <a href="/manager/room-pricing-detailed?start_date={{ prev_week }}{% if selected_hotel %}&hotel_id={{ selected_hotel }}{% endif %}" 
+           class="btn btn-outline-primary btn-sm rounded-pill px-3">
+            <i class="fas fa-chevron-left me-1"></i> Tuần trước
+        </a>
+        <div class="text-center px-4 border-start border-end">
+            <div class="extra-small text-muted uppercase fw-bold ls-1">Đang xem giai đoạn</div>
+            <div class="fw-bold text-booking">
+                {{ dates[0]|date_parse|format_date('%d/%m/%Y') }} - {{ dates[-1]|date_parse|format_date('%d/%m/%Y') }}
+            </div>
+        </div>
+        <a href="/manager/room-pricing-detailed?start_date={{ next_week }}{% if selected_hotel %}&hotel_id={{ selected_hotel }}{% endif %}" 
+           class="btn btn-outline-primary btn-sm rounded-pill px-3">
+            Tuần sau <i class="fas fa-chevron-right ms-1"></i>
+        </a>
+    </div>
+    <div class="col-auto">
+        <a href="/manager/room-pricing-detailed{% if selected_hotel %}?hotel_id={{ selected_hotel }}{% endif %}" 
+           class="btn btn-link btn-sm text-decoration-none text-muted">
+            <i class="fas fa-history me-1"></i>Về hôm nay
+        </a>
+    </div>
+</div>
+
+{% if inventory %}
+    {% for rt in inventory %}
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-3">
+            <h5 class="fw-bold mb-0 text-booking">{{ rt.room_type_code }}</h5>
+            <span class="badge bg-light text-dark ms-2 border small fw-normal">{{ rt.physical_rooms|length }} phòng</span>
+            <div class="ms-auto extra-small text-muted">
+                Giá gốc loại phòng: <span class="fw-bold">{{ rt.base_price|vnd }}</span>
+            </div>
+        </div>
+
+        <div class="main-card p-0 overflow-hidden shadow-sm">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0" style="min-width: 900px;">
+                    <thead class="bg-light border-bottom">
+                        <tr>
+                            <th class="ps-4 py-3 border-end" style="width: 250px;">Phòng & Trạng thái</th>
+                            {% for d_str in dates %}
+                            <th class="text-center py-3">
+                                <div class="extra-small text-muted">{{ d_str[8:10] }}/{{ d_str[5:7] }}</div>
+                                <div class="small fw-bold">{{ d_str|date_parse|format_date('%a') if d_str|date_parse else '' }}</div>
+                            </th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pr in rt.physical_rooms %}
+                        <tr class="align-middle">
+                            <td class="ps-4 py-3 border-end">
+                                <div class="fw-bold text-dark mb-0">{{ pr.room_name }}</div>
+                                <div class="extra-small text-muted d-flex align-items-center gap-2">
+                                    <span>ID: <code class="text-primary">{{ pr.physical_room_id }}</code></span>
+                                    <span>•</span>
+                                    <span class="{% if pr.housekeeping_status == 'Clean' %}text-success{% else %}text-warning{% endif %}">
+                                        <i class="fas fa-magic me-1"></i>{{ pr.housekeeping_status }}
+                                    </span>
+                                </div>
+                            </td>
+                            {% for wp in pr.weekly_prices %}
+                            <td class="text-center p-2">
+                                <div class="pricing-bubble p-2 rounded-3 border transition-all hover-scale cursor-pointer 
+                                    {% if wp.is_holiday %}bg-danger bg-opacity-10 border-danger border-opacity-25{% else %}bg-white border-light{% endif %}"
+                                     data-bs-toggle="tooltip" title="{{ wp.date }}">
+                                    <div class="fw-bold small {% if wp.is_holiday %}text-danger{% else %}text-booking{% endif %}">
+                                        {{ (wp.price / 1000)|int }}k
+                                    </div>
+                                    <div class="extra-small opacity-75" style="font-size: 0.65rem;">
+                                        {% if wp.is_holiday %}Lễ{% else %}Thường{% endif %}
+                                    </div>
+                                </div>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% else %}
+<div class="text-center py-5">
+    <div class="text-muted mb-3"><i class="fas fa-bed fa-3x opacity-25"></i></div>
+    <h5 class="text-muted">Không tìm thấy dữ liệu phòng cho khách sạn này.</h5>
+</div>
+{% endif %}
+
+
+
+<script src="{{ url_for('static', filename='js/pages/manager_room_pricing_detailed.js') }}"></script>
+
+{% endblock %}

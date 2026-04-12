@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+{% block title %}Hóa đơn #{{ booking.booking_id }} - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Hóa đơn đặt phòng</h2>
+        <p class="text-muted small mb-0">Chi tiết thanh toán và dịch vụ.</p>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <button onclick="window.print()" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-print me-1"></i>In hóa đơn
+        </button>
+        <a href="/receptionist" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <!-- Booking info -->
+        <div class="main-card p-4 mb-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div>
+                    <h5 class="fw-bold text-booking mb-0">Đặt phòng #{{ booking.booking_id }}</h5>
+                    {% if booking.invoice_number %}
+                    <div class="extra-small text-muted">Hóa đơn: {{ booking.invoice_number }}</div>
+                    {% endif %}
+                </div>
+                <span class="badge-clean status-{{ (booking.status or 'unknown')|lower|replace('-','') }} fs-6">
+                    {{ booking.status or '—' }}
+                </span>
+            </div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="small text-muted">Khách hàng</div>
+                    <div class="fw-bold">{{ booking.customer_name or '—' }}</div>
+                    {% if booking.customer_phone %}
+                    <div class="small text-muted">{{ booking.customer_phone }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-sm-6">
+                    <div class="small text-muted">Phòng</div>
+                    <div class="fw-bold">{{ booking.room_type_code or '—' }}</div>
+                    {% if booking.hotel_name %}
+                    <div class="small text-muted">{{ booking.hotel_name }}</div>
+                    {% endif %}
+                    {% if booking.room_name %}
+                    <div class="small text-muted">Phòng: {{ booking.room_name }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-sm-6">
+                    <div class="small text-muted">Nhận phòng</div>
+                    <div class="fw-bold">{{ booking.checkin_date or '—' }}</div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="small text-muted">Trả phòng</div>
+                    <div class="fw-bold">{{ booking.checkout_date or '—' }}</div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="small text-muted">Số khách</div>
+                    <div class="fw-bold">{{ booking.adults or 1 }} người lớn
+                        {% if booking.children %}, {{ booking.children }} trẻ em{% endif %}</div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="small text-muted">Mã khuyến mãi</div>
+                    <div class="fw-bold">{{ booking.promo_code or 'Không có' }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Extra services -->
+        {% if extra_services %}
+        <div class="main-card p-4 mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-concierge-bell me-2 text-warning"></i>Dịch vụ thêm</h6>
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>Dịch vụ</th>
+                        <th>SL</th>
+                        <th>Đơn giá</th>
+                        <th>Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for s in extra_services %}
+                    <tr>
+                        <td>{{ s.service_name }}</td>
+                        <td>{{ s.quantity }}</td>
+                        <td>{{ s.unit_price|vnd }}</td>
+                        <td class="fw-bold">{{ (s.quantity * s.unit_price)|vnd }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="fw-bold text-end">Tổng dịch vụ:</td>
+                        <td class="fw-bold text-warning">{{ extra_grand_total|vnd }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        {% endif %}
+
+        <!-- Payments -->
+        {% if payments %}
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-credit-card me-2 text-success"></i>Lịch sử thanh toán</h6>
+            <table class="table-clean">
+                <thead>
+                    <tr>
+                        <th>Thời gian</th>
+                        <th>Phương thức</th>
+                        <th>Loại</th>
+                        <th>Số tiền</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in payments %}
+                    <tr>
+                        <td class="small">{{ p.payment_date or '—' }}</td>
+                        <td>{{ p.payment_method or '—' }}</td>
+                        <td>{{ p.payment_type or '—' }}</td>
+                        <td class="fw-bold">{{ p.amount|vnd }}</td>
+                        <td>
+                            <span class="badge-clean {% if p.status == 'completed' %}text-success bg-success bg-opacity-10 border-success{% else %}text-muted{% endif %} border extra-small">
+                                {{ p.status or '—' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Summary sidebar -->
+    <div class="col-lg-4">
+        <div class="main-card p-4 mb-3">
+            <h6 class="fw-bold mb-3"><i class="fas fa-calculator me-2 text-booking"></i>Tóm tắt chi phí</h6>
+            <div class="d-flex justify-content-between mb-2 small">
+                <span class="text-muted">Tiền phòng</span>
+                <span class="fw-bold">{{ booking.room_charge|vnd if booking.room_charge else (booking.total_price|vnd if booking.total_price else '—') }}</span>
+            </div>
+            {% if extra_grand_total and extra_grand_total > 0 %}
+            <div class="d-flex justify-content-between mb-2 small">
+                <span class="text-muted">Dịch vụ thêm</span>
+                <span class="fw-bold">{{ extra_grand_total|vnd }}</span>
+            </div>
+            {% endif %}
+            {% if booking.discount_amount and booking.discount_amount > 0 %}
+            <div class="d-flex justify-content-between mb-2 small text-success">
+                <span>Giảm giá</span>
+                <span>-{{ booking.discount_amount|vnd }}</span>
+            </div>
+            {% endif %}
+            {% if booking.tax_amount and booking.tax_amount > 0 %}
+            <div class="d-flex justify-content-between mb-2 small">
+                <span class="text-muted">Thuế (10%)</span>
+                <span>{{ booking.tax_amount|vnd }}</span>
+            </div>
+            {% endif %}
+            <div class="border-top pt-3 mt-3 d-flex justify-content-between">
+                <span class="fw-bold">Tổng cộng</span>
+                <span class="fw-bold fs-5 text-booking">{{ booking.total_price|vnd if booking.total_price else '—' }}</span>
+            </div>
+            {% if booking.deposit_paid and booking.deposit_paid > 0 %}
+            <div class="d-flex justify-content-between mt-2 small">
+                <span class="text-muted">Đã thanh toán</span>
+                <span class="fw-bold text-success">{{ booking.deposit_paid|vnd }}</span>
+            </div>
+            <div class="d-flex justify-content-between mt-1 small">
+                <span class="text-muted">Còn lại</span>
+                <span class="fw-bold text-danger">{{ (booking.total_price - booking.deposit_paid)|vnd if booking.total_price and booking.deposit_paid else '—' }}</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Action buttons -->
+        {% if booking.status == 'Confirmed' %}
+        <div class="d-grid gap-2">
+            <form method="POST" action="/receptionist/checkin/{{ booking.booking_id }}">
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold"
+                        onclick="return confirm('Xác nhận check-in?')">
+                    <i class="fas fa-sign-in-alt me-2"></i>Check-in
+                </button>
+            </form>
+            <a href="/receptionist/cancel/{{ booking.booking_id }}" class="btn btn-outline-danger py-2">
+                <i class="fas fa-times me-2"></i>Hủy đặt phòng
+            </a>
+        </div>
+        {% elif booking.status == 'Checked-In' %}
+        <div class="d-grid gap-2">
+            <a href="/receptionist/checkout/{{ booking.booking_id }}" class="btn btn-warning py-2 fw-bold text-dark">
+                <i class="fas fa-sign-out-alt me-2"></i>Check-out
+            </a>
+            <a href="/receptionist/move-room/{{ booking.booking_id }}" class="btn btn-outline-info py-2">
+                <i class="fas fa-exchange-alt me-2"></i>Chuyển phòng
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

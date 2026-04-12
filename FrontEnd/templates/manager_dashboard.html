@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+{% block title %}Manager Dashboard - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Bảng điều khiển Quản lý</h2>
+        <p class="text-muted small mb-0">Tổng quan hoạt động kinh doanh và vận hành.</p>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <a href="/analytics" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-chart-bar me-1"></i>Analytics
+        </a>
+        <a href="/manager/reports" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-file-alt me-1"></i>Báo cáo
+        </a>
+    </div>
+</div>
+
+<!-- KPI stats -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-booking">{{ summary.total_bookings or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Tổng đặt phòng</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-success">{{ summary.total_revenue|vnd if summary.total_revenue else '0đ' }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Doanh thu</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-warning">
+                {{ "%.0f"|format((summary.avg_occupancy_rate or 0) * 100) }}%
+            </div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Công suất phòng</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-2 fw-bold text-info">{{ summary.total_nights or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Đêm lưu trú</div>
+        </div>
+    </div>
+</div>
+
+<!-- Ops row -->
+{% if ops %}
+<div class="row g-3 mb-4">
+    <div class="col-4 col-md-2">
+        <div class="stat-box text-center">
+            <div class="fs-4 fw-bold text-success">{{ ops.checkins_due or 0 }}</div>
+            <div class="extra-small text-muted">Nhận phòng hôm nay</div>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="stat-box text-center">
+            <div class="fs-4 fw-bold text-warning">{{ ops.checkouts_due or 0 }}</div>
+            <div class="extra-small text-muted">Trả phòng hôm nay</div>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="stat-box text-center">
+            <div class="fs-4 fw-bold text-danger">{{ ops.dirty_rooms or 0 }}</div>
+            <div class="extra-small text-muted">Phòng bẩn</div>
+        </div>
+    </div>
+    <div class="col-4 col-md-2">
+        <div class="stat-box text-center">
+            <div class="fs-4 fw-bold text-secondary">{{ ops.maintenance_rooms or 0 }}</div>
+            <div class="extra-small text-muted">Bảo trì</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row g-4">
+    <!-- Recent bookings -->
+    <div class="col-lg-8">
+        <div class="main-card p-0 overflow-hidden">
+            <div class="card-header-clean px-4 py-3 d-flex justify-content-between align-items-center">
+                <span class="fw-bold"><i class="fas fa-clock me-2"></i>Đặt phòng gần đây</span>
+                <a href="/receptionist" class="btn btn-outline-secondary btn-sm">Xem tất cả</a>
+            </div>
+            {% if bookings %}
+            <div class="table-responsive">
+                <table class="table-clean">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Khách hàng</th>
+                            <th>Phòng</th>
+                            <th>Ngày</th>
+                            <th>Doanh thu</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td>
+                                <a href="/receptionist/invoice/{{ b.booking_id }}" class="text-decoration-none fw-bold text-booking">
+                                    #{{ b.booking_id }}
+                                </a>
+                            </td>
+                            <td class="small">{{ b.customer_name or '—' }}</td>
+                            <td class="small">{{ b.room_type_code or '—' }}</td>
+                            <td class="small">{{ b.checkin_date or '—' }}</td>
+                            <td class="fw-bold small">{{ b.total_price|vnd if b.total_price else '—' }}</td>
+                            <td>
+                                <span class="badge-clean status-{{ (b.status or 'unknown')|lower|replace('-','') }} extra-small">
+                                    {{ b.status or '—' }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-4 text-center text-muted small">Chưa có đặt phòng nào.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- By hotel + Quick links -->
+    <div class="col-lg-4">
+        {% if by_hotel %}
+        <div class="main-card p-4 mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-hotel me-2 text-booking"></i>Theo khách sạn</h6>
+            {% for h in by_hotel %}
+            <div class="d-flex justify-content-between align-items-center mb-2 pb-2 {% if not loop.last %}border-bottom{% endif %}">
+                <div>
+                    <div class="small fw-bold">{{ h.hotel_name or '—' }}</div>
+                    <div class="extra-small text-muted">{{ h.total_bookings or 0 }} đặt phòng</div>
+                </div>
+                <div class="text-end">
+                    <div class="small fw-bold text-booking">{{ h.total_revenue|vnd if h.total_revenue else '0đ' }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-tools me-2 text-muted"></i>Quản lý nhanh</h6>
+            <a href="/manager/inventory-pricing" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-tag me-2 text-booking"></i>Quản lý giá phòng
+            </a>
+            <a href="/manager/promotions" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-percentage me-2 text-success"></i>Khuyến mãi
+            </a>
+            <a href="/manager/physical-rooms" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-door-open me-2 text-info"></i>Quản lý phòng vật lý
+            </a>
+            <a href="/manager/room-catalog" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-list me-2 text-warning"></i>Danh mục loại phòng
+            </a>
+            <a href="/manager/refund-policy" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-undo me-2 text-danger"></i>Chính sách hoàn tiền
+            </a>
+            <a href="/manager/reports" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark">
+                <i class="fas fa-chart-bar me-2 text-secondary"></i>Báo cáo tổng hợp
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

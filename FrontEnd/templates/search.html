@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+{% block title %}Tìm phòng - Hotel Booking{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/search.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{# ── THANH TÌM KIẾM TRÊN CÙNG ── #}
+<div class="search-hero mb-4">
+  <form action="/search" method="GET" id="search-form">
+    <div class="search-bar-wrap d-flex justify-content-center align-items-center gap-2 flex-wrap">
+
+      {# Ngày #}
+      <div class="sb-group d-flex align-items-center gap-1 px-3 py-2 rounded-3 bg-white border">
+        <i class="fas fa-calendar-alt text-muted small"></i>
+        <div>
+          <div class="sb-label">Nhận phòng</div>
+          <input type="date" name="checkin_date" class="sb-input" value="{{ params.checkin_date }}" required>
+        </div>
+        <span class="text-muted mx-1">→</span>
+        <div>
+          <div class="sb-label">Trả phòng</div>
+          <input type="date" name="checkout_date" class="sb-input" value="{{ params.checkout_date }}" required>
+        </div>
+      </div>
+
+      {# Khách #}
+      <div class="sb-group d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-white border">
+        <i class="fas fa-user-friends text-muted small"></i>
+        <div>
+          <div class="sb-label">Người lớn</div>
+          <input type="number" name="adults" class="sb-input" value="{{ params.adults }}" min="1" max="10" style="width:48px">
+        </div>
+        <div>
+          <div class="sb-label">Trẻ em</div>
+          <input type="number" name="children" class="sb-input" value="{{ params.children }}" min="0" max="5" style="width:48px">
+        </div>
+      </div>
+
+      {# Ẩn bộ lọc sidebar khi submit form #}
+      {% for sr in params.star_ratings %}<input type="hidden" name="star_ratings[]" value="{{ sr }}">{% endfor %}
+      {% for ht in params.hotel_types %}<input type="hidden" name="hotel_types[]" value="{{ ht }}">{% endfor %}
+      {% for rtc in params.room_type_codes %}<input type="hidden" name="room_type_codes[]" value="{{ rtc }}">{% endfor %}
+      {% if params.min_price %}<input type="hidden" name="min_price" value="{{ params.min_price }}">{% endif %}
+      {% if params.max_price %}<input type="hidden" name="max_price" value="{{ params.max_price }}">{% endif %}
+      <input type="hidden" name="sort_by" id="hidden-sort" value="{{ params.sort_by or 'price_asc' }}">
+
+      <button type="submit" class="btn btn-search">
+        <i class="fas fa-search me-2"></i>Tìm kiếm
+      </button>
+    </div>
+  </form>
+</div>
+
+{% set total = rooms|length %}
+
+{# ── LAYOUT 2 CỘT ── #}
+<div class="row g-4">
+
+  {# ══════════════════════════════════════════════════
+     CỘT TRÁI: SIDEBAR BỘ LỌC
+  ══════════════════════════════════════════════════ #}
+  <div class="col-lg-3 col-md-4">
+    <form action="/search" method="GET" id="filter-form">
+      {# Preserve search params #}
+      <input type="hidden" name="checkin_date" value="{{ params.checkin_date }}">
+      <input type="hidden" name="checkout_date" value="{{ params.checkout_date }}">
+      <input type="hidden" name="adults" value="{{ params.adults }}">
+      <input type="hidden" name="children" value="{{ params.children }}">
+      <input type="hidden" name="sort_by" value="{{ params.sort_by or 'price_asc' }}">
+
+      <div class="filter-panel">
+        {# Header bộ lọc #}
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0"><i class="fas fa-sliders-h me-2 text-primary"></i>Bộ lọc</h6>
+          <a href="/search?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}&adults={{ params.adults }}&children={{ params.children }}"
+             class="btn-clear-filter small text-muted">Xóa tất cả</a>
+        </div>
+
+        {# KHOẢNG GIÁ #}
+        <div class="filter-section">
+          <div class="filter-title">Khoảng giá (VND)</div>
+          <div class="d-flex gap-2 mb-2">
+            <input type="number" name="min_price" class="form-control form-control-sm"
+                   placeholder="Từ" value="{{ params.min_price }}" min="0" step="100000">
+            <input type="number" name="max_price" class="form-control form-control-sm"
+                   placeholder="Đến" value="{{ params.max_price }}" min="0" step="100000">
+          </div>
+          <div class="price-hint d-flex justify-content-between text-muted" style="font-size:11px">
+            <span>500.000đ</span><span>10.000.000đ</span>
+          </div>
+        </div>
+
+        {# XẾP HẠNG SAO #}
+        <div class="filter-section">
+          <div class="filter-title">Xếp hạng sao</div>
+          {% for star in [5, 4, 3, 2, 1] %}
+          <div class="form-check filter-check">
+            <input class="form-check-input" type="checkbox" name="star_ratings[]"
+                   value="{{ star }}" id="star_{{ star }}"
+                   {% if star|string in params.star_ratings %}checked{% endif %}
+                   onchange="this.form.submit()">
+            <label class="form-check-label" for="star_{{ star }}">
+              {% for i in range(star) %}<i class="fas fa-star" style="color:#f59e0b;font-size:12px"></i>{% endfor %}
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+
+        {# HẠNG PHÒNG #}
+        <div class="filter-section">
+          <div class="filter-title">Hạng phòng</div>
+          {% for rt in all_room_types %}
+          <div class="form-check filter-check">
+            <input class="form-check-input" type="checkbox" name="room_type_codes[]"
+                   value="{{ rt.room_type_code }}" id="rtc_{{ rt.room_type_code }}"
+                   {% if rt.room_type_code in params.room_type_codes %}checked{% endif %}
+                   onchange="this.form.submit()">
+            <label class="form-check-label" for="rtc_{{ rt.room_type_code }}">
+              {{ rt.room_type_code }}
+              <span class="text-muted small">— {{ rt.hotel_name }}</span>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+
+        {# LOẠI KHÁCH SẠN #}
+        <div class="filter-section">
+          <div class="filter-title">Loại hình khách sạn</div>
+          <div class="d-flex flex-wrap gap-2 mt-1">
+            {% for ht in ['City Hotel', 'Resort Hotel'] %}
+            <button type="button"
+                    class="btn-hotel-type {% if ht in params.hotel_types %}active{% endif %}"
+                    onclick="toggleHotelType(this, '{{ ht }}')">
+              {{ ht }}
+            </button>
+            {% endfor %}
+          </div>
+          {# Hidden inputs cho hotel_types[] #}
+          <div id="hotel-type-inputs">
+            {% for ht in params.hotel_types %}
+            <input type="hidden" name="hotel_types[]" value="{{ ht }}">
+            {% endfor %}
+          </div>
+        </div>
+
+        {# Nút Áp dụng #}
+        <button type="submit" class="btn btn-apply-filter w-100 mt-3">
+          <i class="fas fa-check me-1"></i>Áp dụng bộ lọc
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {# ══════════════════════════════════════════════════
+     CỘT PHẢI: KẾT QUẢ
+  ══════════════════════════════════════════════════ #}
+  <div class="col-lg-9 col-md-8">
+
+    {% if not params.checkin_date or not params.checkout_date %}
+    {# Chưa chọn ngày #}
+    <div class="empty-state text-center py-5">
+      <div class="empty-icon mb-3"><i class="fas fa-calendar-alt fa-3x text-muted opacity-25"></i></div>
+      <h5 class="fw-bold">Chọn ngày để tìm phòng</h5>
+      <p class="text-muted">Vui lòng chọn ngày nhận và trả phòng ở thanh tìm kiếm phía trên.</p>
+    </div>
+
+    {% elif total == 0 %}
+    {# Không tìm thấy #}
+    <div class="empty-state text-center py-5">
+      <div class="empty-icon mb-3"><i class="fas fa-bed fa-3x text-muted opacity-25"></i></div>
+      <h5 class="fw-bold">Không tìm thấy phòng trống</h5>
+      <p class="text-muted">Không có phòng nào phù hợp với bộ lọc hiện tại.</p>
+      <a href="/search?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}&adults={{ params.adults }}&children={{ params.children }}"
+         class="btn btn-outline-secondary me-2">Xóa bộ lọc</a>
+      <a href="/" class="btn btn-primary px-4">Tìm kiếm mới</a>
+    </div>
+
+    {% else %}
+    {# ── Thanh kết quả + sắp xếp ── #}
+    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+      <div>
+        {% set n_continuous = rooms | selectattr('availability_type', 'equalto', 'continuous') | list | length %}
+        {% set n_fragmented = rooms | selectattr('availability_type', 'equalto', 'fragmented') | list | length %}
+        <span class="fw-semibold text-dark">
+          <span class="text-primary fs-5 fw-bold">{{ total }}</span> kết quả
+        </span>
+        <span class="ms-2">
+          {% if n_continuous %}<span class="badge-avail continuous">{{ n_continuous }} toàn thời gian</span>{% endif %}
+          {% if n_fragmented %}<span class="badge-avail fragmented ms-1">{{ n_fragmented }} đêm lẻ</span>{% endif %}
+        </span>
+      </div>
+
+      {# Sắp xếp #}
+      <div class="d-flex align-items-center gap-2">
+        <span class="text-muted small">Sắp xếp:</span>
+        <a href="?{{ request.query_string.decode() | replace('sort_by=price_asc','') | replace('sort_by=price_desc','') | replace('sort_by=rating_desc','') }}&sort_by=price_asc"
+           class="sort-btn {% if params.sort_by == 'price_asc' or not params.sort_by %}active{% endif %}">Giá thấp nhất</a>
+        <a href="?{{ request.query_string.decode() | replace('sort_by=price_asc','') | replace('sort_by=price_desc','') | replace('sort_by=rating_desc','') }}&sort_by=price_desc"
+           class="sort-btn {% if params.sort_by == 'price_desc' %}active{% endif %}">Giá cao nhất</a>
+        <a href="?{{ request.query_string.decode() | replace('sort_by=price_asc','') | replace('sort_by=price_desc','') | replace('sort_by=rating_desc','') }}&sort_by=rating_desc"
+           class="sort-btn {% if params.sort_by == 'rating_desc' %}active{% endif %}">Đánh giá</a>
+      </div>
+    </div>
+
+    {# ── DANH SÁCH PHÒNG (horizontal cards) ── #}
+    <div class="d-flex flex-column gap-3">
+    {% for room in rooms %}
+    <div class="result-card d-flex {% if room.availability_type == 'fragmented' %}result-card--fragmented{% endif %}">
+
+      {# Ảnh bên trái #}
+      <div class="result-card__img flex-shrink-0">
+        {% if room.availability_type == 'continuous' %}
+          <div class="img-placeholder img-placeholder--blue">
+            <i class="fas fa-door-open fa-2x text-white opacity-60"></i>
+            <div class="img-badge">PHÒNG TRỐNG</div>
+          </div>
+        {% else %}
+          <div class="img-placeholder img-placeholder--amber">
+            <i class="fas fa-moon fa-2x text-white opacity-60"></i>
+            <div class="img-badge img-badge--amber">ƯU ĐÃI ĐÊM LẺ</div>
+          </div>
+        {% endif %}
+      </div>
+
+      {# Nội dung giữa #}
+      <div class="result-card__body flex-grow-1 p-3">
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+          {# Tên + thông tin phòng #}
+          <div>
+            <h5 class="result-card__name mb-1">{{ room.hotel_name }}</h5>
+            <div class="d-flex align-items-center gap-2 flex-wrap mb-2">
+              {# Sao khách sạn #}
+              <span>
+                {% for i in range(room.star_rating | default(3)) %}
+                  <i class="fas fa-star" style="color:#f59e0b;font-size:11px"></i>
+                {% endfor %}
+              </span>
+              <span class="badge-room-type">{{ room.room_type_code }}</span>
+              <span class="text-muted small">Phòng {{ room.room_name }}</span>
+              <span class="badge-hotel-type">{{ room.hotel_type | default('City Hotel') }}</span>
+            </div>
+
+            {# Mô tả ngắn #}
+            {% if room.description %}
+            <p class="result-card__desc text-muted small mb-2">{{ room.description[:120] }}{% if room.description|length > 120 %}...{% endif %}</p>
+            {% endif %}
+
+            {# Tiện nghi (amenities) #}
+            {% if room.amenities %}
+            <div class="d-flex flex-wrap gap-1 mb-2">
+              {% for am in room.amenities.split(',')[:4] %}
+              <span class="badge-amenity">{{ am.strip() }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+
+            {# Sức chứa #}
+            <div class="d-flex gap-3 text-muted" style="font-size:12px">
+              <span><i class="fas fa-user me-1"></i>{{ room.max_adults }} người lớn</span>
+              <span><i class="fas fa-child me-1"></i>{{ room.max_children }} trẻ em</span>
+              {% if room.extra_bed_capacity > 0 %}
+              <span class="text-info"><i class="fas fa-plus-circle me-1"></i>+{{ room.extra_bed_capacity }} giường phụ</span>
+              {% endif %}
+            </div>
+
+            {# Đêm trống (fragmented) #}
+            {% if room.availability_type == 'fragmented' and room.free_nights %}
+            <div class="mt-2">
+              <span class="text-muted small fw-bold">Đêm còn trống: </span>
+              {% for n in room.free_nights[:4] %}
+              <span class="badge-night">{{ n }}</span>
+              {% endfor %}
+              {% if room.free_nights|length > 4 %}
+              <span class="text-muted small">+{{ room.free_nights|length - 4 }} đêm nữa</span>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+
+          {# Giá + nút đặt (cột phải trong thẻ) #}
+          <div class="result-card__price text-end d-flex flex-column align-items-end gap-2" style="min-width:160px">
+            {# Rating box #}
+            {% if room.avg_rating > 0 %}
+            <div class="rating-box">
+              <span class="rating-label">
+                {% if room.avg_rating >= 9 %}Tuyệt vời
+                {% elif room.avg_rating >= 8 %}Rất tốt
+                {% elif room.avg_rating >= 7 %}Tốt
+                {% else %}Khá{% endif %}
+              </span>
+              <span class="rating-score">{{ "%.1f"|format(room.avg_rating * 2) }}</span>
+            </div>
+            <div class="text-muted" style="font-size:11px">{{ room.review_count }} đánh giá</div>
+            {% endif %}
+
+            {# Giá #}
+            <div class="mt-auto">
+              {% if room.promo_price_min < room.effective_price_max %}
+              <div class="price-original text-muted text-decoration-line-through small">
+                {{ "{:,.0f}".format(room.effective_price_max) }}đ
+              </div>
+              {% endif %}
+              <div class="price-final {% if room.availability_type == 'continuous' %}text-primary{% else %}text-warning{% endif %}">
+                {{ "{:,.0f}".format(room.promo_price_min) }}<span class="price-unit">đ</span>
+              </div>
+              <div class="text-muted" style="font-size:11px">Giá mỗi đêm</div>
+            </div>
+
+            {# Nút CTA #}
+            {% if room.availability_type == 'continuous' %}
+            <a href="/room/{{ room.room_type_id }}?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}"
+               class="btn btn-outline-detail mb-1">
+              <i class="fas fa-eye me-1"></i>Xem chi tiết
+            </a>
+            <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}&physical_room_id={{ room.physical_room_id }}&checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}"
+               class="btn btn-book">
+              <i class="fas fa-calendar-check me-1"></i>Đặt phòng
+            </a>
+            {% else %}
+            <a href="/room/{{ room.room_type_id }}?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}"
+               class="btn btn-outline-detail mb-1">
+              <i class="fas fa-eye me-1"></i>Xem chi tiết
+            </a>
+            <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}&physical_room_id={{ room.physical_room_id }}&checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}"
+               class="btn btn-book btn-book--amber">
+              <i class="fas fa-moon me-1"></i>Chọn đêm lẻ
+            </a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+  </div>{# end col-right #}
+</div>{# end row #}
+
+{# ── CSS nội tuyến cho trang search ── #}
+
+
+<script src="{{ url_for('static', filename='js/pages/search.js') }}"></script>
+
+{% endblock %}

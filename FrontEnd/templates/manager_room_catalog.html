@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+{% block title %}Danh mục loại phòng - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Danh mục loại phòng</h2>
+        <p class="text-muted small mb-0">Quản lý cấu hình và giá cơ bản cho từng loại phòng.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/manager" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- Create new -->
+<div class="main-card p-4 mb-4">
+    <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Tạo loại phòng mới</h6>
+    <form method="POST" action="/manager/room-catalog">
+        <input type="hidden" name="action" value="create">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label-clean">Mã loại phòng <span class="text-danger">*</span></label>
+                <input type="text" name="room_type_code" class="form-control form-control-clean text-uppercase"
+                       placeholder="DLXKING" required maxlength="50">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label-clean">Khách sạn <span class="text-danger">*</span></label>
+                <select name="hotel_id" class="form-select form-control-clean" required>
+                    <option value="">-- Chọn khách sạn --</option>
+                    {% for h in hotels %}
+                    <option value="{{ h.hotel_id }}">{{ h.hotel_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Người lớn tối đa</label>
+                <input type="number" name="max_adults" class="form-control form-control-clean"
+                       min="1" max="10" value="2">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Trẻ em tối đa</label>
+                <input type="number" name="max_children" class="form-control form-control-clean"
+                       min="0" max="5" value="1">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Giá cơ bản (đ) <span class="text-danger">*</span></label>
+                <input type="number" name="base_price" class="form-control form-control-clean"
+                       min="0" step="1000" value="500000" required>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label-clean">Mô tả</label>
+                <input type="text" name="description" class="form-control form-control-clean"
+                       placeholder="Phòng Deluxe với view biển...">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label-clean">Tiện nghi</label>
+                <input type="text" name="amenities" class="form-control form-control-clean"
+                       placeholder="WiFi, Smart TV, Hồ bơi...">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Phụ phí người lớn thêm</label>
+                <input type="number" name="extra_adult_fee" class="form-control form-control-clean"
+                       min="0" step="1000" value="0">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Giường phụ</label>
+                <input type="number" name="extra_bed_capacity" class="form-control form-control-clean"
+                       min="0" max="5" value="0">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-clean">Phí bữa sáng trẻ em</label>
+                <input type="number" name="child_breakfast_fee" class="form-control form-control-clean"
+                       min="0" step="1000" value="0">
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="allow_child_sharing" id="allowChild" checked>
+                    <label class="form-check-label small" for="allowChild">Cho trẻ em ngủ chung</label>
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
+                    <i class="fas fa-plus me-2"></i>Tạo loại phòng
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Room types list -->
+<div class="main-card p-0 overflow-hidden">
+    <div class="card-header-clean px-4 py-3">
+        <span class="fw-bold"><i class="fas fa-list me-2"></i>Danh sách loại phòng</span>
+        <span class="badge bg-secondary ms-2">{{ room_types|length }}</span>
+    </div>
+    {% if room_types %}
+    {% for rt in room_types %}
+    <div class="border-bottom p-4 {% if not rt.is_active %}opacity-50{% endif %}">
+        <div class="row align-items-start g-3">
+            <div class="col-md-6">
+                <div class="fw-bold text-booking">{{ rt.room_type_code }}</div>
+                {% if rt.hotel_name %}
+                <div class="extra-small text-muted"><i class="fas fa-hotel me-1"></i>{{ rt.hotel_name }}</div>
+                {% endif %}
+                {% if rt.description %}
+                <p class="small text-muted mb-0 mt-1">{{ rt.description }}</p>
+                {% endif %}
+                {% if rt.amenities %}
+                <div class="extra-small text-muted mt-1"><i class="fas fa-star me-1"></i>{{ rt.amenities }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <div class="d-flex flex-wrap gap-2 small">
+                    <span class="badge-clean bg-light border text-dark">
+                        <i class="fas fa-user me-1"></i>{{ rt.max_adults }} người lớn
+                    </span>
+                    <span class="badge-clean bg-light border text-dark">
+                        <i class="fas fa-child me-1"></i>{{ rt.max_children }} trẻ em
+                    </span>
+                    {% if rt.extra_bed_capacity and rt.extra_bed_capacity > 0 %}
+                    <span class="badge-clean bg-info bg-opacity-10 text-info border">
+                        +{{ rt.extra_bed_capacity }} giường phụ
+                    </span>
+                    {% endif %}
+                </div>
+                <div class="fw-bold text-booking mt-2">{{ rt.base_price|vnd }}/đêm</div>
+                {% if rt.extra_adult_fee and rt.extra_adult_fee > 0 %}
+                <div class="extra-small text-muted">+{{ rt.extra_adult_fee|vnd }}/người lớn thêm</div>
+                {% endif %}
+            </div>
+            <div class="col-md-3">
+                <!-- Inline edit form -->
+                <form method="POST" action="/manager/room-catalog" class="d-inline">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" name="room_type_id" value="{{ rt.room_type_id }}">
+                    <input type="hidden" name="room_type_code" value="{{ rt.room_type_code }}">
+                    <input type="hidden" name="hotel_id" value="{{ rt.hotel_id or 1 }}">
+                    <input type="hidden" name="max_adults" value="{{ rt.max_adults }}">
+                    <input type="hidden" name="max_children" value="{{ rt.max_children }}">
+                    <input type="hidden" name="description" value="{{ rt.description or '' }}">
+                    <input type="hidden" name="amenities" value="{{ rt.amenities or '' }}">
+                    <input type="hidden" name="extra_bed_capacity" value="{{ rt.extra_bed_capacity or 0 }}">
+                    <input type="hidden" name="extra_adult_fee" value="{{ rt.extra_adult_fee or 0 }}">
+                    <input type="hidden" name="child_breakfast_fee" value="{{ rt.child_breakfast_fee or 0 }}">
+                    <input type="hidden" name="allow_child_sharing" value="{{ rt.allow_child_sharing or 1 }}">
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="number" name="base_price" class="form-control form-control-clean"
+                               value="{{ rt.base_price }}" min="0" step="1000">
+                        <button type="submit" class="btn btn-success px-2" title="Cập nhật giá">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="d-flex gap-1">
+                    <a href="/manager/room-edit/{{ rt.room_type_id }}" class="btn btn-sm btn-outline-primary px-2"
+                       title="Chỉnh sửa chi tiết">
+                        <i class="fas fa-pen-alt"></i>
+                    </a>
+                    <form method="POST" action="/manager/room-catalog" class="d-inline">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="room_type_id" value="{{ rt.room_type_id }}">
+                        <button type="submit" class="btn btn-sm btn-outline-danger px-2"
+                                onclick="return confirm('Xóa loại phòng {{ rt.room_type_code }}?')"
+                                title="Xóa">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                    <span class="badge-clean extra-small {% if rt.is_active %}bg-success bg-opacity-10 text-success border-success{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
+                        {% if rt.is_active %}Hoạt động{% else %}Ẩn{% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="fas fa-bed fa-3x opacity-25 mb-3 d-block"></i>
+        <p>Chưa có loại phòng nào. Hãy tạo mới!</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

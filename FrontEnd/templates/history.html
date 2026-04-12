@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Lịch sử đặt phòng - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Chuyến đi của bạn</h2>
+        <p class="text-muted d-none d-md-block">Xem lại các đặt phòng hiện tại và lịch sử lưu trú trước đây.</p>
+    </div>
+</div>
+
+<div class="main-card overflow-hidden">
+    <div class="card-header-clean bg-light">
+        <h6 class="fw-bold mb-0">Danh sách đặt phòng</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-clean mb-0">
+            <thead>
+                <tr>
+                    <th>Mã số</th>
+                    <th>Chỗ nghỉ / Loại phòng</th>
+                    <th>Thông tin lưu trú</th>
+                    <th class="text-end">Tổng tiền</th>
+                    <th class="text-center">Trạng thái</th>
+                    <th class="text-end">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bookings %}
+                    {% for b in bookings %}
+                    <tr>
+                        <td class="text-muted small">#{{ b.booking_id }}</td>
+                        <td>
+                            <div class="fw-bold text-primary">{{ b.hotel_name }}</div>
+                            <div class="extra-small text-muted">{{ b.room_type_code }} / {{ b.physical_room_name }}</div>
+                            <span class="badge badge-clean bg-light text-muted border extra-small mt-1">
+                                {{ 'Liên tục' if b.booking_type == 'continuous' else 'Ngắt quãng' }}
+                            </span>
+                        </td>
+                        <td class="small">
+                            {% if b.booking_type == 'continuous' %}
+                                <div class="fw-bold text-dark">{{ b.arrival_date }}</div>
+                                <div class="text-muted">đến {{ b.departure_date }}</div>
+                            {% else %}
+                                <div class="text-muted italic">Các đêm: {{ b.selected_nights }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="fw-bold">{{ (b.total_price or 0)|vnd }}</div>
+                            <div class="extra-small text-success mb-1">Đã cọc: {{ (b.deposit_paid or 0)|vnd }}</div>
+                            {% set balance = (b.total_price or 0) - (b.deposit_paid or 0) %}
+                            {% if balance > 0 %}
+                                <div class="extra-small text-danger fw-bold">Còn nợ: {{ balance|vnd }}</div>
+                            {% else %}
+                                <div class="extra-small text-success">Đã thanh toán đủ</div>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if b.is_canceled %}
+                                <span class="badge badge-clean bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Đã Hủy</span>
+                            {% elif b.status_detail == 'Checked-Out' %}
+                                <span class="badge badge-clean bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">Hoàn tất</span>
+                            {% elif b.status_detail == 'Checked-In' %}
+                                <span class="badge badge-clean bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Đang ở</span>
+                            {% else %}
+                                <span class="badge badge-clean bg-success bg-opacity-10 text-success border border-success border-opacity-25">{{ b.status_detail }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if not b.is_canceled and b.status_detail in ('Confirmed', 'Pending') %}
+                                <a href="/cancel-preview/{{ b.booking_id }}" class="btn btn-sm btn-outline-danger py-1">Hủy phòng</a>
+                            {% elif b.status_detail == 'Checked-Out' %}
+                                <a href="/booking/review/{{ b.booking_id }}" class="btn btn-sm btn-light py-1">Đánh giá</a>
+                            {% else %}
+                                <span class="text-muted extra-small italic">Không thể thao tác</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted small">
+                            <i class="fas fa-suitcase-rolling fa-2x mb-2 d-block opacity-25"></i>
+                            Bạn chưa có bất kỳ đặt phòng nào. <br>
+                            <a href="/search" class="text-primary fw-bold text-decoration-none">Khám phá ngay!</a>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

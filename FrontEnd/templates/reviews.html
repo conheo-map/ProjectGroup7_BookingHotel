@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Đánh giá khách sạn - Hotel Booking{% endblock %}
+{% block content %}
+<div class="row mb-4 align-items-end">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Đánh giá khách sạn</h2>
+        <p class="text-muted small mb-0">Nhận xét thực tế từ khách hàng đã lưu trú.</p>
+    </div>
+    {% if avg_rating %}
+    <div class="col-auto text-end">
+        <div class="fw-bold fs-3 text-warning">{{ "%.1f"|format(avg_rating) }} <i class="fas fa-star"></i></div>
+        <div class="extra-small text-muted">{{ reviews|length }} đánh giá</div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Filter -->
+<div class="main-card p-3 mb-4">
+    <form action="/reviews" method="GET" class="row g-2 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label-clean">Lọc theo khách sạn</label>
+            <select name="hotel_id" class="form-select form-control-clean">
+                <option value="">-- Tất cả khách sạn --</option>
+                {% for h in hotels %}
+                <option value="{{ h.hotel_id }}" {% if selected_hotel|string == h.hotel_id|string %}selected{% endif %}>
+                    {{ h.hotel_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-blue-booking px-4 py-2 fw-bold">
+                <i class="fas fa-filter me-1"></i>Lọc
+            </button>
+        </div>
+        {% if selected_hotel %}
+        <div class="col-auto">
+            <a href="/reviews" class="btn btn-outline-secondary px-3 py-2">Xóa bộ lọc</a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+{% if reviews %}
+<div class="row g-3">
+    {% for r in reviews %}
+    <div class="col-md-6">
+        <div class="main-card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <div>
+                    <div class="fw-bold">{{ r.customer_name or 'Khách hàng ẩn danh' }}</div>
+                    {% if r.hotel_name %}
+                    <div class="extra-small text-muted"><i class="fas fa-hotel me-1"></i>{{ r.hotel_name }}</div>
+                    {% endif %}
+                </div>
+                <div class="text-end">
+                    <div class="fw-bold text-warning">
+                        {% for i in range(r.rating|int) %}<i class="fas fa-star"></i>{% endfor %}
+                        {% for i in range(5 - r.rating|int) %}<i class="far fa-star text-muted"></i>{% endfor %}
+                    </div>
+                    <div class="extra-small text-muted">{{ r.review_date or '' }}</div>
+                </div>
+            </div>
+            {% if r.comment %}
+            <p class="small text-muted mb-0" style="line-height:1.6;">{{ r.comment }}</p>
+            {% else %}
+            <p class="small text-muted fst-italic mb-0">Không có nhận xét.</p>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="main-card p-5 text-center">
+    <i class="fas fa-star fa-3x text-muted opacity-25 mb-3 d-block"></i>
+    <h5 class="fw-bold">Chưa có đánh giá nào</h5>
+    <p class="text-muted">Hãy là người đầu tiên chia sẻ trải nghiệm!</p>
+    <a href="/" class="btn btn-blue-booking px-4">Đặt phòng ngay</a>
+</div>
+{% endif %}
+{% endblock %}

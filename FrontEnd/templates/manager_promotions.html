@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Quản lý khuyến mãi - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Quản lý khuyến mãi</h2>
+        <p class="text-muted small mb-0">Tạo và quản lý mã giảm giá, chương trình ưu đãi.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/manager" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Create promo -->
+    <div class="col-lg-4">
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Tạo khuyến mãi mới</h6>
+            <form method="POST" action="/manager/promotions">
+                <input type="hidden" name="action" value="create">
+                <div class="mb-3">
+                    <label class="form-label-clean">Mã khuyến mãi <span class="text-danger">*</span></label>
+                    <input type="text" name="promo_code" class="form-control form-control-clean text-uppercase"
+                           placeholder="SUMMER26" required maxlength="50">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Phạm vi áp dụng</label>
+                    <select name="apply_scope" class="form-select form-control-clean" id="scopeSelect">
+                        <option value="all">Tất cả</option>
+                        <option value="hotel">Theo khách sạn</option>
+                        <option value="room_type">Theo loại phòng</option>
+                        <option value="tier">Theo hạng thành viên</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="scopeValueDiv">
+                    <label class="form-label-clean">Giá trị phạm vi</label>
+                    <input type="text" name="scope_value" class="form-control form-control-clean"
+                           placeholder="hotel_id, room_type_code, hoặc Gold/Silver...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Loại giảm giá</label>
+                    <select name="discount_type" class="form-select form-control-clean">
+                        <option value="percent">Phần trăm (%)</option>
+                        <option value="fixed">Số tiền cố định (đ)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Giá trị giảm <span class="text-danger">*</span></label>
+                    <input type="number" name="discount_percent" class="form-control form-control-clean"
+                           min="0" max="100" step="0.01" required placeholder="10">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Ngày bắt đầu</label>
+                    <input type="date" name="start_date" class="form-control form-control-clean">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Ngày kết thúc</label>
+                    <input type="date" name="end_date" class="form-control form-control-clean">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-clean">Mô tả</label>
+                    <textarea name="description" class="form-control form-control-clean" rows="2"
+                              placeholder="Chương trình ưu đãi mùa hè..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                    <i class="fas fa-plus me-2"></i>Tạo khuyến mãi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Promotions list -->
+    <div class="col-lg-8">
+        <div class="main-card p-0 overflow-hidden">
+            <div class="card-header-clean px-4 py-3">
+                <span class="fw-bold"><i class="fas fa-tags me-2"></i>Danh sách khuyến mãi</span>
+                <span class="badge bg-secondary ms-2">{{ promotions|length }}</span>
+            </div>
+            {% if promotions %}
+            <div class="table-responsive">
+                <table class="table-clean">
+                    <thead>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Giảm giá</th>
+                            <th>Phạm vi</th>
+                            <th>Hiệu lực</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in promotions %}
+                        <tr>
+                            <td>
+                                <span class="fw-bold text-booking">{{ p.promo_code }}</span>
+                                {% if p.description %}
+                                <div class="extra-small text-muted">{{ p.description }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="fw-bold">
+                                {% if p.discount_type == 'percent' %}
+                                {{ p.discount_percent }}%
+                                {% else %}
+                                {{ p.discount_percent|vnd }}
+                                {% endif %}
+                            </td>
+                            <td class="small">
+                                {{ p.apply_scope or 'all' }}
+                                {% if p.scope_value %}
+                                <div class="extra-small text-muted">{{ p.scope_value }}</div>
+                                {% endif %}
+                            </td>
+                            <td class="extra-small text-muted">
+                                {% if p.start_date %}{{ p.start_date }}{% else %}—{% endif %}
+                                →
+                                {% if p.end_date %}{{ p.end_date }}{% else %}∞{% endif %}
+                            </td>
+                            <td>
+                                <span class="badge-clean extra-small
+                                    {% if p.is_active %}bg-success bg-opacity-10 text-success border-success
+                                    {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
+                                    {% if p.is_active %}Hoạt động{% else %}Tắt{% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <form method="POST" action="/manager/promotions" class="d-inline">
+                                        <input type="hidden" name="action" value="toggle">
+                                        <input type="hidden" name="promo_id" value="{{ p.promo_id }}">
+                                        <input type="hidden" name="is_active" value="{{ p.is_active }}">
+                                        <button type="submit" class="btn btn-sm {% if p.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %} px-2"
+                                                title="{% if p.is_active %}Tắt{% else %}Bật{% endif %}">
+                                            <i class="fas {% if p.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="/manager/promotions" class="d-inline">
+                                        <input type="hidden" name="action" value="delete">
+                                        <input type="hidden" name="promo_id" value="{{ p.promo_id }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger px-2"
+                                                onclick="return confirm('Xóa khuyến mãi {{ p.promo_code }}?')"
+                                                title="Xóa">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-tags fa-3x opacity-25 mb-3 d-block"></i>
+                <p>Chưa có khuyến mãi nào. Hãy tạo mới!</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

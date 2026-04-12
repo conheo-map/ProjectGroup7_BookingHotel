@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Housekeeping - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Quản lý Housekeeping</h2>
+        <p class="text-muted small mb-0">Danh sách phòng cần vệ sinh và bảo trì.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/receptionist/room-plan" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-th me-1"></i>Sơ đồ phòng
+        </a>
+    </div>
+</div>
+
+<!-- Stats -->
+{% if ops %}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-danger">{{ ops.dirty_rooms or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Phòng bẩn</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-warning">{{ ops.maintenance_rooms or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Bảo trì</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-success">{{ ops.checkins_due or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Nhận phòng hôm nay</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-booking">{{ ops.checkouts_due or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase">Trả phòng hôm nay</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Rooms list -->
+{% if rooms %}
+<div class="main-card p-0 overflow-hidden">
+    <div class="card-header-clean px-4 py-3">
+        <span class="fw-bold"><i class="fas fa-broom me-2"></i>Danh sách phòng cần xử lý</span>
+        <span class="badge bg-danger ms-2">{{ rooms|length }}</span>
+    </div>
+    <div class="table-responsive">
+        <table class="table-clean">
+            <thead>
+                <tr>
+                    <th>Phòng</th>
+                    <th>Loại phòng</th>
+                    <th>Khách sạn</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in rooms %}
+                <tr>
+                    <td class="fw-bold">{{ r.room_name or '—' }}</td>
+                    <td class="small">{{ r.room_type_code or '—' }}</td>
+                    <td class="small text-muted">{{ r.hotel_name or '—' }}</td>
+                    <td>
+                        <span class="badge-clean extra-small
+                            {% if r.housekeeping_status == 'Dirty' %}bg-danger bg-opacity-10 text-danger border-danger
+                            {% elif r.housekeeping_status == 'Maintenance' %}bg-secondary bg-opacity-10 text-secondary
+                            {% else %}bg-warning bg-opacity-10 text-warning border-warning{% endif %} border">
+                            {% if r.housekeeping_status == 'Dirty' %}<i class="fas fa-exclamation-triangle me-1"></i>{% endif %}
+                            {{ r.housekeeping_status or '—' }}
+                        </span>
+                    </td>
+                    <td class="small text-muted">{{ r.notes or '' }}</td>
+                    <td>
+                        {% if r.housekeeping_status != 'Clean' %}
+                        <form method="POST" action="/housekeeping/clean/{{ r.physical_room_id }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-success px-3"
+                                    onclick="return confirm('Đánh dấu phòng {{ r.room_name }} đã dọn sạch?')">
+                                <i class="fas fa-check me-1"></i>Đã dọn
+                            </button>
+                        </form>
+                        {% else %}
+                        <span class="extra-small text-success"><i class="fas fa-check-circle me-1"></i>Sạch</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<div class="main-card p-5 text-center">
+    <i class="fas fa-check-circle fa-3x text-success opacity-50 mb-3 d-block"></i>
+    <h5 class="fw-bold text-success">Tất cả phòng đã sạch!</h5>
+    <p class="text-muted small">Không có phòng nào cần vệ sinh hoặc bảo trì lúc này.</p>
+</div>
+{% endif %}
+{% endblock %}

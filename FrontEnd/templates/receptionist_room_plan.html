@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+{% block title %}Sơ đồ phòng - Hotel Booking{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/receptionist_room_plan.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{# ── HEADER ── #}
+<div class="rp-header d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h4 class="fw-bold mb-0"><i class="fas fa-th me-2 text-primary"></i>Sơ đồ phòng</h4>
+    <div class="text-muted small">Tổng quan tình trạng tất cả phòng theo thời gian thực</div>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="/receptionist/walkin" class="btn rp-btn-walkin">
+      <i class="fas fa-plus me-1"></i>Đặt phòng khách vãng lai
+    </a>
+    <a href="/receptionist" class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-1"></i>Quay lại
+    </a>
+  </div>
+</div>
+
+{# ── FILTER BAR ── #}
+<div class="rp-filter-bar mb-3">
+  <button class="rp-filter-chip active" onclick="filterRooms('all', this)">
+    <i class="fas fa-border-all me-1"></i>Tất cả
+  </button>
+  <button class="rp-filter-chip" onclick="filterRooms('available', this)">
+    <i class="fas fa-door-open me-1"></i>Phòng trống
+  </button>
+  <button class="rp-filter-chip" onclick="filterRooms('occupied', this)">
+    <i class="fas fa-user me-1"></i>Đang sử dụng
+  </button>
+  <button class="rp-filter-chip" onclick="filterRooms('dirty', this)">
+    <i class="fas fa-broom me-1"></i>Cần dọn
+  </button>
+  <button class="rp-filter-chip" onclick="filterRooms('maintenance', this)">
+    <i class="fas fa-wrench me-1"></i>Bảo trì
+  </button>
+  <button class="rp-filter-chip" onclick="filterRooms('confirmed', this)">
+    <i class="fas fa-calendar-check me-1"></i>Xác nhận (chưa checkin)
+  </button>
+
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <span class="text-muted small">Sắp xếp:</span>
+    <select id="grid-cols" class="form-select form-select-sm" style="width:90px" onchange="changeGridCols(this.value)">
+      <option value="6">6 cột</option>
+      <option value="8" selected>8 cột</option>
+      <option value="10">10 cột</option>
+      <option value="12">12 cột</option>
+    </select>
+  </div>
+</div>
+
+{# ── LEGEND ── #}
+<div class="rp-legend mb-3">
+  <span class="rp-legend__item"><span class="rp-legend__dot rp-legend__dot--green"></span>Trống & Sạch</span>
+  <span class="rp-legend__item"><span class="rp-legend__dot rp-legend__dot--orange"></span>Đang sử dụng</span>
+  <span class="rp-legend__item"><span class="rp-legend__dot rp-legend__dot--red"></span>Bẩn / Cần dọn</span>
+  <span class="rp-legend__item"><span class="rp-legend__dot rp-legend__dot--gray"></span>Bảo trì</span>
+  <span class="rp-legend__item"><span class="rp-legend__dot rp-legend__dot--blue"></span>Xác nhận</span>
+</div>
+
+{# ── QUICK STATS ── #}
+{% if ops %}
+<div class="rp-stats-row mb-4">
+  <div class="rp-stat-card rp-stat-card--green">
+    <div class="rp-stat-card__val">{{ ops.checkins_due or 0 }}</div>
+    <div class="rp-stat-card__label">Check-in hôm nay</div>
+  </div>
+  <div class="rp-stat-card rp-stat-card--amber">
+    <div class="rp-stat-card__val">{{ ops.checkouts_due or 0 }}</div>
+    <div class="rp-stat-card__label">Check-out hôm nay</div>
+  </div>
+  <div class="rp-stat-card rp-stat-card--red">
+    <div class="rp-stat-card__val">{{ ops.dirty_rooms or 0 }}</div>
+    <div class="rp-stat-card__label">Cần dọn</div>
+  </div>
+  <div class="rp-stat-card rp-stat-card--gray">
+    <div class="rp-stat-card__val">{{ ops.maintenance_rooms or 0 }}</div>
+    <div class="rp-stat-card__label">Bảo trì</div>
+  </div>
+</div>
+{% endif %}
+
+{# ── ROOM GRID BY ROOM TYPE ── #}
+{% if room_types %}
+{% for rt in room_types %}
+{% set ns = namespace(avail=0) %}
+{% for pr in rt.physical_rooms %}
+  {% if not pr.current_booking_id and (pr.housekeeping_status or 'Clean') == 'Clean' %}
+    {% set ns.avail = ns.avail + 1 %}
+  {% endif %}
+{% endfor %}
+<div class="rp-type-section mb-4">
+  {# Header hạng phòng #}
+  <div class="rp-type-header">
+    <div class="rp-type-header__left">
+      <span class="rp-type-header__name">{{ rt.room_type_code }}</span>
+      {% if rt.hotel_name %}
+      <span class="rp-type-header__hotel">— {{ rt.hotel_name }}</span>
+      {% endif %}
+    </div>
+    <div class="rp-type-header__right">
+      <span class="rp-type-header__info">
+        <i class="fas fa-user me-1"></i>{{ rt.max_adults }}
+        <i class="fas fa-child ms-2 me-1"></i>{{ rt.max_children }}
+      </span>
+      <span class="rp-type-header__price">
+        <i class="fas fa-tag me-1"></i>{{ "{:,.0f}".format(rt.base_price or 0) }}đ/đêm
+      </span>
+      <span class="rp-type-header__avail">
+        {{ ns.avail }}/{{ rt.physical_rooms | length }} trống
+      </span>
+    </div>
+  </div>
+
+  {# Grid phòng #}
+  <div class="rp-room-grid" id="grid-{{ rt.room_type_id }}">
+    {% if rt.physical_rooms %}
+    {% for pr in rt.physical_rooms %}
+    {% set hs = pr.housekeeping_status or 'Clean' %}
+    {% set occupied = pr.current_booking_id | default(false) %}
+
+    {% if occupied %}
+      {% set status_class = 'occupied' %}
+    {% elif hs == 'Dirty' %}
+      {% set status_class = 'dirty' %}
+    {% elif hs == 'Maintenance' %}
+      {% set status_class = 'maintenance' %}
+    {% else %}
+      {% set status_class = 'available' %}
+    {% endif %}
+
+    <div class="rp-room-card rp-room-card--{{ status_class }}" data-status="{{ status_class }}"
+         {% if status_class == 'available' %}onclick="openWalkinModal({{ pr.physical_room_id }}, '{{ pr.room_name }}', {{ rt.room_type_id }}, {{ rt.hotel_id }}, '{{ rt.room_type_code }}', {{ rt.base_price or 0 }})"{% endif %}>
+      <div class="rp-room-card__name">{{ pr.room_name }}</div>
+      <div class="rp-room-card__type">{{ rt.room_type_code }}</div>
+
+      {% if occupied %}
+      <div class="rp-room-card__detail">
+        <div class="rp-room-card__dates">
+          {% if pr.current_checkin %}{{ pr.current_checkin[5:] }}{% endif %}
+          {% if pr.current_checkout %} - {{ pr.current_checkout[5:] }}{% endif %}
+        </div>
+        <div class="rp-room-card__guest">
+          <i class="fas fa-user"></i> {{ pr.guest_name | default('') }}
+        </div>
+      </div>
+      <div class="rp-room-card__actions">
+        <a href="/receptionist/checkout/{{ pr.current_booking_id }}"
+           class="rp-action-btn rp-action-btn--checkout" title="Check-out">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+      {% elif hs == 'Dirty' %}
+      <div class="rp-room-card__detail">
+        <i class="fas fa-broom"></i> Cần dọn
+      </div>
+      {% elif hs == 'Maintenance' %}
+      <div class="rp-room-card__detail">
+        <i class="fas fa-wrench"></i> Bảo trì
+      </div>
+      {% else %}
+      <div class="rp-room-card__detail rp-room-card__detail--price">
+        {{ "{:,.0f}".format(rt.base_price or 0) }}đ
+      </div>
+      <div class="rp-room-card__actions">
+        <span class="rp-action-btn rp-action-btn--walkin" title="Đặt phòng vãng lai">
+          <i class="fas fa-plus"></i>
+        </span>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="text-muted small p-3">Chưa có phòng nào.</div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% else %}
+<div class="rp-empty">
+  <i class="fas fa-hotel fa-3x opacity-25 mb-3"></i>
+  <p>Chưa có dữ liệu phòng.</p>
+</div>
+{% endif %}
+
+{# ── MODAL ĐẶT PHÒNG VÃNG LAI NHANH ── #}
+<div class="rp-modal-backdrop" id="walkin-backdrop" onclick="closeWalkinModal()" style="display:none"></div>
+<div class="rp-modal" id="walkin-modal" style="display:none">
+  <div class="rp-modal__header">
+    <h6 class="fw-bold mb-0"><i class="fas fa-user-plus me-2 text-success"></i>Đặt phòng khách vãng lai</h6>
+    <button class="btn-close btn-close-sm" onclick="closeWalkinModal()"></button>
+  </div>
+  <form action="/receptionist/walkin" method="POST" id="walkin-form">
+    <input type="hidden" name="physical_room_id" id="wk-physical-room-id">
+    <input type="hidden" name="room_type_id" id="wk-room-type-id">
+    <input type="hidden" name="hotel_id" id="wk-hotel-id">
+
+    <div class="rp-modal__room-badge" id="wk-room-badge"></div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <label class="rp-f-label">Tên khách <span class="text-danger">*</span></label>
+        <input type="text" name="customer_name" class="form-control form-control-sm" placeholder="Họ và tên" required>
+      </div>
+      <div class="col-6">
+        <label class="rp-f-label">Số điện thoại</label>
+        <input type="text" name="customer_phone" class="form-control form-control-sm" placeholder="0912...">
+      </div>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <label class="rp-f-label">Nhận phòng <span class="text-danger">*</span></label>
+        <input type="date" name="checkin_date" class="form-control form-control-sm" id="wk-checkin" required>
+      </div>
+      <div class="col-6">
+        <label class="rp-f-label">Trả phòng <span class="text-danger">*</span></label>
+        <input type="date" name="checkout_date" class="form-control form-control-sm" id="wk-checkout" required>
+      </div>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-4">
+        <label class="rp-f-label">Người lớn</label>
+        <input type="number" name="adults" class="form-control form-control-sm" value="1" min="1" max="10">
+      </div>
+      <div class="col-4">
+        <label class="rp-f-label">Trẻ em</label>
+        <input type="number" name="children" class="form-control form-control-sm" value="0" min="0" max="5">
+      </div>
+      <div class="col-4">
+        <label class="rp-f-label">Thanh toán</label>
+        <select name="payment_method" class="form-select form-select-sm">
+          <option value="cash">Tiền mặt</option>
+          <option value="credit_card">Thẻ</option>
+          <option value="bank_transfer">Chuyển khoản</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row g-2 mb-3">
+      <div class="col-6">
+        <label class="rp-f-label">Đặt cọc (VND)</label>
+        <input type="number" name="deposit_paid" class="form-control form-control-sm" value="0" min="0">
+      </div>
+      <div class="col-6">
+        <label class="rp-f-label">Giá phòng/đêm</label>
+        <div class="form-control form-control-sm bg-light fw-bold text-primary" id="wk-price-display">—</div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="rp-f-label">Ghi chú</label>
+      <textarea name="special_requests" class="form-control form-control-sm" rows="2" placeholder="Yêu cầu đặc biệt..."></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn rp-btn-walkin flex-fill">
+        <i class="fas fa-check me-1"></i>Xác nhận đặt phòng
+      </button>
+      <button type="button" class="btn btn-outline-secondary btn-sm" onclick="closeWalkinModal()">Hủy</button>
+    </div>
+  </form>
+</div>
+
+{# ── CSS ── #}
+
+
+<script src="{{ url_for('static', filename='js/pages/receptionist_room_plan.js') }}"></script>
+
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Đặt phòng - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h2 class="auth-title">Đăng ký đặt phòng</h2>
+        <p class="auth-subtitle mb-4">Vui lòng điền thông tin chi tiết để chúng tôi kiểm tra tình trạng phòng trống.</p>
+
+        {# ★ Hiển thị phòng cụ thể đã chọn từ trang tìm kiếm #}
+        {% if prefill_physical_room_id and prefill_room_name %}
+        <div class="alert alert-info d-flex align-items-center mb-4" role="alert" style="border-radius:12px;background:#eff6ff;border-color:#bfdbfe">
+            <i class="fas fa-door-open me-3 text-primary fs-4"></i>
+            <div>
+                <div class="small text-muted">Phòng đã chọn từ trang tìm kiếm:</div>
+                <strong class="text-primary">Phòng {{ prefill_room_name }}</strong>
+                <span class="badge bg-primary bg-opacity-10 text-primary ms-2">{{ prefill_room_type_code }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="/booking" id="booking_form">
+            {# ★ Hidden: physical_room_id cụ thể truyền từ search #}
+            <input type="hidden" name="physical_room_id" value="{{ prefill_physical_room_id or '' }}">
+
+            <div class="row g-3">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-clean">Lựa chọn khách sạn <span class="text-danger">*</span></label>
+                    <select name="hotel_id" id="booking_hotel_id" class="form-select form-control-clean" required>
+                        <option value="">-- Chọn khách sạn --</option>
+                        {% for hotel in hotels %}
+                            <option value="{{ hotel.hotel_id }}"
+                                {% if hotel.hotel_id|string == prefill_hotel_id|string %}selected{% endif %}>
+                                {{ hotel.hotel_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                    <label class="form-label-clean">Hạng phòng mong muốn <span class="text-danger">*</span></label>
+                    <select name="room_type_id" id="booking_room_type_id" class="form-select form-control-clean" required>
+                        <option value="">-- Chọn hạng phòng --</option>
+                        {% for rt in room_types %}
+                            <option value="{{ rt.room_type_id }}"
+                                data-code="{{ rt.room_type_code }}"
+                                {% if rt.room_type_id|string == prefill_room_type_id|string %}selected{% endif %}>
+                                {{ rt.room_type_code }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label-clean">Ngày nhận phòng <span class="text-danger">*</span></label>
+                    <input type="date" name="arrival_date" id="booking_arrival_date"
+                           class="form-control form-control-clean"
+                           value="{{ checkin_prefill }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-clean">Ngày trả phòng <span class="text-danger">*</span></label>
+                    <input type="date" name="departure_date" id="booking_departure_date"
+                           class="form-control form-control-clean"
+                           value="{{ checkout_prefill }}" required>
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <label class="form-label-clean">Người lớn</label>
+                    <input type="number" name="adults" id="booking_adults" value="1" min="1" max="10" class="form-control form-control-clean">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label-clean">Trẻ em</label>
+                    <input type="number" name="children" id="booking_children" value="0" min="0" max="5" class="form-control form-control-clean">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-clean">Mã ưu đãi (Promo Code)</label>
+                    <input type="text" name="promo_code" id="booking_promo_code" placeholder="VD: SUMMER26" class="form-control form-control-clean text-uppercase">
+                </div>
+            </div>
+
+            <input type="hidden" name="room_type_code" id="booking_room_type_code" value="{{ prefill_room_type_code }}">
+
+            <div class="d-grid gap-2 mb-4">
+                <button type="submit" id="btn_confirm_booking" class="btn btn-blue-booking py-3 fw-bold rounded-4 shadow-sm">
+                    XÁC NHẬN & KIỂM TRA PHÒNG TRỐNG
+                </button>
+                <a href="/search" class="text-center text-decoration-none small text-muted">Hủy và quay lại tìm kiếm</a>
+            </div>
+        </form>
+
+        <div class="mt-4 pt-4 border-top">
+            <h6 class="fw-bold small mb-3 text-uppercase letter-spacing-1">Quy tắc & Lưu ý</h6>
+            <div class="bg-light p-3 rounded-8 small text-muted">
+                <div class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Giá tiền được tính dựa trên giá thực tế từng đêm.</div>
+                <div class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Hệ thống sẽ tự động giữ phòng trong 10 phút sau khi xác nhận.</div>
+                <div><i class="fas fa-check-circle text-success me-2"></i> Vui lòng thanh toán đặt cọc để đảm bảo giữ chỗ thành công.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

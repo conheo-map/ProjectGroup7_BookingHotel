@@ -1,0 +1,21 @@
+.pricing-bubble {
+        min-height: 52px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .pricing-bubble:hover {
+        background-color: #f8f9fa !important;
+        border-color: #003580 !important;
+        transform: translateY(-2px);
+    }
+    .text-booking {
+        color: #003580;
+    }
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
+    .extra-small {
+        font-size: 0.75rem;
+    }

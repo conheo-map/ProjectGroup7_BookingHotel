@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Chính sách hoàn tiền - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Chính sách hoàn tiền</h2>
+        <p class="text-muted small mb-0">Thiết lập tỷ lệ hoàn tiền theo thời gian hủy phòng.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/manager" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Add policy -->
+    <div class="col-lg-4">
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Thêm chính sách</h6>
+            <form method="POST" action="/manager/refund-policy">
+                <input type="hidden" name="action" value="create">
+                <div class="mb-3">
+                    <label class="form-label-clean">Số giờ trước nhận phòng <span class="text-danger">*</span></label>
+                    <input type="number" name="hours_before_checkin" class="form-control form-control-clean"
+                           min="0" step="1" required placeholder="VD: 48">
+                    <div class="extra-small text-muted mt-1">Áp dụng khi hủy trước X giờ</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Số ngày trước nhận phòng</label>
+                    <input type="number" name="days_before_arrival" class="form-control form-control-clean"
+                           min="0" step="0.5" placeholder="VD: 2">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Tỷ lệ hoàn tiền (%) <span class="text-danger">*</span></label>
+                    <input type="number" name="refund_percent" class="form-control form-control-clean"
+                           min="0" max="100" step="1" required placeholder="100">
+                    <div class="extra-small text-muted mt-1">0 = không hoàn, 100 = hoàn full</div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-clean">Mô tả</label>
+                    <textarea name="description" class="form-control form-control-clean" rows="2"
+                              placeholder="Hủy trước 48 giờ được hoàn 100%..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
+                    <i class="fas fa-plus me-2"></i>Thêm chính sách
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Policies list -->
+    <div class="col-lg-8">
+        <div class="main-card p-0 overflow-hidden">
+            <div class="card-header-clean px-4 py-3">
+                <span class="fw-bold"><i class="fas fa-undo me-2"></i>Danh sách chính sách</span>
+            </div>
+            {% if policies %}
+            <div class="table-responsive">
+                <table class="table-clean">
+                    <thead>
+                        <tr>
+                            <th>Giờ trước nhận phòng</th>
+                            <th>Ngày trước nhận phòng</th>
+                            <th>Tỷ lệ hoàn</th>
+                            <th>Mô tả</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in policies %}
+                        <tr>
+                            <td class="fw-bold">
+                                {% if p.hours_before_checkin is not none %}
+                                {{ p.hours_before_checkin }} giờ
+                                {% else %}—{% endif %}
+                            </td>
+                            <td class="small">
+                                {% if p.days_before_arrival is not none %}
+                                {{ p.days_before_arrival }} ngày
+                                {% else %}—{% endif %}
+                            </td>
+                            <td>
+                                <span class="fw-bold {% if p.refund_percent == 100 %}text-success{% elif p.refund_percent == 0 %}text-danger{% else %}text-warning{% endif %}">
+                                    {{ p.refund_percent }}%
+                                </span>
+                            </td>
+                            <td class="small text-muted">{{ p.description or '—' }}</td>
+                            <td>
+                                <form method="POST" action="/manager/refund-policy" class="d-inline">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="policy_id" value="{{ p.policy_id }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-2"
+                                            onclick="return confirm('Xóa chính sách này?')" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="p-5 text-center text-muted">
+                <i class="fas fa-undo fa-3x opacity-25 mb-3 d-block"></i>
+                <p>Chưa có chính sách hoàn tiền nào.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="alert alert-info border-0 mt-3 small">
+            <i class="fas fa-info-circle me-2"></i>
+            Hệ thống tự động chọn chính sách phù hợp nhất dựa trên thời gian còn lại trước khi nhận phòng.
+            Chính sách có giờ cao hơn sẽ được ưu tiên nếu khách hủy sớm hơn.
+        </div>
+    </div>
+</div>
+{% endblock %}
