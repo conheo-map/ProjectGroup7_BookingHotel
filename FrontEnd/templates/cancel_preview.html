@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Hủy đặt phòng - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="text-center mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-danger bg-opacity-10 text-danger rounded-circle mb-3 shadow-sm">
+                <i class="fas fa-exclamation-triangle fa-2x"></i>
+            </div>
+            <h2 class="fw-bold text-dark">Xác nhận hủy đặt phòng</h2>
+            <p class="text-muted small">Vui lòng kiểm tra kỹ chính sách hoàn tiền trước khi tiếp tục.</p>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- BREAKDOWN -->
+            <div class="col-md-6">
+                <div class="main-card p-3 h-100 bg-light border-0">
+                    <h6 class="extra-small fw-bold text-muted text-uppercase letter-spacing-1 mb-3">Thông tin đơn hàng #{{ preview.booking_id }}</h6>
+                    <div class="mb-2">
+                        <div class="small text-muted">Khách hàng</div>
+                        <div class="fw-bold">{{ preview.customer_name }}</div>
+                    </div>
+                    <div class="mb-2">
+                        <div class="small text-muted">Ngày nhận phòng</div>
+                        <div class="fw-bold">{{ preview.arrival_date }}</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Đã thanh toán (Cọc)</div>
+                        <div class="fw-bold text-primary">{{ (preview.deposit_paid or 0)|vnd }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- REFUND POLICY -->
+            <div class="col-md-6">
+                <div class="main-card p-3 h-100 bg-white border-2 border-primary border-opacity-10">
+                    <h6 class="extra-small fw-bold text-primary text-uppercase letter-spacing-1 mb-3">Số dư hoàn trả dự kiến</h6>
+                    <div class="mb-3">
+                        <div class="small text-muted">Tỷ lệ hoàn tiền áp dụng</div>
+                        <div class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">{{ preview.refund_percent }}%</div>
+                    </div>
+                    <div class="mb-3">
+                        <div class="small text-muted">Số tiền hoàn lại</div>
+                        <div class="fs-4 fw-bold text-success">{{ (preview.refund_amount or 0)|vnd }}</div>
+                    </div>
+                    <div>
+                        <div class="small text-muted">Phí hủy phòng (Khấu trừ)</div>
+                        <div class="fw-bold text-danger">{{ (preview.penalty_amount or 0)|vnd }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CANCELLATION FORM -->
+        <form action="/cancel/{{ preview.booking_id }}" method="POST">
+            <div class="mb-4">
+                <label class="form-label-clean">Lý do hủy phòng <span class="text-danger">*</span></label>
+                <textarea name="cancel_reason" class="form-control form-control-clean" rows="3" required placeholder="Ví dụ: Thay đổi lịch trình công tác, có việc đột xuất..."></textarea>
+                <p class="extra-small text-muted mt-2 italic">Thông tin này giúp chúng tôi cải thiện dịch vụ tốt hơn.</p>
+            </div>
+
+            <div class="main-card p-3 bg-danger bg-opacity-10 border-0 mb-4 rounded-8 small text-danger">
+                <i class="fas fa-info-circle me-2"></i> <strong>Lưu ý:</strong> Hành động này không thể hoàn tác. Phòng của bạn sẽ được mở lại ngay lập tức cho khách hàng khác.
+            </div>
+
+            <div class="row g-2">
+                <div class="col-8">
+                    <button type="submit" class="btn btn-danger w-100 py-3 fw-bold rounded-4 shadow-sm">
+                        XÁC NHẬN HỦY VÀ HOÀN TIỀN
+                    </button>
+                </div>
+                <div class="col-4">
+                    <a href="/history" class="btn btn-outline-secondary w-100 h-100 d-flex align-items-center justify-content-center rounded-4 border-0 small">
+                        Quay lại
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

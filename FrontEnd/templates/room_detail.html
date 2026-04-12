@@ -1,0 +1,375 @@
+{% extends "base.html" %}
+{% block title %}{{ room.room_type_code or 'Chi tiết phòng' }} — {{ room.hotel_name or 'Hotel Booking' }}{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/room_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+
+{% set star_count = hotel_info.star_rating | default(3) | int %}
+{% set h_type = hotel_info.hotel_type | default('City Hotel') %}
+
+{# ── BREADCRUMB ── #}
+<nav class="rd-breadcrumb mb-3">
+  <a href="/">Trang chủ</a>
+  <span class="sep">/</span>
+  <a href="/search{% if checkin_date %}?checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}{% endif %}">Tìm phòng</a>
+  <span class="sep">/</span>
+  <span class="current">{{ room.room_type_code }}</span>
+</nav>
+
+{# ── HOTEL HEADER ── #}
+<div class="rd-header d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+  <div>
+    <h1 class="rd-hotel-name">
+      {{ room.hotel_name or 'Khách sạn' }}
+      <span class="rd-stars ms-2">
+        {% for i in range(star_count) %}<i class="fas fa-star"></i>{% endfor %}
+      </span>
+    </h1>
+    <div class="rd-hotel-meta text-muted">
+      <span class="me-3"><i class="fas fa-map-marker-alt me-1 text-danger"></i>{{ h_type }}</span>
+      <span class="me-3"><i class="fas fa-door-open me-1"></i>Hạng: <strong>{{ room.room_type_code }}</strong></span>
+      {% if room.description %}
+      <span><i class="fas fa-info-circle me-1"></i>{{ room.description[:80] }}{% if room.description|length > 80 %}...{% endif %}</span>
+      {% endif %}
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <a href="/search{% if checkin_date %}?checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}{% endif %}"
+       class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-arrow-left me-1"></i>Quay lại
+    </a>
+    {% if auth.is_logged_in and auth.account_type == 'customer' %}
+    <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}{% if checkin_date %}&checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}{% endif %}"
+       class="btn btn-book-now">
+      <i class="fas fa-calendar-check me-1"></i>Đặt ngay
+    </a>
+    {% endif %}
+  </div>
+</div>
+
+{# ── IMAGE GALLERY ── #}
+<div class="rd-gallery mb-4">
+  <div class="rd-gallery__main">
+    <div class="rd-img-placeholder rd-img-placeholder--large">
+      <i class="fas fa-hotel fa-4x text-white opacity-30"></i>
+      <div class="rd-promo-badge" style="{% if not room.base_price %}display:none{% endif %}">
+        {{ "{:,.0f}".format(room.base_price or 0) }}đ / đêm
+      </div>
+    </div>
+  </div>
+  <div class="rd-gallery__grid">
+    <div class="rd-img-placeholder rd-img-placeholder--sm">
+      <i class="fas fa-bed fa-2x text-white opacity-40"></i>
+    </div>
+    <div class="rd-img-placeholder rd-img-placeholder--sm">
+      <i class="fas fa-bath fa-2x text-white opacity-40"></i>
+    </div>
+    <div class="rd-img-placeholder rd-img-placeholder--sm">
+      <i class="fas fa-couch fa-2x text-white opacity-40"></i>
+    </div>
+    <div class="rd-img-placeholder rd-img-placeholder--sm rd-img-placeholder--overlay">
+      <i class="fas fa-images fa-2x text-white opacity-40"></i>
+      <span class="rd-more-photos">+5 ảnh</span>
+    </div>
+  </div>
+</div>
+
+{# ── MAIN CONTENT: 2 COLUMNS ── #}
+<div class="row g-4">
+
+  {# ═══ CỘT TRÁI: THÔNG TIN CHI TIẾT ═══ #}
+  <div class="col-lg-8">
+
+    {# ── Thông tin phòng ── #}
+    <div class="rd-section">
+      <h4 class="rd-section__title"><i class="fas fa-info-circle me-2"></i>Thông tin phòng</h4>
+
+      <div class="row g-3 mb-4">
+        <div class="col-sm-3">
+          <div class="rd-stat-box">
+            <i class="fas fa-user fa-lg text-primary"></i>
+            <div class="rd-stat-val">{{ room.max_adults or 2 }}</div>
+            <div class="rd-stat-label">Người lớn tối đa</div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="rd-stat-box">
+            <i class="fas fa-child fa-lg text-info"></i>
+            <div class="rd-stat-val">{{ room.max_children or 1 }}</div>
+            <div class="rd-stat-label">Trẻ em tối đa</div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="rd-stat-box">
+            <i class="fas fa-bed fa-lg text-success"></i>
+            <div class="rd-stat-val">{{ room.extra_bed_capacity or 0 }}</div>
+            <div class="rd-stat-label">Giường phụ</div>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="rd-stat-box">
+            <i class="fas fa-expand-arrows-alt fa-lg text-warning"></i>
+            <div class="rd-stat-val">{{ room.base_price | default(0) | int }}đ</div>
+            <div class="rd-stat-label">Giá cơ bản/đêm</div>
+          </div>
+        </div>
+      </div>
+
+      {% if room.description %}
+      <div class="rd-desc mb-3">
+        <h6 class="fw-bold mb-2">Mô tả</h6>
+        <p>{{ room.description }}</p>
+      </div>
+      {% endif %}
+
+      {% if room.extra_adult_fee and room.extra_adult_fee > 0 %}
+      <div class="rd-surcharge-info">
+        <i class="fas fa-info-circle text-primary me-2"></i>
+        Phụ phí thêm người lớn: <strong>{{ room.extra_adult_fee|vnd }}/đêm</strong>
+        {% if room.child_breakfast_fee and room.child_breakfast_fee > 0 %}
+        · Trẻ em ăn sáng: <strong>{{ room.child_breakfast_fee|vnd }}</strong>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    {# ── Tiện nghi phòng ── #}
+    {% if room.amenities %}
+    <div class="rd-section">
+      <h4 class="rd-section__title"><i class="fas fa-concierge-bell me-2"></i>Tiện nghi phòng</h4>
+      <div class="rd-amenities-grid">
+        {% set amenity_icons = {
+          'WiFi': 'fas fa-wifi',
+          'TV': 'fas fa-tv',
+          'Điều hòa': 'fas fa-snowflake',
+          'Minibar': 'fas fa-glass-martini-alt',
+          'Két sắt': 'fas fa-lock',
+          'Bồn tắm': 'fas fa-bath',
+          'Ban công': 'fas fa-door-open',
+          'Bể bơi': 'fas fa-swimming-pool',
+          'Phòng gym': 'fas fa-dumbbell',
+          'Bữa sáng': 'fas fa-coffee',
+          'Spa': 'fas fa-spa',
+          'Đỗ xe': 'fas fa-car'
+        } %}
+        {% for am in room.amenities.split(',') %}
+        {% set am_clean = am.strip() %}
+        {% if am_clean %}
+        <div class="rd-amenity-item">
+          <i class="{{ amenity_icons.get(am_clean, 'fas fa-check-circle') }} text-primary"></i>
+          <span>{{ am_clean }}</span>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# ── Tình trạng phòng trống ── #}
+    {% if checkin_date and checkout_date %}
+    <div class="rd-section">
+      <h4 class="rd-section__title"><i class="fas fa-calendar-check me-2"></i>Phòng trống ({{ checkin_date }} → {{ checkout_date }})</h4>
+
+      {% if continuous_rooms %}
+      <div class="rd-avail-banner rd-avail-banner--green mb-3">
+        <i class="fas fa-check-circle me-2"></i>
+        <strong>{{ continuous_rooms|length }} phòng</strong> sẵn sàng toàn bộ thời gian đã chọn
+      </div>
+      <div class="rd-room-list">
+        {% for phys in continuous_rooms %}
+        <div class="rd-room-item d-flex justify-content-between align-items-center">
+          <div>
+            <span class="fw-bold">{{ phys.room_name }}</span>
+            <span class="badge-avail-tag ms-2">Toàn thời gian</span>
+          </div>
+          {% if auth.is_logged_in and auth.account_type == 'customer' %}
+          <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}&physical_room_id={{ phys.physical_room_id }}&checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}"
+             class="btn btn-sm btn-book-now">
+            <i class="fas fa-calendar-plus me-1"></i>Đặt phòng này
+          </a>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if fragmented_rooms %}
+      <div class="rd-avail-banner rd-avail-banner--amber mb-3 {% if continuous_rooms %}mt-4{% endif %}">
+        <i class="fas fa-calendar-week me-2"></i>
+        <strong>{{ fragmented_rooms|length }} phòng</strong> trống một phần — có thể đặt đêm lẻ
+      </div>
+      <div class="rd-room-list">
+        {% for phys in fragmented_rooms %}
+        <div class="rd-room-item">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div>
+              <span class="fw-bold">{{ phys.room_name }}</span>
+              <span class="badge-avail-tag badge-avail-tag--amber ms-2">Đêm lẻ</span>
+            </div>
+            {% if auth.is_logged_in and auth.account_type == 'customer' %}
+            <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}&physical_room_id={{ phys.physical_room_id }}&checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}"
+               class="btn btn-sm btn-book-amber">
+              <i class="fas fa-moon me-1"></i>Chọn đêm lẻ
+            </a>
+            {% endif %}
+          </div>
+          {% if phys.free_nights %}
+          <div class="d-flex flex-wrap gap-1">
+            {% for n in phys.free_nights %}
+            <span class="badge-night-sm">{{ n }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if not continuous_rooms and not fragmented_rooms %}
+      <div class="rd-avail-banner rd-avail-banner--red">
+        <i class="fas fa-times-circle me-2"></i>
+        Không còn phòng trống cho khoảng thời gian này.
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {# ── Đánh giá khách hàng ── #}
+    {% if reviews %}
+    <div class="rd-section">
+      <h4 class="rd-section__title"><i class="fas fa-comments me-2"></i>Đánh giá từ khách hàng</h4>
+      <div class="rd-reviews-list">
+        {% for r in reviews[:6] %}
+        <div class="rd-review-item {% if not loop.last %}mb-3{% endif %}">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="d-flex align-items-center gap-2">
+              <div class="rd-review-avatar">{{ (r.reviewer_name or r.customer_name or 'K')[0] | upper }}</div>
+              <div>
+                <div class="fw-bold small">{{ r.reviewer_name or r.customer_name or 'Khách hàng' }}</div>
+                <div class="text-muted" style="font-size:11px">{{ r.review_date or '' }}</div>
+              </div>
+            </div>
+            <div class="rd-review-stars">
+              {% for i in range(r.rating|int) %}<i class="fas fa-star"></i>{% endfor %}
+              {% for i in range(5 - r.rating|int) %}<i class="far fa-star"></i>{% endfor %}
+            </div>
+          </div>
+          {% if r.comment %}
+          <p class="small text-muted mb-0" style="line-height:1.6">{{ r.comment }}</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="text-center mt-3">
+        <a href="/reviews?hotel_id={{ room.hotel_id }}" class="btn btn-outline-secondary btn-sm px-4">
+          Xem tất cả đánh giá
+        </a>
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  {# ═══ CỘT PHẢI: SIDEBAR BOOKING ═══ #}
+  <div class="col-lg-4">
+
+    {# ── Rating Box kiểu Booking.com ── #}
+    <div class="rd-rating-card mb-3">
+      <div class="rd-rating-card__score">
+        <span class="rd-rating-number">{{ "%.1f" | format((avg_rating or 0) * 2) }}</span>
+        <div>
+          <div class="rd-rating-text fw-bold">
+            {% if avg_rating >= 4.5 %}Tuyệt vời
+            {% elif avg_rating >= 4 %}Rất tốt
+            {% elif avg_rating >= 3.5 %}Tốt
+            {% elif avg_rating >= 3 %}Khá
+            {% else %}Trung bình{% endif %}
+          </div>
+          <div class="text-muted" style="font-size:12px">{{ review_count }} đánh giá</div>
+        </div>
+      </div>
+      {% if reviews %}
+      <div class="rd-rating-card__preview">
+        <p class="small text-muted mb-1 fst-italic">"{{ (reviews[0].comment or '')[:100] }}{% if (reviews[0].comment or '')|length > 100 %}...{% endif %}"</p>
+        <div class="d-flex align-items-center gap-2" style="font-size:12px">
+          <div class="rd-review-avatar rd-review-avatar--sm">{{ (reviews[0].reviewer_name or reviews[0].customer_name or 'K')[0] | upper }}</div>
+          <span class="fw-bold">{{ reviews[0].reviewer_name or reviews[0].customer_name or 'Khách hàng' }}</span>
+          <span class="text-muted">{{ reviews[0].review_date or '' }}</span>
+        </div>
+      </div>
+      <a href="/reviews?hotel_id={{ room.hotel_id }}" class="rd-rating-card__link">Xem tất cả đánh giá →</a>
+      {% endif %}
+    </div>
+
+    {# ── Booking Sidebar ── #}
+    <div class="rd-booking-card">
+      <div class="rd-booking-card__price-block">
+        <div class="rd-price-main">
+          {{ "{:,.0f}".format(room.base_price or 0) }}<span class="rd-price-unit">đ</span>
+        </div>
+        <div class="rd-price-note">Giá mỗi đêm · Đã bao gồm thuế 10%</div>
+      </div>
+
+      {% if checkin_date and checkout_date %}
+      <div class="rd-booking-dates mb-3">
+        <div class="d-flex gap-2">
+          <div class="rd-date-box flex-fill">
+            <div class="rd-date-label">Nhận phòng</div>
+            <div class="rd-date-val"><i class="fas fa-calendar-alt me-1"></i>{{ checkin_date }}</div>
+          </div>
+          <div class="rd-date-box flex-fill">
+            <div class="rd-date-label">Trả phòng</div>
+            <div class="rd-date-val"><i class="fas fa-calendar-alt me-1"></i>{{ checkout_date }}</div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if auth.is_logged_in and auth.account_type == 'customer' %}
+      <a href="/booking?room_type_id={{ room.room_type_id }}&hotel_id={{ room.hotel_id }}{% if checkin_date %}&checkin_date={{ checkin_date }}&checkout_date={{ checkout_date }}{% endif %}"
+         class="btn btn-book-now w-100 py-3 fw-bold mb-3">
+        <i class="fas fa-calendar-check me-2"></i>Đặt phòng ngay
+      </a>
+      {% elif not auth.is_logged_in %}
+      <a href="/login" class="btn btn-book-now w-100 py-3 fw-bold mb-3">
+        <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập để đặt phòng
+      </a>
+      {% endif %}
+
+      {# Ưu đãi #}
+      <div class="rd-perks">
+        <div class="rd-perks__title">Ưu đãi khi đặt phòng</div>
+        <div class="rd-perk-item">
+          <i class="fas fa-award text-warning"></i>
+          <span>Tích 10 điểm loyalty mỗi đêm lưu trú</span>
+        </div>
+        <div class="rd-perk-item">
+          <i class="fas fa-crown text-warning"></i>
+          <span>Thành viên Gold giảm thêm 5%</span>
+        </div>
+        <div class="rd-perk-item">
+          <i class="fas fa-shield-alt text-success"></i>
+          <span>Hủy miễn phí theo chính sách hoàn tiền</span>
+        </div>
+        <div class="rd-perk-item">
+          <i class="fas fa-headset text-primary"></i>
+          <span>Hỗ trợ 24/7 qua hotline</span>
+        </div>
+      </div>
+    </div>
+
+    {# ── Hot badge kiểu iVIVU ── #}
+    {% if continuous_rooms %}
+    <div class="rd-hot-badge mt-3">
+      <i class="fas fa-fire me-2"></i>
+      Đang bán chạy · {{ continuous_rooms|length }} phòng trống
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+{# ── CSS ── #}
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Hồ sơ cá nhân - Hotel Booking{% endblock %}
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Hồ sơ cá nhân</h2>
+        <p class="text-muted small">Quản lý thông tin tài khoản và theo dõi chương trình loyalty.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Profile form -->
+    <div class="col-lg-7">
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-user-edit me-2 text-primary"></i>Thông tin cá nhân</h6>
+            <form method="POST" action="/profile">
+                <div class="mb-3">
+                    <label class="form-label-clean">Email (không thể thay đổi)</label>
+                    <input type="email" class="form-control form-control-clean bg-light" value="{{ email }}" disabled>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-clean">Họ và tên <span class="text-danger">*</span></label>
+                    <input type="text" name="customer_name" class="form-control form-control-clean" value="{{ full_name }}" required>
+                </div>
+                <hr class="my-4">
+                <h6 class="fw-bold mb-3 small text-muted text-uppercase">Đổi mật khẩu (để trống nếu không muốn đổi)</h6>
+                <div class="mb-3">
+                    <label class="form-label-clean">Mật khẩu hiện tại</label>
+                    <input type="password" name="old_password" class="form-control form-control-clean" placeholder="Nhập mật khẩu hiện tại">
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-clean">Mật khẩu mới</label>
+                    <input type="password" name="new_password" class="form-control form-control-clean" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" minlength="6">
+                </div>
+                <button type="submit" class="btn btn-blue-booking px-5 py-2 fw-bold">
+                    <i class="fas fa-save me-2"></i>Lưu thay đổi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loyalty sidebar -->
+    <div class="col-lg-5">
+        <div class="main-card p-4 mb-4" style="border-left: 4px solid #003580;">
+            <h6 class="fw-bold mb-3"><i class="fas fa-award me-2 text-booking"></i>Thành viên Loyalty</h6>
+            {% set tier = loyalty.tier or 'Newbie' %}
+            {% set points = loyalty.points or 0 %}
+            <div class="text-center py-3">
+                <div class="d-inline-block rounded-circle p-3 mb-2
+                    {% if tier == 'Gold' %}bg-warning{% elif tier == 'Silver' %}bg-secondary{% else %}bg-light{% endif %}">
+                    <i class="fas fa-medal fa-2x
+                        {% if tier == 'Gold' %}text-dark{% elif tier == 'Silver' %}text-white{% else %}text-muted{% endif %}"></i>
+                </div>
+                <div class="fw-bold fs-5 mt-2">{{ tier }}</div>
+                <div class="extra-small text-muted">Hạng thành viên hiện tại</div>
+            </div>
+            <div class="border-top pt-3">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Điểm tích lũy</span>
+                    <span class="fw-bold text-booking">{{ points }} điểm</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted small">Đêm lưu trú (ước tính)</span>
+                    <span class="fw-bold">{{ (points // 10) }} đêm</span>
+                </div>
+                {% if tier == 'Newbie' %}
+                <div class="progress mt-3 mb-1" style="height:6px;">
+                    <div class="progress-bar bg-success" style="width:{{ [points * 2, 100]|min }}%"></div>
+                </div>
+                <div class="extra-small text-muted">Cần {{ 50 - points }} điểm nữa để lên <strong>Silver</strong></div>
+                {% elif tier == 'Silver' %}
+                <div class="progress mt-3 mb-1" style="height:6px;">
+                    <div class="progress-bar bg-warning" style="width:{{ [(points - 50) * 100 // 160, 100]|min }}%"></div>
+                </div>
+                <div class="extra-small text-muted">Cần {{ 210 - points }} điểm nữa để lên <strong>Gold</strong></div>
+                {% else %}
+                <div class="alert alert-warning alert-sm border-0 py-2 extra-small mt-2 mb-0">
+                    <i class="fas fa-star me-1"></i> Bạn đang ở hạng cao nhất! Hưởng ưu đãi 5% mỗi đặt phòng.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="main-card p-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-link me-2 text-muted"></i>Liên kết nhanh</h6>
+            <a href="/history" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-list me-2 text-primary"></i>Lịch sử đặt phòng
+            </a>
+            <a href="/loyalty" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
+                <i class="fas fa-award me-2 text-warning"></i>Chi tiết chương trình Loyalty
+            </a>
+            <a href="/search" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark">
+                <i class="fas fa-search me-2 text-success"></i>Tìm phòng mới
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

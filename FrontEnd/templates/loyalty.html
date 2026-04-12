@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Chương trình Loyalty - Hotel Booking{% endblock %}
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Chương trình Loyalty</h2>
+        <p class="text-muted small">Tích điểm mỗi đêm lưu trú và nhận ưu đãi độc quyền.</p>
+    </div>
+</div>
+
+{% set tier = loyalty.tier or 'Newbie' %}
+{% set points = loyalty.points or 0 %}
+
+<!-- Tier Card -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-4">
+        <div class="main-card p-4 text-center h-100" style="border-top: 4px solid {% if tier == 'Gold' %}#f59e0b{% elif tier == 'Silver' %}#94a3b8{% else %}#003580{% endif %};">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3 shadow"
+                 style="width:80px;height:80px;background:{% if tier == 'Gold' %}#fef3c7{% elif tier == 'Silver' %}#f1f5f9{% else %}#eff6ff{% endif %}">
+                <i class="fas fa-medal fa-2x {% if tier == 'Gold' %}text-warning{% elif tier == 'Silver' %}text-secondary{% else %}text-primary{% endif %}"></i>
+            </div>
+            <h3 class="fw-bold {% if tier == 'Gold' %}text-warning{% elif tier == 'Silver' %}text-secondary{% else %}text-primary{% endif %}">{{ tier }}</h3>
+            <p class="text-muted small">Hạng thành viên của bạn</p>
+            <div class="border-top pt-3 mt-3">
+                <div class="fs-2 fw-bold text-booking">{{ points }}</div>
+                <div class="text-muted small">Điểm tích lũy</div>
+            </div>
+            <div class="mt-3">
+                <div class="text-muted small">Ước tính {{ (points // 10) }} đêm lưu trú</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="main-card p-4 h-100">
+            <h6 class="fw-bold mb-4 border-bottom pb-2">Lộ trình thăng hạng</h6>
+            <!-- Newbie -->
+            <div class="d-flex align-items-start mb-4 p-3 rounded-8 {% if tier == 'Newbie' %}bg-primary bg-opacity-5 border border-primary border-opacity-25{% endif %}">
+                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width:44px;height:44px;background:#eff6ff;">
+                    <i class="fas fa-seedling text-primary"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">Newbie <span class="badge-clean bg-primary bg-opacity-10 text-primary border ms-1 extra-small">0 điểm</span></div>
+                    <div class="small text-muted">Hạng khởi đầu dành cho thành viên mới</div>
+                </div>
+                {% if tier == 'Newbie' %}<span class="badge bg-primary badge-clean">Hiện tại</span>{% endif %}
+            </div>
+            <!-- Silver -->
+            <div class="d-flex align-items-start mb-4 p-3 rounded-8 {% if tier == 'Silver' %}bg-secondary bg-opacity-5 border border-secondary border-opacity-25{% endif %}">
+                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width:44px;height:44px;background:#f1f5f9;">
+                    <i class="fas fa-star text-secondary"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">Silver <span class="badge-clean bg-secondary bg-opacity-10 text-secondary border ms-1 extra-small">50 điểm</span></div>
+                    <div class="small text-muted">Ưu đãi promo độc quyền dành cho Silver+</div>
+                    {% if tier == 'Newbie' %}
+                    <div class="mt-2">
+                        <div class="progress mb-1" style="height:5px;"><div class="progress-bar bg-secondary" style="width:{{ [points * 2, 100]|min }}%"></div></div>
+                        <div class="extra-small text-muted">{{ [50 - points, 0]|max }} điểm nữa</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if tier == 'Silver' %}<span class="badge bg-secondary badge-clean">Hiện tại</span>{% endif %}
+            </div>
+            <!-- Gold -->
+            <div class="d-flex align-items-start p-3 rounded-8 {% if tier == 'Gold' %}bg-warning bg-opacity-5 border border-warning border-opacity-25{% endif %}">
+                <div class="d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 me-3" style="width:44px;height:44px;background:#fef3c7;">
+                    <i class="fas fa-crown text-warning"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">Gold <span class="badge-clean bg-warning bg-opacity-10 text-warning border ms-1 extra-small">210 điểm</span></div>
+                    <div class="small text-muted">Giảm 5% mỗi đặt phòng + promo độc quyền Gold</div>
+                    {% if tier == 'Silver' %}
+                    <div class="mt-2">
+                        <div class="progress mb-1" style="height:5px;"><div class="progress-bar bg-warning" style="width:{{ [(points - 50) * 100 // 160, 100]|min }}%"></div></div>
+                        <div class="extra-small text-muted">{{ [210 - points, 0]|max }} điểm nữa</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% if tier == 'Gold' %}<span class="badge bg-warning text-dark badge-clean">Hiện tại</span>{% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How to earn -->
+<div class="main-card p-4 mb-4">
+    <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Cách tích điểm</h6>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <div class="p-3 bg-success bg-opacity-5 rounded-8 h-100">
+                <div class="fw-bold text-success mb-1"><i class="fas fa-bed me-2"></i>Đặt phòng</div>
+                <div class="small text-muted">+10 điểm mỗi đêm lưu trú thành công (sau khi check-out)</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-info bg-opacity-5 rounded-8 h-100">
+                <div class="fw-bold text-info mb-1"><i class="fas fa-star me-2"></i>Đánh giá</div>
+                <div class="small text-muted">Điểm được tính sau khi hoàn tất lưu trú và check-out</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="p-3 bg-warning bg-opacity-5 rounded-8 h-100">
+                <div class="fw-bold text-warning mb-1"><i class="fas fa-crown me-2"></i>Gold</div>
+                <div class="small text-muted">Tự động giảm 5% trên tất cả đặt phòng khi đạt hạng Gold</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <a href="/search" class="btn btn-blue-booking px-5 py-2 fw-bold me-3">
+        <i class="fas fa-search me-2"></i>Tìm phòng & Tích điểm
+    </a>
+    <a href="/history" class="btn btn-outline-secondary px-4 py-2">
+        <i class="fas fa-list me-2"></i>Lịch sử đặt phòng
+    </a>
+</div>
+{% endblock %}

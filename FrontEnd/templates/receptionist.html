@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% block title %}Lễ tân - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Bảng điều khiển Lễ tân</h2>
+        <p class="text-muted small mb-0">Quản lý đặt phòng, check-in/out và dịch vụ khách hàng.</p>
+    </div>
+    <div class="col-auto d-flex gap-2">
+        <a href="/receptionist/walkin" class="btn btn-blue-booking px-3 py-2 fw-bold">
+            <i class="fas fa-user-plus me-1"></i>Walk-in
+        </a>
+        <a href="/receptionist/room-plan" class="btn btn-outline-secondary px-3 py-2">
+            <i class="fas fa-th me-1"></i>Sơ đồ phòng
+        </a>
+    </div>
+</div>
+
+<!-- Ops stats -->
+{% if ops %}
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-booking">{{ ops.dirty_rooms or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Phòng cần dọn</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-success">{{ ops.checkins_due or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Nhận phòng hôm nay</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-warning">{{ ops.checkouts_due or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Trả phòng hôm nay</div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="stat-box text-center">
+            <div class="fs-3 fw-bold text-danger">{{ ops.maintenance_rooms or 0 }}</div>
+            <div class="extra-small text-muted text-uppercase letter-spacing-1">Bảo trì</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Search & Filter -->
+<div class="main-card p-3 mb-4">
+    <form action="/receptionist" method="GET" class="row g-2 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label-clean">Tìm kiếm</label>
+            <input type="text" name="q" class="form-control form-control-clean"
+                   value="{{ q }}" placeholder="Tên, mã đặt phòng, số điện thoại...">
+        </div>
+        <div class="col-md-3">
+            <label class="form-label-clean">Trạng thái</label>
+            <select name="status" class="form-select form-control-clean">
+                <option value="">Tất cả</option>
+                <option value="Confirmed" {% if status == 'Confirmed' %}selected{% endif %}>Đã xác nhận</option>
+                <option value="Checked-In" {% if status == 'Checked-In' %}selected{% endif %}>Đang ở</option>
+                <option value="Checked-Out" {% if status == 'Checked-Out' %}selected{% endif %}>Đã trả phòng</option>
+                <option value="Canceled" {% if status == 'Canceled' %}selected{% endif %}>Đã hủy</option>
+                <option value="No-Show" {% if status == 'No-Show' %}selected{% endif %}>No-Show</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-blue-booking px-4 py-2 fw-bold">
+                <i class="fas fa-search me-1"></i>Tìm
+            </button>
+        </div>
+        {% if q or status %}
+        <div class="col-auto">
+            <a href="/receptionist" class="btn btn-outline-secondary px-3 py-2">Xóa bộ lọc</a>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<!-- Bookings table -->
+<div class="main-card p-0 overflow-hidden">
+    <div class="card-header-clean px-4 py-3">
+        <span class="fw-bold"><i class="fas fa-list me-2"></i>Danh sách đặt phòng</span>
+        <span class="badge bg-secondary ms-2">{{ bookings|length }}</span>
+    </div>
+    {% if bookings %}
+    <div class="table-responsive">
+        <table class="table-clean">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Khách hàng</th>
+                    <th>Phòng</th>
+                    <th>Check-in</th>
+                    <th>Check-out</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for b in bookings %}
+                <tr>
+                    <td class="fw-bold text-booking">
+                        <a href="/receptionist/invoice/{{ b.booking_id }}" class="text-decoration-none text-booking">
+                            #{{ b.booking_id }}
+                        </a>
+                    </td>
+                    <td>
+                        <div class="fw-bold small">{{ b.customer_full_name or b.customer_name or '—' }}</div>
+                        {% if b.customer_email %}
+                        <div class="extra-small text-muted">{{ b.customer_email }}</div>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div class="small">{{ b.room_type_code or '—' }}</div>
+                        {% if b.hotel_name %}
+                        <div class="extra-small text-muted">{{ b.hotel_name }}</div>
+                        {% endif %}
+                    </td>
+                    <td class="small">{{ b.arrival_date or '—' }}</td>
+                    <td class="small">{{ b.departure_date or '—' }}</td>
+                    <td class="fw-bold small">{{ "{:,.0f}".format(b.total_price or 0) }}đ</td>
+                    <td>
+                        <span class="badge-clean status-{{ (b.status_detail or 'unknown')|lower|replace('-','') }}">
+                            {{ b.status_detail or '—' }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="d-flex gap-1 flex-wrap">
+                            <a href="/receptionist/invoice/{{ b.booking_id }}"
+                               class="btn btn-sm btn-outline-secondary px-2" title="Hóa đơn">
+                                <i class="fas fa-receipt"></i>
+                            </a>
+                            {% if b.status_detail == 'Confirmed' %}
+                            <form method="POST" action="/receptionist/checkin/{{ b.booking_id }}" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-success px-2" title="Check-in"
+                                        onclick="return confirm('Xác nhận check-in #{{ b.booking_id }}?')">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </button>
+                            </form>
+                            <a href="/receptionist/cancel/{{ b.booking_id }}"
+                               class="btn btn-sm btn-outline-danger px-2" title="Hủy">
+                                <i class="fas fa-times"></i>
+                            </a>
+                            <a href="/receptionist/noshow/{{ b.booking_id }}"
+                               class="btn btn-sm btn-outline-secondary px-2" title="No-Show">
+                                <i class="fas fa-user-slash"></i>
+                            </a>
+                            {% elif b.status_detail == 'Checked-In' %}
+                            <a href="/receptionist/checkout/{{ b.booking_id }}"
+                               class="btn btn-sm btn-warning px-2 text-dark" title="Check-out">
+                                <i class="fas fa-sign-out-alt"></i>
+                            </a>
+                            <a href="/receptionist/move-room/{{ b.booking_id }}"
+                               class="btn btn-sm btn-outline-info px-2" title="Chuyển phòng">
+                                <i class="fas fa-exchange-alt"></i>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="p-5 text-center text-muted">
+        <i class="fas fa-inbox fa-3x opacity-25 mb-3 d-block"></i>
+        <p class="mb-0">Không tìm thấy đặt phòng nào.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+{% block title %}Giỏ hàng & Thanh toán - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Giỏ hàng của bạn</h2>
+        <p class="text-muted d-none d-md-block">Kiểm tra thông tin đặt phòng và hoàn tất thủ tục giữ chỗ.</p>
+    </div>
+</div>
+
+{% if cart_items and cart_items|length > 0 %}
+<form action="/cart/checkout" method="POST">
+    <div class="dashboard-grid">
+        <!-- MAIN COLUMN: ITEMS -->
+        <main>
+            <div class="alert alert-warning d-flex align-items-center shadow-sm small py-2 rounded-8 mb-4" id="countdown-banner">
+                <i class="fas fa-clock me-2 fs-4"></i>
+                <div>
+                    <strong>Phòng đang được giữ!</strong>
+                    Bạn còn <span id="countdown-timer" class="fw-bold text-danger fs-5">00:00</span> để hoàn tất đặt phòng.
+                </div>
+            </div>
+
+            <div class="main-card overflow-hidden mb-4">
+                <div class="card-header-clean bg-light">
+                    <h6 class="fw-bold mb-0">Danh sách phòng đang giữ</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-clean mb-0">
+                        <thead>
+                            <tr>
+                                <th>Chi tiết chỗ nghỉ</th>
+                                <th>Thời gian</th>
+                                <th class="text-end">Tạm tính (VNĐ)</th>
+                                <th class="text-end"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set ns = namespace(total=0) %}
+                            {% for item in cart_items %}
+                                {% set ns.total = ns.total + item.total_price %}
+                                <tr>
+                                    <td>
+                                        <div class="fw-bold text-primary">{{ item.hotel_name }}</div>
+                                        <div class="small text-muted">{{ item.room_name }} ({{ item.room_type_code }})</div>
+                                        <div class="extra-small text-dark mt-1">{{ item.adults }} người lớn, {{ item.children }} trẻ em</div>
+                                    </td>
+                                    <td class="small">
+                                        {% if item.booking_type == 'continuous' %}
+                                            <div class="fw-bold text-dark">{{ item.arrival_date }}</div>
+                                            <div class="text-muted text-nowrap">đến {{ item.departure_date }}</div>
+                                        {% else %}
+                                            <div class="text-muted italic">Đêm: {{ item.selected_nights }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-end fw-bold align-middle">
+                                        {{ (item.total_price or 0)|vnd }}
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        <form action="/cart/remove/{{ item.cart_item_id }}" method="POST" class="m-0 d-inline">
+                                            <button type="submit" class="btn btn-link link-danger p-0 text-decoration-none small">Xóa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ADDITIONAL DETAILS -->
+            <div class="main-card p-4">
+                <h6 class="fw-bold mb-4 border-bottom pb-2">Thông tin bổ sung cho chuyến đi</h6>
+                
+                <div class="form-section-clean">
+                    <label class="form-label-clean d-block mb-3">Yêu cầu đặc biệt cho khách sạn:</label>
+                    <textarea name="special_requests" class="form-control form-control-clean" rows="3" placeholder="Ví dụ: Phòng không hút thuốc, Nhận phòng sớm..."></textarea>
+                    <p class="extra-small text-muted mt-2 italic">*Yêu cầu đặc biệt không được đảm bảo nhưng khách sạn sẽ cố gắng hết sức để hỗ trợ.</p>
+                </div>
+
+                <div class="form-section-clean mb-0">
+                    <label class="form-label-clean d-block mb-3">Dịch vụ gia tăng (Tùy chọn):</label>
+                    <div class="row g-2">
+                        {% for cat in catalog %}
+                        <div class="col-md-6">
+                            <label class="d-flex align-items-center p-3 border rounded-8 cursor-pointer hover-bg-light transition-base">
+                                <input type="checkbox" name="extra_services" value="{{ cat.catalog_id }}" class="me-3">
+                                <div class="small">
+                                    <div class="fw-bold">{{ cat.item_name }}</div>
+                                    <div class="text-success fw-bold">+ {{ (cat.default_price or 0)|vnd }}</div>
+                                </div>
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- SIDEBAR: SUMMARY -->
+        <aside>
+            <div class="summary-card shadow-sm">
+                <h5 class="fw-bold mb-4">Chi tiết thanh toán</h5>
+                
+                <div class="mb-4">
+                    <label class="extra-small fw-bold text-muted text-uppercase mb-2 d-block">Mã giảm giá</label>
+                    <div class="d-flex gap-2">
+                        <input type="text" name="promo_code" class="form-control form-control-clean form-control-sm" placeholder="VD: SUMMER26">
+                        <button type="button" class="btn btn-outline-primary btn-sm px-3">Áp dụng</button>
+                    </div>
+                </div>
+
+                <div class="mb-4 border-top border-bottom py-3">
+                    <label class="extra-small fw-bold text-muted text-uppercase mb-3 d-block">Tùy chọn thanh toán</label>
+                    
+                    <div class="mb-3">
+                        <label class="form-label-clean extra-small">Phương thức</label>
+                        <select name="payment_method" class="form-select form-select-sm form-control-clean">
+                            <option value="credit_card">Thẻ tín dụng (Quốc tế)</option>
+                            <option value="bank_transfer">Chuyển khoản / VNPay</option>
+                            <option value="cash">Thanh toán tại quầy</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label-clean extra-small">Kế hoạch thanh toán</label>
+                        <select name="payment_type" class="form-select form-select-sm form-control-clean">
+                            <option value="full">Thanh toán 100% (Ưu tiên)</option>
+                            <option value="deposit">Đặt cọc giữ chỗ (50%)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- PRICE BREAKDOWN -->
+                <div class="price-breakdown mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Giá tiền phòng</span>
+                        <span class="fw-bold text-dark">{{ (ns.total or 0)|vnd }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Thuế & phí dịch vụ</span>
+                        <span class="text-dark small">Đã bao gồm</span>
+                    </div>
+                    <div class="d-flex justify-content-between mt-3 pt-3 border-top">
+                        <span class="fw-bold fs-5">TỔNG CỘNG</span>
+                        <span class="fw-bold fs-5 text-primary">{{ (ns.total or 0)|vnd }}</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-blue-booking w-100 py-3 fw-bold shadow-sm">
+                    GỬI YÊU CẦU ĐẶT PHÒNG
+                </button>
+                
+                <div class="text-center mt-3">
+                    <a href="/search" class="text-decoration-none small text-muted"> <i class="fas fa-arrow-left me-1"></i> Tiếp tục tìm kiếm </a>
+                </div>
+            </div>
+
+            <!-- TRUST BADGES -->
+            <div class="mt-4 p-3 bg-white border-clean rounded-8 text-center">
+                <div class="extra-small text-muted mb-2"><i class="fas fa-shield-alt text-success me-1"></i> Giao dịch được bảo mật và mã hóa</div>
+                <div class="d-flex justify-content-center gap-3 opacity-50 grayscale">
+                    <i class="fab fa-cc-visa fa-2x"></i>
+                    <i class="fab fa-cc-mastercard fa-2x"></i>
+                    <i class="fas fa-money-check fa-2x"></i>
+                </div>
+            </div>
+        </aside>
+    </div>
+</form>
+
+{% else %}
+    <div class="main-card p-5 text-center shadow-sm">
+        <div class="mb-4 text-muted">
+            <i class="fas fa-shopping-cart fa-4x opacity-25"></i>
+        </div>
+        <h3 class="fw-bold mb-2">Giỏ hàng của bạn đang trống</h3>
+        <p class="text-muted mb-4">Hãy nhanh tay chọn cho mình một căn phòng tuyệt vời cho kỳ nghỉ sắp tới.</p>
+        <a href="/search" class="btn btn-blue-booking px-5 py-2 fw-bold">Tìm phòng trống ngay</a>
+    </div>
+{% endif %}
+
+{% endblock %}
+
+<script type="application/json" id="cart-data">
+{
+    "earliestLockExpiry": "{{ earliest_lock_expiry }}"
+}
+</script>
+<script src="{{ url_for('static', filename='js/pages/cart.js') }}"></script>

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Xác nhận Giữ phòng (Tùy chọn đêm) - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="auth-wrapper">
+    <div class="auth-card text-center">
+        <div class="mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-info bg-opacity-10 text-info rounded-circle shadow-sm">
+                <i class="fas fa-calendar-alt fa-2x"></i>
+            </div>
+        </div>
+
+        <h2 class="fw-bold mb-1">Xác nhận giữ các đêm đã chọn</h2>
+        <p class="text-muted mb-4 small">Bạn đang đặt phòng theo hình thức ghép đêm (ngắt quãng).</p>
+
+        <div class="main-card p-4 text-start mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2">Thông tin Hạng phòng</h6>
+            <div class="fw-bold fs-5 text-primary mb-1">{{ room_type.room_type_code }}</div>
+            <div class="small text-muted mb-4">Mã phòng vật lý: <code class="text-dark">{{ physical_room_id }}</code></div>
+
+            <h6 class="fw-bold mb-3 border-bottom pb-2">Các đêm lưu trú (Check-in)</h6>
+            <div class="d-flex flex-wrap gap-2">
+                {% for n in selected_nights %}
+                <div class="badge badge-clean bg-light text-dark border p-2 px-3 fw-normal">
+                    <i class="far fa-clock me-1 text-primary"></i> {{ n }}
+                </div>
+                {% endfor %}
+            </div>
+            <p class="extra-small text-muted mt-3 italic">* Quý khách lưu ý: Trả phòng vào 12:00 ngày hôm sau cho mỗi đêm đã chọn.</p>
+        </div>
+
+        <div class="main-card p-3 border-danger border-opacity-25 bg-danger bg-opacity-10 mb-5">
+            <h6 class="fw-bold text-danger mb-1"><i class="fas fa-hourglass-half me-1"></i> Thời hạn giữ phòng</h6>
+            <div class="fs-5 fw-bold text-dark">{{ locked_until }}</div>
+            <p class="extra-small text-muted mb-0">Hệ thống sẽ giải phóng các đêm này nếu không hoàn tất thanh toán.</p>
+        </div>
+
+        <div class="d-grid gap-2 mb-3">
+            <a href="/booking/checkout" class="btn btn-blue-booking py-3 fw-bold rounded-4 shadow-sm">
+                TIẾP TỤC ĐẾN THANH TOÁN
+            </a>
+            <form action="/booking/release" method="POST" class="m-0">
+                <button type="submit" class="btn btn-outline-secondary w-100 py-2 border-0 small">Hủy giữ phòng và quay lại</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

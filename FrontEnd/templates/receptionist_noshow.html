@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}No-Show #{{ booking_id }} - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Đánh dấu No-Show</h2>
+        <p class="text-muted small mb-0">Xác nhận khách không đến nhận phòng.</p>
+    </div>
+    <div class="col-auto">
+        <a href="/receptionist" class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-arrow-left me-1"></i>Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="main-card p-4 mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-user-slash me-2 text-warning"></i>Thông tin đặt phòng</h6>
+            {% if booking %}
+            <div class="row g-2">
+                <div class="col-6">
+                    <div class="small text-muted">Mã đặt phòng</div>
+                    <div class="fw-bold text-booking">#{{ booking.booking_id or booking_id }}</div>
+                </div>
+                <div class="col-6">
+                    <div class="small text-muted">Khách hàng</div>
+                    <div class="fw-bold">{{ booking.customer_name or '—' }}</div>
+                </div>
+                <div class="col-6 mt-2">
+                    <div class="small text-muted">Phòng</div>
+                    <div class="fw-bold">{{ booking.room_type_code or '—' }}</div>
+                    {% if booking.hotel_name %}
+                    <div class="extra-small text-muted">{{ booking.hotel_name }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-6 mt-2">
+                    <div class="small text-muted">Ngày nhận phòng dự kiến</div>
+                    <div class="fw-bold">{{ booking.checkin_date or '—' }}</div>
+                </div>
+                <div class="col-6 mt-2">
+                    <div class="small text-muted">Tổng tiền</div>
+                    <div class="fw-bold text-booking">{{ booking.total_price|vnd if booking.total_price else '—' }}</div>
+                </div>
+                <div class="col-6 mt-2">
+                    <div class="small text-muted">Đã cọc</div>
+                    <div class="fw-bold">{{ booking.deposit_paid|vnd if booking.deposit_paid else '0đ' }}</div>
+                </div>
+            </div>
+            {% else %}
+            <p class="text-muted small">Không tải được thông tin đặt phòng.</p>
+            {% endif %}
+        </div>
+
+        <div class="alert alert-warning border-0 mb-4">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Lưu ý:</strong> Đánh dấu No-Show sẽ giải phóng phòng và có thể áp dụng phí phạt theo chính sách hoàn tiền.
+            Hành động này không thể hoàn tác.
+        </div>
+
+        <div class="main-card p-4">
+            <form method="POST" action="/receptionist/noshow/{{ booking_id }}">
+                <p class="text-muted small mb-4">Xác nhận rằng khách hàng <strong>{{ booking.customer_name or '(#'+booking_id|string+')' }}</strong>
+                    đã không đến nhận phòng vào ngày <strong>{{ booking.checkin_date or '—' }}</strong>.</p>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-warning px-5 py-2 fw-bold text-dark"
+                            onclick="return confirm('Xác nhận No-Show cho đặt phòng #{{ booking_id }}?')">
+                        <i class="fas fa-user-slash me-2"></i>Xác nhận No-Show
+                    </button>
+                    <a href="/receptionist" class="btn btn-outline-secondary px-4 py-2">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

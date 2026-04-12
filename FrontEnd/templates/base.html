@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Hotel Booking System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body>
+
+    {% set is_staff = auth.is_logged_in and auth.account_type == 'staff' %}
+
+    {% if is_staff %}
+    {# ══════════ STAFF LAYOUT: Sidebar + Content ══════════ #}
+    <div class="sb-layout">
+
+        {# ── SIDEBAR ── #}
+        <aside class="sb-sidebar" id="staff-sidebar">
+            <div class="sb-toggle" onclick="toggleSidebar()" title="Thu/Mở sidebar">
+                <i class="fas fa-bars"></i>
+            </div>
+
+            <div class="sb-brand">
+                <span class="sb-brand-text"></span>
+            </div>
+
+            <nav class="sb-nav">
+                {% if auth.role in ('Receptionist', 'Manager', 'Admin') %}
+                <div class="sb-section-title">Lễ tân</div>
+                <a class="sb-nav-link {% if request.path == '/receptionist' %}active{% endif %}" href="/receptionist">
+                    <i class="fas fa-concierge-bell"></i><span class="sb-label">Quản lý đặt phòng</span>
+                </a>
+                <a class="sb-nav-link {% if '/room-plan' in request.path %}active{% endif %}"
+                    href="/receptionist/room-plan">
+                    <i class="fas fa-th"></i><span class="sb-label">Sơ đồ phòng</span>
+                </a>
+                <a class="sb-nav-link {% if '/walkin' in request.path %}active{% endif %}" href="/receptionist/walkin">
+                    <i class="fas fa-walking"></i><span class="sb-label">Walk-in</span>
+                </a>
+                {% endif %}
+
+                {% if auth.role in ('Housekeeper', 'Receptionist', 'Manager', 'Admin') %}
+                <div class="sb-section-title">Buồng phòng</div>
+                <a class="sb-nav-link {% if '/housekeeping' in request.path %}active{% endif %}" href="/housekeeping">
+                    <i class="fas fa-broom"></i><span class="sb-label">Dọn phòng</span>
+                </a>
+                {% endif %}
+
+                {% if auth.role in ('Manager', 'Admin') %}
+                <div class="sb-section-title">Quản lý</div>
+                <!-- <a class="sb-nav-link {% if request.path == '/manager' %}active{% endif %}" href="/manager">
+                    <i class="fas fa-tachometer-alt"></i><span class="sb-label">Dashboard</span>
+                </a> -->
+                <a class="sb-nav-link {% if '/manager/room-catalog' in request.path %}active{% endif %}"
+                    href="/manager/room-catalog">
+                    <i class="fas fa-list"></i><span class="sb-label">Danh mục loại phòng</span>
+                </a>
+                <a class="sb-nav-link {% if '/manager/physical-rooms' in request.path %}active{% endif %}"
+                    href="/manager/physical-rooms">
+                    <i class="fas fa-door-open"></i><span class="sb-label">Quản lý phòng vật lý</span>
+                </a>
+                <a class="sb-nav-link {% if '/inventory' in request.path and 'detailed' not in request.path %}active{% endif %}"
+                    href="/manager/inventory-pricing">
+                    <i class="fas fa-cubes"></i><span class="sb-label">Kho & Giá</span>
+                </a>
+                <a class="sb-nav-link {% if 'detailed' in request.path %}active{% endif %}"
+                    href="/manager/room-pricing-detailed">
+                    <i class="fas fa-calendar-alt"></i><span class="sb-label">Lịch giá chi tiết</span>
+                </a>
+                <a class="sb-nav-link {% if '/promotions' in request.path %}active{% endif %}"
+                    href="/manager/promotions">
+                    <i class="fas fa-tags"></i><span class="sb-label">Khuyến mãi</span>
+                </a>
+                <a class="sb-nav-link {% if '/manager/refund-policy' in request.path %}active{% endif %}"
+                    href="/manager/refund-policy">
+                    <i class="fas fa-undo"></i><span class="sb-label">Chính sách hoàn tiền</span>
+                </a>
+                <!-- <a class="sb-nav-link {% if '/reports' in request.path or '/analytics' in request.path %}active{% endif %}"
+                    href="/manager/reports">
+                    <i class="fas fa-chart-bar"></i><span class="sb-label">Báo cáo</span>
+                </a> -->
+                {% endif %}
+
+                {% if auth.role == 'Admin' %}
+                <div class="sb-section-title">Hệ thống</div>
+                <a class="sb-nav-link {% if '/admin/users' in request.path %}active{% endif %}" href="/admin/users">
+                    <i class="fas fa-users-cog"></i><span class="sb-label">Nhân sự</span>
+                </a>
+                <a class="sb-nav-link {% if '/admin/dimensions' in request.path %}active{% endif %}"
+                    href="/admin/dimensions">
+                    <i class="fas fa-cog"></i><span class="sb-label">Cấu hình</span>
+                </a>
+                {% endif %}
+            </nav>
+
+            <div class="sb-user">
+                <div class="sb-user-avatar">{{ (auth.full_name or auth.username or '?')[0] | upper }}</div>
+                <div class="sb-user-info">
+                    <div class="sb-user-name">{{ auth.full_name or auth.username }}</div>
+                    <div class="sb-user-role">{{ auth.role }}</div>
+                </div>
+                <a href="/logout" class="sb-logout" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </aside>
+
+        <div class="sb-overlay" id="sb-overlay" onclick="closeMobileSidebar()"></div>
+
+        <div class="sb-content">
+            <div class="sb-topbar">
+                <div class="sb-topbar__left">
+                    <button class="sb-topbar__hamburger" onclick="openMobileSidebar()">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <span class="sb-topbar__breadcrumb">
+                        <i class="fas fa-home me-1"></i>{% block topbar_title %}Trang quản trị{% endblock %}
+                    </span>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge badge-clean
+          {% if auth.role == 'Admin' %}bg-danger{% elif auth.role == 'Manager' %}bg-warning text-dark{% elif auth.role == 'Receptionist' %}bg-info{% else %}bg-secondary{% endif %}
+        ">{{ auth.role }}</span>
+                    <span class="text-muted small fw-bold">{{ auth.full_name or auth.username }}</span>
+                </div>
+            </div>
+            <div class="px-4 mt-4 mb-5">
+                {% else %}
+                {# ══════════ CUSTOMER / GUEST LAYOUT: Top Navbar ══════════ #}
+                <nav id="customerNavbar" class="navbar navbar-dark top-navbar sticky-top glass-nav" style="padding: 0; height: 92px;">
+                    <div class="nav-bubble-bg"></div>
+                    <div class="container-fluid position-relative d-flex align-items-center h-100" style="padding: 0 40px;">
+                        
+                        <!-- Logo Content (Left) -->
+                        <a class="navbar-brand m-0 d-flex align-items-center nav-fade-element text-decoration-none" style="padding: 0; z-index: 1;" href="/">
+                            <i class="fas fa-water text-white me-3" style="font-size: 2.5rem; opacity: 0.9;"></i>
+                            <div class="d-flex flex-column lh-1">
+                                <div class="fw-bold text-white mb-1" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1.6rem; letter-spacing: 0.5px;">SAIGON-CONDAO</div>
+                                <div class="text-center w-100 mb-1" style="color: #cbd5e1; font-size: 0.85rem; font-style: italic; font-family: 'Georgia', serif;">Islands Resort</div>
+                                <div class="d-flex align-items-center justify-content-center" style="font-size: 0.65rem;">
+                                    <span class="text-white me-1">A member of</span>
+                                    <img src="/static/images/cropped-logo-1.png" style="height: 14px; object-fit: contain;" alt="Saigontourist Group">
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- Desktop Links (Center-Right) -->
+                        <div class="d-none d-lg-flex align-items-center gap-4 ms-auto me-4 nav-fade-element" style="z-index: 1;">
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khu nghỉ dưỡng</a>
+                            <a href="/search" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Phòng nghỉ</a>
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Ẩm thực</a>
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Dịch vụ</a>
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khuyến mãi</a>
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Tin tức</a>
+                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Liên hệ</a>
+                        </div>
+
+                        <!-- Hamburger Menu Bubble Toggle -->
+                        <button class="navbar-toggler ms-lg-0 ms-auto" id="navToggler" style="display: flex; justify-content: center; align-items: center; border: none; outline: none; padding: 0; width: 44px; height: 44px; z-index: 2;" type="button" data-bs-toggle="offcanvas" data-bs-target="#customerSidebar" aria-controls="customerSidebar">
+                            <span class="navbar-toggler-icon" style="width: 1.2rem; height: 1.2rem;"></span>
+                        </button>
+                    </div>
+                </nav>
+
+                {# OFF-CANVAS CUSTOMER SIDEBAR #}
+                <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="customerSidebar"
+                    aria-labelledby="customerSidebarLabel"
+                    style="width: 280px; background: linear-gradient(180deg, #001f42 0%, #003580 100%) !important;">
+                    <div class="offcanvas-header border-bottom border-secondary" style="padding: 20px;">
+                        <h5 class="offcanvas-title fw-bold text-white" id="customerSidebarLabel">Menu</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body d-flex flex-column p-0">
+                        <div class="flex-grow-1 p-3">
+                            <a class="sb-nav-link {% if request.path == '/search' %}active{% endif %}" href="/search">
+                                <i class="fas fa-search"></i><span class="sb-label">Tìm phòng</span>
+                            </a>
+                            <a class="sb-nav-link {% if request.path == '/reviews' %}active{% endif %}" href="/reviews">
+                                <i class="fas fa-star"></i><span class="sb-label">Đánh giá</span>
+                            </a>
+
+                            {% if auth.is_logged_in and auth.account_type == 'customer' %}
+                            <!-- <div class="sb-section-title mt-4 mb-2 text-muted small fw-bold text-uppercase px-2">Cá nhân</div> -->
+                            <a class="sb-nav-link {% if request.path == '/history' %}active{% endif %}" href="/history">
+                                <i class="fas fa-list"></i><span class="sb-label">Lịch sử đặt phòng</span>
+                            </a>
+                            <a class="sb-nav-link {% if request.path == '/loyalty' %}active{% endif %}" href="/loyalty">
+                                <i class="fas fa-award"></i><span class="sb-label">Loyalty</span>
+                            </a>
+                            <a class="sb-nav-link {% if request.path == '/profile' %}active{% endif %}" href="/profile">
+                                <i class="fas fa-user"></i><span class="sb-label">Hồ sơ</span>
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-auto">
+                            {% if auth.is_logged_in %}
+                            <div class="sb-user">
+                                <div class="sb-user-avatar bg-info text-white">{{ (auth.full_name or auth.username or
+                                    '?')[0] | upper }}</div>
+                                <div class="sb-user-info">
+                                    <div class="sb-user-name text-white">{{ auth.full_name or auth.username }}</div>
+                                    <div class="sb-user-role text-white-50">Khách hàng</div>
+                                </div>
+                                <a href="/logout" class="sb-logout text-danger" title="Đăng xuất"><i
+                                        class="fas fa-sign-out-alt"></i></a>
+                            </div>
+                            {% else %}
+                            <div class="p-3 border-top border-secondary">
+                                <a class="btn btn-outline-light w-100 mb-2 fw-bold" href="/login"><i
+                                        class="fas fa-sign-in-alt me-2"></i>Đăng nhập</a>
+                                <a class="btn btn-info w-100 text-white fw-bold" href="/register"><i
+                                        class="fas fa-user-plus me-2"></i>Đăng ký</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container-fluid px-4 mt-4 mb-5">
+                    {% endif %}
+
+                    {% block content %}{% endblock %}
+
+                    {% if is_staff %}
+                </div>{# /px-4 #}
+            </div>{# /sb-content #}
+        </div>{# /sb-layout #}
+        {% else %}
+    </div>{# /container-fluid #}
+    {% endif %}
+
+    <!-- Toast Notifications -->
+    <div aria-live="polite" aria-atomic="true">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            {% set bg = 'bg-primary' %}
+            {% set txt = 'text-white' %}
+            {% if category in ('error', 'danger') %}{% set bg = 'bg-danger' %}
+            {% elif category == 'success' %}{% set bg = 'bg-success' %}
+            {% elif category == 'warning' %}{% set bg = 'bg-warning' %}{% set txt = 'text-dark' %}
+            {% endif %}
+            <div class="toast show align-items-center {{ txt }} {{ bg }} border-0 rounded-3 shadow mb-2" role="alert"
+                aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body fw-semibold small">
+                        {% if category == 'success' %}<i class="fas fa-check-circle me-2"></i>{% endif %}
+                        {% if category in ('error', 'danger') %}<i class="fas fa-exclamation-circle me-2"></i>{% endif
+                        %}
+                        {% if category == 'warning' %}<i class="fas fa-exclamation-triangle me-2"></i>{% endif %}
+                        {{ message }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

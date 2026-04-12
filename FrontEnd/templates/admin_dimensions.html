@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Quản trị Danh mục - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Cấu hình Hệ thống</h2>
+        <p class="text-muted d-none d-md-block">Quản lý các bảng danh mục (Dimension Tables) cốt lõi của ứng dụng.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- KHÁCH SẠN (READ ONLY OR CORE) -->
+    <div class="col-lg-5">
+        <div class="main-card overflow-hidden shadow-sm border-0 rounded-8 bg-white h-100">
+            <div class="card-header-clean bg-light">
+                <h6 class="fw-bold mb-0">Danh sách Khách sạn (Partner Hotels)</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-clean mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên Khách sạn</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for hotel in hotels %}
+                        <tr>
+                            <td><span class="badge bg-light text-muted border">#{{ hotel.hotel_id }}</span></td>
+                            <td class="fw-bold text-dark">{{ hotel.hotel_name }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="p-3 bg-light bg-opacity-50 border-top mt-auto">
+                <p class="extra-small text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Để thêm chi nhánh mới, vui lòng liên hệ Bộ phận Kỹ thuật để thiết lập hạ tầng.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOẠI PHÒNG (CRUD) -->
+    <div class="col-lg-7">
+        <div class="main-card overflow-hidden shadow-sm border-0 rounded-8 bg-white h-100">
+            <div class="card-header-clean bg-light d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0">Quản lý Loại phòng Đặc thù</h6>
+                <button class="btn btn-sm btn-blue-booking px-3" data-bs-toggle="modal" data-bs-target="#addRTModal">
+                    <i class="fas fa-plus me-1"></i> Thêm mới
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-clean mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mã Loại Phòng</th>
+                            <th class="text-end">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if room_types %}
+                            {% for rt in room_types %}
+                            <tr class="align-middle {% if not rt.is_active %}opacity-50{% endif %}">
+                                <td class="extra-small text-muted fw-bold">#{{ rt.room_type_id }}</td>
+                                <td>
+                                    <form method="POST" action="/admin/dimensions" class="d-flex gap-2 align-items-center">
+                                        <input type="hidden" name="action" value="update_room_type">
+                                        <input type="hidden" name="room_type_id" value="{{ rt.room_type_id }}">
+                                        <input type="text" name="room_type_code" value="{{ rt.room_type_code }}" 
+                                               class="form-control form-control-sm form-control-clean border-primary border-opacity-10 fw-bold"
+                                               {% if not rt.is_active %}readonly{% endif %}>
+                                        {% if not rt.is_active %}
+                                            <span class="badge bg-secondary">Vô hiệu hóa</span>
+                                        {% else %}
+                                            <button type="submit" class="btn btn-sm btn-light border bg-white" title="Lưu thay đổi"><i class="fas fa-save text-primary"></i></button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                                <td class="text-end text-nowrap">
+                                    {% if rt.is_active %}
+                                        <button type="button" class="btn btn-sm btn-outline-danger p-1 px-2" 
+                                                data-bs-toggle="modal" data-bs-target="#deleteRTModal"
+                                                onclick="document.getElementById('delete_rt_id').value='{{ rt.room_type_id }}'; document.getElementById('delete_rt_code').innerText='{{ rt.room_type_code }}';">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    {% else %}
+                                        <button type="button" class="btn btn-sm btn-outline-secondary p-1 px-2" disabled title="Đã vô hiệu hóa">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="3" class="text-center py-5 text-muted small italic">Chưa có loại phòng chuyên dụng nào.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm -->
+<div class="modal fade" id="addRTModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content shadow-lg border-0">
+            <form method="POST" action="/admin/dimensions">
+                <input type="hidden" name="action" value="create_room_type">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Thêm Loại phòng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-0">
+                        <label class="form-label-clean">Mã loại phòng mới</label>
+                        <input type="text" name="room_type_code" class="form-control form-control-clean text-uppercase fw-bold" placeholder="VD: VIP_SUITE" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-blue-booking px-4">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Xóa -->
+<div class="modal fade" id="deleteRTModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content shadow-lg border-0">
+            <form method="POST" action="/admin/dimensions">
+                <input type="hidden" name="action" value="delete_room_type">
+                <input type="hidden" name="room_type_id" id="delete_rt_id" value="">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title fw-bold"><i class="fas fa-exclamation-triangle me-2"></i>Xác nhận xóa</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 text-center">
+                    <p class="mb-1 text-muted">Bạn có chắc chắn muốn xóa mã phòng này?</p>
+                    <h4 class="fw-bold text-danger my-3" id="delete_rt_code"></h4>
+                    <p class="small text-muted mb-0">Hệ thống sẽ <strong>vô hiệu hóa</strong> thay vì xóa vĩnh viễn nếu loại phòng đang được sử dụng trong hóa đơn.</p>
+                </div>
+                <div class="modal-footer justify-content-center border-0 pb-4">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger px-4 fw-bold">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

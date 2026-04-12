@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Thanh toán & Xác nhận - Hotel Booking{% endblock %}
+{% block content %}
+
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="fw-bold mb-1">Thanh toán & Xác nhận</h2>
+        <p class="text-muted d-none d-md-block">Vui lòng kiểm tra kỹ thông tin và hoàn tất thủ tục thanh toán để xác nhận đặt phòng.</p>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+    <!-- MAIN COLUMN -->
+    <main>
+        {% if locked_until %}
+        <div class="alert alert-danger border-0 shadow-sm small py-2 rounded-8 mb-4">
+            <i class="fas fa-clock me-2"></i> <strong>Thời gian giữ phòng có hạn:</strong> Phòng của bạn sẽ được giải phóng lúc <strong>{{ locked_until }}</strong> nếu không thanh toán.
+        </div>
+        {% endif %}
+
+        <form action="/booking/checkout" method="POST">
+            <!-- EXTRA SERVICES -->
+            <div class="main-card p-4 mb-4">
+                <h6 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-concierge-bell me-2 text-primary"></i>Dịch vụ gia tăng (Tùy chọn)</h6>
+                <div class="row g-3">
+                    {% for item in catalog %}
+                    <div class="col-md-6">
+                        <label class="d-flex align-items-center p-3 border rounded-8 cursor-pointer hover-bg-light transition-base h-100">
+                            <input type="checkbox" name="extra_services" value="{{ item.catalog_id }}" class="me-3">
+                            <div>
+                                <div class="fw-bold small">{{ item.item_name }}</div>
+                                <div class="text-success fw-bold small">+{{ item.default_price }} EUR</div>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- SPECIAL REQUESTS -->
+            <div class="main-card p-4 mb-4">
+                <h6 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-comment-alt me-2 text-primary"></i>Yêu cầu đặc biệt</h6>
+                <textarea name="special_requests" class="form-control form-control-clean" rows="3" placeholder="Ví dụ: Phòng không hút thuốc, Nhận phòng sớm..."></textarea>
+                <p class="extra-small text-muted mt-2 italic">*Yêu cầu đặc biệt không được đảm bảo nhưng chúng tôi sẽ cố gắng hỗ trợ.</p>
+            </div>
+
+            <!-- PROMO & PAYMENT -->
+            <div class="main-card p-4 mb-4">
+                <h6 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-credit-card me-2 text-primary"></i>Thông tin thanh toán</h6>
+                
+                <div class="form-section-clean">
+                    <label class="form-label-clean">Mã khuyến mãi (Nếu có)</label>
+                    <div class="d-flex gap-2 max-w-400">
+                        <input type="text" name="promo_code" value="{{ promo_code }}" class="form-control form-control-clean" placeholder="Nhập mã ưu đãi">
+                        <button type="button" class="btn btn-outline-primary px-3">Kiểm tra</button>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="form-label-clean d-block mb-3">Phương thức thanh toán</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_method" value="credit_card" id="pay_cc" checked>
+                            <label class="form-check-label small" for="pay_cc">Thẻ tín dụng (Visa, Master, JCB)</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_method" value="bank_transfer" id="pay_bank">
+                            <label class="form-check-label small" for="pay_bank">Chuyển khoản / VNPAY</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_method" value="cash" id="pay_cash">
+                            <label class="form-check-label small" for="pay_cash">Tiền mặt (Tại quầy)</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label-clean d-block mb-3">Hình thức lựa chọn</label>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="payment_type" value="full" id="type_full" checked>
+                            <label class="form-check-label small" for="type_full">Trả toàn bộ 100%</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="payment_type" value="deposit" id="type_dep">
+                            <label class="form-check-label small" for="type_dep">Đặt cọc giữ chỗ (50%)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <button type="button" class="btn btn-link text-muted text-decoration-none small"
+                        onclick="document.getElementById('release-form').submit()">
+                    <i class="fas fa-times me-1"></i> Hủy đặt phòng này
+                </button>
+                <button type="submit" id="confirm-btn" class="btn btn-blue-booking px-5 py-3 fw-bold rounded-4">XÁC NHẬN & THANH TOÁN</button>
+            </div>
+            <div id="checkout-error" class="alert alert-danger py-2 mt-3 d-none small"></div>
+        </form>
+
+        <!-- Form hủy phòng tách biệt, nằm ngoài form thanh toán -->
+        <form id="release-form" action="/booking/release" method="POST" class="d-none"></form>
+    </main>
+
+    <!-- SIDEBAR: SUMMARY -->
+    <aside>
+        <div class="summary-card shadow-sm border-2 border-primary border-opacity-25">
+            <h5 class="fw-bold mb-4">Chi tiết chuyến đi</h5>
+            
+            <div class="mb-4">
+                <div class="fw-bold text-primary fs-5">{{ room_type.room_type_code }}</div>
+                <div class="small text-muted"><i class="fas fa-hotel me-1"></i> Hệ thống khách sạn đối tác</div>
+            </div>
+
+            <div class="border-top pt-3 mb-4">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <label class="extra-small fw-bold text-muted uppercase">Nhận phòng</label>
+                        <div class="fw-bold small">{{ checkin_date }}</div>
+                        <div class="extra-small text-muted">Từ 14:00</div>
+                    </div>
+                    <div class="col-6">
+                        <label class="extra-small fw-bold text-muted uppercase">Trả phòng</label>
+                        <div class="fw-bold small">{{ checkout_date }}</div>
+                        <div class="extra-small text-muted">Trước 12:00</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="extra-small fw-bold text-muted uppercase d-block mb-1">Thời gian lưu trú</label>
+                <div class="small fw-bold">
+                    {% if booking_type == 'continuous' %}
+                        Xuyên suốt từ {{ checkin_date }}
+                    {% else %}
+                        Từng đêm đặc biệt
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="extra-small fw-bold text-muted uppercase d-block mb-1">Số lượng khách</label>
+                <div class="small fw-bold">{{ adults }} người lớn, {{ children }} trẻ em</div>
+            </div>
+
+            <div class="price-breakdown mt-4 pt-4 border-top">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-muted" id="total-price-label">Giá tạm tính</span>
+                    <span class="fw-bold text-primary fs-5" id="total-price-display">Hệ thống xử lý...</span>
+                </div>
+                <div class="status-badge mt-3 text-center p-2 bg-success bg-opacity-10 text-success rounded small border border-success border-opacity-25">
+                    <i class="fas fa-check-circle me-1"></i> Giá tốt nhất hiện có
+                </div>
+            </div>
+        </div>
+    </aside>
+</div>
+
+<script type="application/json" id="checkout-data">
+{
+    "checkinDate": "{{ checkin_date }}",
+    "checkoutDate": "{{ checkout_date }}",
+    "basePrice": {{ room_type.base_price or 0 }},
+    "selectedNights": "{{ selected_nights|default('') }}"
+}
+</script>
+<script src="{{ url_for('static', filename='js/pages/checkout.js') }}"></script>
+
+{% endblock %}

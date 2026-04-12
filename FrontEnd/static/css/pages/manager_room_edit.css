@@ -1,0 +1,107 @@
+/* ── Room Edit Gallery ── */
+.re-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+}
+
+.re-gallery__item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 4/3;
+    background: #f1f5f9;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    transition: transform .2s, box-shadow .2s;
+}
+
+.re-gallery__item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.15);
+}
+
+.re-gallery__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.re-gallery__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,.0) 50%, rgba(0,0,0,.5) 100%);
+    opacity: 0;
+    transition: opacity .2s;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 8px;
+}
+
+.re-gallery__item:hover .re-gallery__overlay {
+    opacity: 1;
+}
+
+.re-gallery__del {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+}
+
+.re-gallery__idx {
+    position: absolute;
+    bottom: 6px;
+    left: 8px;
+    background: rgba(0,0,0,.6);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+/* ── Upload Zone ── */
+.re-upload-zone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    transition: border-color .2s, background .2s;
+    overflow: hidden;
+}
+
+.re-upload-zone:hover,
+.re-upload-zone.dragover {
+    border-color: #2563eb;
+    background: rgba(37,99,235,.04);
+}
+
+.re-upload-zone__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 16px;
+    cursor: pointer;
+}
+
+.re-upload-preview {
+    padding: 12px;
+    text-align: center;
+}
+
+.re-upload-preview img {
+    max-height: 200px;
+    max-width: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.re-upload-preview__actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
