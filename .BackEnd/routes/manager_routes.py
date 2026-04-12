@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, g
 from database import get_db_connection
 from services.api_auth import require_token
-from services.booking_service import get_user_role_from_db, invalidate_pricing_caches
+from services.booking_service import get_user_role_from_db
 from datetime import datetime, timedelta, date
 import sqlite3
 import time
@@ -552,13 +552,24 @@ def api_apply_flexible_pricing():
     
     targets = []
     if mode == 'type':
-        # target_id is room_type_code
-        targets.append({'type_code': target_id, 'room_id': None})
-    elif mode == 'single':
-        # target_id is physical_room_id. Need to find its type_code.
+        # target_id can be room_type_code (string) or room_type_id (numeric)
+        # We need the code for the DB
+        cursor.execute("SELECT room_type_code FROM Dim_RoomType WHERE room_type_code = ? OR room_type_id = ?", (target_id, target_id))
+        row = cursor.fetchone()
+        if row:
+            targets.append({'type_code': row['room_type_code'], 'room_id': None})
+        else:
+            conn.close()
+            return jsonify({'success': False, 'message': f'Loại phòng không hợp lệ: {target_id}'}), 400
+    elif mode == 'single' or mode == 'room': # 'room' for compat with some templates
+        # target_id is physical_room_id.
         cursor.execute("SELECT drt.room_type_code FROM Physical_Room pr JOIN Dim_RoomType drt ON pr.room_type_id = drt.room_type_id WHERE pr.physical_room_id = ?", (target_id,))
         row = cursor.fetchone()
-        if row: targets.append({'type_code': row['room_type_code'], 'room_id': target_id})
+        if row: 
+            targets.append({'type_code': row['room_type_code'], 'room_id': target_id})
+        else:
+            conn.close()
+            return jsonify({'success': False, 'message': f'Phòng không hợp lệ: {target_id}'}), 400
     elif mode == 'group':
         for rid in room_ids:
             cursor.execute("SELECT drt.room_type_code FROM Physical_Room pr JOIN Dim_RoomType drt ON pr.room_type_id = drt.room_type_id WHERE pr.physical_room_id = ?", (rid,))
@@ -569,18 +580,24 @@ def api_apply_flexible_pricing():
         curr = start_dt
         while curr <= end_dt:
             d_str = curr.strftime('%Y-%m-%d')
+            # Calculate base_price_cents for consistency
+            base_price_cents = int(float(base_price) * 100)
+            
+            # Use DELETE then INSERT to avoid NULL conflict issues with UPSERT
+            if t['room_id'] is None:
+                cursor.execute("DELETE FROM Room_Rates WHERE room_type_code = ? AND valid_date = ? AND physical_room_id IS NULL", (t['type_code'], d_str))
+            else:
+                cursor.execute("DELETE FROM Room_Rates WHERE room_type_code = ? AND valid_date = ? AND physical_room_id = ?", (t['type_code'], d_str, t['room_id']))
+                
             cursor.execute("""
-                INSERT INTO Room_Rates (room_type_code, physical_room_id, valid_date, base_price, is_holiday)
-                VALUES (?, ?, ?, ?, ?)
-                ON CONFLICT(room_type_code, physical_room_id, valid_date) 
-                DO UPDATE SET base_price = excluded.base_price, is_holiday = excluded.is_holiday
-            """, (t['type_code'], t['room_id'], d_str, base_price, is_holiday))
+                INSERT INTO Room_Rates (room_type_code, physical_room_id, valid_date, base_price, base_price_cents, is_holiday)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (t['type_code'], t['room_id'], d_str, base_price, base_price_cents, is_holiday))
             curr += timedelta(days=1)
             
     conn.commit()
     conn.close()
-    invalidate_pricing_caches()
-    return jsonify({'success': True, 'message': 'Ap dung gia thanh cong'})
+    return jsonify({'success': True, 'message': 'Cập nhật giá thành công (Dữ liệu đã được đồng bộ)'})
 
 
 # ─── PROMOTIONS ENDPOINTS ─────────────────────────────────────────────────────

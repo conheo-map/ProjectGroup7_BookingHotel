@@ -5,7 +5,7 @@ import json
 from database import get_db_connection
 from datetime import datetime
 from services.api_auth import require_token
-from services.booking_service import get_user_role_from_db, cleanup_expired_locks, invalidate_pricing_caches, timedelta
+from services.booking_service import get_user_role_from_db, cleanup_expired_locks, timedelta
 
 system_bp = Blueprint('system_bp', __name__)
 @system_bp.route('/api/funnel/event', methods=['POST'])

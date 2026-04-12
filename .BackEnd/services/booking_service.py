@@ -1,12 +1,6 @@
 import sqlite3
 from datetime import datetime, timedelta, date
-from functools import lru_cache
 from database import get_db_connection
-
-def invalidate_pricing_caches():
-    """Gọi sau khi đổi giá/ngày áp dụng Room_Rates, Promotions hoặc Dim_RoomType.base_price."""
-    _cached_effective_price.cache_clear()
-    _cached_promo_price.cache_clear()
 
 
 def cleanup_expired_locks(conn):
@@ -103,36 +97,44 @@ def evaluate_occupancy_policy(cursor, room_type_id, adults, children):
         'surcharge_per_night': surcharge_per_night
     }
 
-@lru_cache(maxsize=2000)
-def _cached_effective_price(room_type_id, room_type_code, target_date_str):
+def _get_effective_price(room_type_id, room_type_code, target_date_str):
     conn = get_db_connection()
     cursor = conn.cursor()
+    
+    price = 0.0
+
+    # 1. Tìm trong Room_Rates (Ghi đè theo ngày)
     cursor.execute("""
-        SELECT base_price, base_price_cents FROM Room_Rates
-        WHERE room_type_code = ? AND valid_date = ?
+        SELECT rate_id, base_price, base_price_cents FROM Room_Rates
+        WHERE room_type_code = ? AND valid_date = ? AND physical_room_id IS NULL
     """, (room_type_code, target_date_str))
     override_row = cursor.fetchone()
+    
     if override_row:
         if override_row['base_price_cents']:
             price = override_row['base_price_cents'] / 100.0
         else:
             price = override_row['base_price']
     else:
+        # 2. Lấy giá mặc định từ Dim_RoomType
         cursor.execute("SELECT base_price, base_price_cents FROM Dim_RoomType WHERE room_type_id = ?", (room_type_id,))
         base_row = cursor.fetchone()
-        if base_row and base_row['base_price_cents']:
-            price = base_row['base_price_cents'] / 100.0
+        if base_row:
+            if base_row['base_price_cents']:
+                price = base_row['base_price_cents'] / 100.0
+            else:
+                price = base_row['base_price']
         else:
-            price = base_row['base_price'] if base_row and base_row['base_price'] else 100.0
+            price = 100.0
+            
     conn.close()
     return price
 
 def get_effective_price_for_date(cursor, room_type_id, room_type_code, target_date_str):
     """Gia hieu luc cho 1 dem: uu tien Room_Rates, fallback Dim_RoomType.base_price."""
-    return _cached_effective_price(room_type_id, room_type_code, target_date_str)
+    return _get_effective_price(room_type_id, room_type_code, target_date_str)
 
-@lru_cache(maxsize=6000)
-def _cached_promo_price(effective_price, target_date_str, membership_tier, room_type_code, hotel_id):
+def _get_promo_price(effective_price, target_date_str, membership_tier, room_type_code, hotel_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.execute("""
@@ -220,7 +222,7 @@ def _cached_promo_price(effective_price, target_date_str, membership_tier, room_
 
 def get_promo_price_for_date(cursor, effective_price, room_type_code, target_date_str, membership_tier='Newbie', hotel_id=1):
     """Gia sau khi ap khuyen mai (neu co). Tra ve tuple (promo_price, promo_code_used)."""
-    return _cached_promo_price(effective_price, target_date_str, membership_tier, room_type_code, hotel_id)
+    return _get_promo_price(effective_price, target_date_str, membership_tier, room_type_code, hotel_id)
 
 def calculate_booking_total_for_nights(cursor, room_type_id, room_type_code, list_of_night_dates, membership_tier='Newbie', hotel_id=1, adults=1, children=0):
     """Tinh tong tien cho danh sach cac dem cu the da chon."""
