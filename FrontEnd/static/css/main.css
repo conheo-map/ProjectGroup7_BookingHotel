@@ -7,7 +7,6 @@
     --mau-xam-dam: #002a66;
 }
 
-/* â”€â”€ Layout â”€â”€ */
 body {
     background: var(--mau-nen);
     color: #1a202c;
@@ -78,7 +77,6 @@ body {
     color: #64748b;
 }
 
-/* â”€â”€ Forms â”€â”€ */
 .bieumau-dieukhien-sach {
     border: 1.5px solid #cbd5e0;
     border-radius: 8px;
@@ -109,7 +107,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* â”€â”€ Buttons â”€â”€ */
 .nut-xanh-datphong {
     background: var(--mau-xanh-chinh);
     color: #fff !important;
@@ -130,7 +127,6 @@ body {
     transform: none;
 }
 
-/* Nut vang thuong hieu (dung cho CTA phu) */
 .nut-vang-thuonghieu {
     background: var(--mau-vang-chinh);
     color: var(--mau-xanh-chinh) !important;
@@ -147,7 +143,6 @@ body {
     box-shadow: 0 4px 12px rgba(255, 195, 18, .4);
 }
 
-/* â”€â”€ Tables â”€â”€ */
 .bang-sach thead th {
     font-size: .72rem;
     font-weight: 700;
@@ -175,7 +170,6 @@ body {
     background: #fafbfc;
 }
 
-/* â”€â”€ Badges â”€â”€ */
 .huyhieu-sach {
     font-weight: 600;
     font-size: .72rem;
@@ -184,7 +178,6 @@ body {
     letter-spacing: .02em;
 }
 
-/* â”€â”€ Room Cards (Search) â”€â”€ */
 .thephong {
     background: #fff;
     border-radius: 14px;
@@ -214,7 +207,6 @@ body {
     justify-content: center;
 }
 
-/* â”€â”€ Stat Boxes â”€â”€ */
 .thongke-hop {
     background: #fff;
     border-radius: 12px;
@@ -235,7 +227,6 @@ body {
     letter-spacing: .05em;
 }
 
-/* â”€â”€ Ops Widget â”€â”€ */
 .toochuc-congcu {
     background: #fff;
     border-radius: 12px;
@@ -248,7 +239,6 @@ body {
     font-weight: 700;
 }
 
-/* â”€â”€ TOP Navbar (customer) â”€â”€ */
 .thanhdieu-huong-tren {
     border-bottom: 1px solid rgba(255, 255, 255, .1);
 }
@@ -263,9 +253,7 @@ body {
     padding: 8px 14px !important;
 }
 
-/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-           SIDEBAR (staff/admin) â€” Collapsible vertical navigation
-           â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+
 .thanhben-bocuc {
     display: flex;
     min-height: 100vh;
@@ -558,7 +546,6 @@ body {
     }
 }
 
-/* â”€â”€ Utilities â”€â”€ */
 .kichthuoc-nho-hon {
     font-size: .75rem;
 }
@@ -617,7 +604,6 @@ body {
     background: var(--mau-xanh-chinh) !important;
 }
 
-/* â”€â”€ Toast â”€â”€ */
 .toast-container {
     z-index: 1100;
 }
@@ -627,7 +613,6 @@ body {
     min-width: 280px;
 }
 
-/* â”€â”€ Status Badge Colors â”€â”€ */
 .trangthai-xacnhan {
     background: #d1fae5;
     color: #065f46;
@@ -658,7 +643,6 @@ body {
     border: 1px solid var(--mau-vang-chinh);
 }
 
-/* â”€â”€ Customer Nav Bubble Effect â”€â”€ */
 .dieu-huong-kinh {
     background: transparent !important;
     box-shadow: none !important;
@@ -686,9 +670,7 @@ body {
     width: 44px;
     height: 44px;
     top: 24px;
-    /* Center inside 92px height */
     right: 40px;
-    /* Aligned with container padding */
     border-radius: 50%;
     border: 1px solid rgba(255, 255, 255, 0.15);
     background: rgba(15, 23, 42, 0.45);
@@ -719,7 +701,6 @@ body {
     bottom: -5px;
     left: 50%;
     background-color: var(--mau-vang-chinh);
-    /* Yellow accent line */
     transition: all 0.3s ease;
     transform: translateX(-50%);
 }
@@ -728,7 +709,6 @@ body {
     width: 100%;
 }
 
-/* â”€â”€ Print â”€â”€ */
 @media print {
 
     .thanhben-chunha,
@@ -749,7 +729,6 @@ body {
     }
 }
 
-/* â”€â”€ Máº«u KhÃ¡m PhÃ¡ (Explore Cards) â”€â”€ */
 .khampha-the {
     border-radius: 24px;
     height: 480px;
@@ -799,7 +778,6 @@ body {
     background: rgba(255, 255, 255, 0.4);
 }
 
-/* â”€â”€ Thanh TÃ¬m Kiáº¿m VÃ ng (Yellow Search Bar) â”€â”€ */
 .thanh-timkiem-vang {
     background: #fff;
     border: 4px solid #fff;
@@ -858,9 +836,7 @@ body {
     cursor: pointer;
     transition: background 0.3s ease, color 0.3s ease;
     border-radius: 8px;
-    /* Bo trÃ²n cáº£ 4 gÃ³c */
     margin: 4px;
-    /* Táº¡o náº¿p nháº¹ Ä‘á»ƒ viá»n khÃ´ng cháº¡m sÃ¡t mÃ©p bao */
 }
 
 .timkiem-nut-tim:hover {
@@ -897,7 +873,6 @@ body {
     }
 }
 
-/* â”€â”€ Navbar bo trÃ²n kiá»ƒu Apple â”€â”€ */
 .navbar-apple {
     margin: 24px auto !important;
     width: calc(100% - 48px);
@@ -941,7 +916,6 @@ body {
     }
 }
 
-/* Hiá»‡u á»©ng thu vá» nhÆ° lÃºc trÆ°á»›c khi cuá»™n trang */
 .navbar-apple.dieu-huong-cuon {
     width: 60px !important;
     height: 60px !important;
@@ -952,7 +926,6 @@ body {
     margin-left: auto !important;
 }
 
-/* áº¨n má»m ná»™i dung, Ä‘á»“ng thá»i rÃºt khÃ´ng gian (absolute) Ä‘á»ƒ nÃºt menu chiáº¿m chá»— */
 .navbar-apple.dieu-huong-cuon .dieu-huong-phan-tu-mo {
     opacity: 0 !important;
     visibility: hidden !important;
@@ -962,7 +935,6 @@ body {
     transition: opacity 0.2s, transform 0.2s;
 }
 
-/* Giá»¯ nÃºt hamburger canh giá»¯a khá»‘i trÃ²n khi thanh Cuá»™n */
 .navbar-apple.dieu-huong-cuon .container-fluid {
     padding: 0 !important;
     justify-content: center !important;
@@ -979,7 +951,6 @@ body {
     }
 }
 
-/* XÃ³a viá»n/bÃ³ng xung quanh nÃºt menu (hamburger) khi nháº¥n */
 .navbar-apple .navbar-toggler,
 .navbar-apple .navbar-toggler:focus,
 .navbar-apple .navbar-toggler:active {
@@ -988,9 +959,7 @@ body {
     border: none !important;
 }
 
-/* ========================================= */
-/* â”€â”€ KHU Vá»°C THá»NG KÃŠ (ABOUT US & STATS) â”€â”€ */
-/* ========================================= */
+
 .gioithieu-khoi {
     background: #f8f9fa;
     border-radius: 24px;
@@ -1035,9 +1004,7 @@ body {
     letter-spacing: 1px;
 }
 
-/* ========================================= */
-/* â”€â”€ CHÃ‚N TRANG (FOOTER) CHUYÃŠN NGHIá»†P â”€â”€  */
-/* ========================================= */
+
 .chantrang {
     background-color: var(--mau-xam-dam);
     color: #e5e7eb;
@@ -1129,9 +1096,7 @@ body {
     color: #6b7280;
 }
 
-/* ========================================= */
-/* â”€â”€ KHU Vá»°C CUá»˜N NGANG GSAP (FEATURED ROOMS) â”€â”€ */
-/* ========================================= */
+
 .truot-phong-baoboc {
     overflow: hidden;
     background: transparent;
@@ -1249,7 +1214,6 @@ body {
     }
 }
 
-/* Cyan accent utilities */
 .vien-phu {
     border-color: var(--mau-phu) !important;
 }
@@ -1262,9 +1226,7 @@ body {
     color: var(--mau-phu);
 }
 
-/* ========================================= */
-/* --- MEGA MENU OCEAN BREEZE --- */
-/* ========================================= */
+
 .mega-menu-wrapper {
     position: absolute;
     top: 100%;
@@ -1381,11 +1343,10 @@ body {
 
 .nav-item-mega {
     position: relative;
-    padding-bottom: 15px; /* Create a bridge for hover */
+    padding-bottom: 15px;
     margin-bottom: -15px;
 }
 
-/* === SLIDE-IN INFO PANELS === */
 .info-overlay {
     position: fixed;
     top: 0;
@@ -1408,7 +1369,7 @@ body {
 .info-panel {
     position: fixed;
     top: 0;
-    right: -100%; /* Hidden by default */
+    right: -100%;
     width: 45%;
     min-width: 400px;
     height: 100vh;
