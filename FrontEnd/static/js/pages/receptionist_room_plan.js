@@ -1,8 +1,8 @@
 // Filter
 function filterRooms(status, btn) {
-  document.querySelectorAll('.rp-filter-chip').forEach(function(c) { c.classList.remove('active'); });
+  document.querySelectorAll('.sodophong-loc-cuc').forEach(function(c) { c.classList.remove('active'); });
   btn.classList.add('active');
-  document.querySelectorAll('.rp-room-card').forEach(function(card) {
+  document.querySelectorAll('.sodophong-phong-the').forEach(function(card) {
     if (status === 'all') {
       card.style.display = '';
     } else {
@@ -13,7 +13,7 @@ function filterRooms(status, btn) {
 
 // Grid columns
 function changeGridCols(n) {
-  document.querySelectorAll('.rp-room-grid').forEach(function(grid) {
+  document.querySelectorAll('.sodophong-phong-luoi').forEach(function(grid) {
     grid.style.gridTemplateColumns = 'repeat(' + n + ', 1fr)';
   });
 }

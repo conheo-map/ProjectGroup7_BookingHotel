@@ -1,100 +1,352 @@
+/* Base Styles */
+:root {
+  --mau-xanh-chinh: #00b4d8;
+  --mau-xanh-dam: #023e8a;
+  --mau-vang-chinh: #ffb703;
+  --mau-phu: #fb8500;
+  --radius-lg: 20px;
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.08);
+}
+
 /* Breadcrumb */
-.rd-breadcrumb { font-size: 13px; }
-.rd-breadcrumb a { color: #2563eb; text-decoration: none; }
-.rd-breadcrumb a:hover { text-decoration: underline; }
-.rd-breadcrumb .sep { color: #cbd5e1; margin: 0 6px; }
-.rd-breadcrumb .current { color: #64748b; }
+.chitietphong-duongdan { font-size: 13px; margin-top: 10px; }
+.chitietphong-duongdan a { color: #64748b; text-decoration: none; }
+.chitietphong-duongdan a:hover { color: var(--mau-xanh-chinh); }
+.chitietphong-duongdan .sep { color: #cbd5e1; margin: 0 8px; }
+.chitietphong-duongdan .current { color: #94a3b8; }
 
 /* Header */
-.rd-hotel-name { font-size: 24px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
-.rd-stars { color: #f59e0b; font-size: 14px; }
-.rd-hotel-meta { font-size: 13px; }
-.btn-book-now { background: #f97316; color: #fff; border: none; border-radius: 10px; font-weight: 700; padding: 10px 22px; font-size: 14px; }
-.btn-book-now:hover { background: #ea580c; color: #fff; }
+.chitietphong-khachsan-ten { font-size: 28px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+.chitietphong-sao { color: #fbbf24; font-size: 16px; margin-left: 8px; }
+.chitietphong-khachsan-thongtin { font-size: 14px; color: #64748b; }
 
-/* Gallery */
-.rd-gallery { display: grid; grid-template-columns: 1.5fr 1fr; gap: 8px; height: 340px; border-radius: 16px; overflow: hidden; }
-.rd-gallery__grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 8px; }
-.rd-img-placeholder { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-.rd-img-placeholder--large { background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); }
-.rd-img-placeholder--sm { background: linear-gradient(135deg, #334155, #475569); }
-.rd-img-placeholder--overlay::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.35); }
-.rd-more-photos { position: relative; z-index: 1; color: #fff; font-weight: 700; font-size: 16px; }
-.rd-promo-badge { position: absolute; top: 14px; left: 14px; background: linear-gradient(135deg, #f97316, #dc2626); color: #fff; padding: 6px 14px; border-radius: 8px; font-weight: 700; font-size: 13px; z-index: 2; }
+/* MODERN GALLERY (1+2 Grid) */
+.chitietphong-thuvien-khung {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  height: 480px;
+  box-shadow: var(--shadow-md);
+}
+
+.chitietphong-thuvien-luoi-moi {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+/* Dynamic Gallery Layouts */
+.chitietphong-thuvien-luoi-moi.grid-single {
+  grid-template-columns: 1fr;
+}
+
+.chitietphong-thuvien-luoi-moi.grid-double {
+  grid-template-columns: 1.8fr 1fr;
+}
+
+.chitietphong-anh-chinh-khung {
+  position: relative;
+  height: 100%;
+}
+
+.chitietphong-anh-phu-khung {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+.chitietphong-anh-phu-khung.single-side {
+  grid-template-rows: 1fr;
+}
+
+.chitietphong-anh-phu-o {
+  position: relative;
+  height: 100%;
+}
+
+.chitietphong-anh-phu-o.full-height {
+  height: 100%;
+}
+
+.chitietphong-anh-moi {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.chitietphong-anh-chinh-khung:hover .chitietphong-anh-moi,
+.chitietphong-anh-phu-o:hover .chitietphong-anh-moi {
+  transform: scale(1.03);
+}
+
+.chitietphong-anh-trong-moi, .chitietphong-anh-trong-full {
+  width: 100%;
+  height: 100%;
+  background: #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* See all photos button */
+.chitietphong-nut-xem-tat-ca {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  color: #1e293b;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.chitietphong-nut-xem-tat-ca:hover {
+  background: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.chitietphong-gia-huyhieu {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #dc2626;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(220, 38, 38, 0.3);
+}
+
+/* Sidebar Cards (iVIVU Style) */
+.chitietphong-danhgia-the {
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.chitietphong-danhgia-the-diem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chitietphong-danhgia-so {
+  font-size: 36px;
+  font-weight: 900;
+  color: #fff;
+  background: #023e8a;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(2, 62, 138, 0.2);
+}
+
+.chitietphong-danhgia-chu {
+  font-size: 18px;
+  color: #1e293b;
+}
+
+/* Booking Card (iVIVU/Traveloka) */
+.chitietphong-datphong-the {
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 20px;
+}
+
+.chitietphong-datphong-the-gia {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.chitietphong-gia-chinh {
+  font-size: 32px;
+  font-weight: 900;
+  color: #023e8a;
+}
+
+.chitietphong-gia-donvi {
+  font-size: 18px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* New Unified Date Box (Image 1 Style) */
+.chitietphong-chon-ngay-moi {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  display: flex;
+  overflow: hidden;
+}
+
+.chitietphong-ngay-cot-moi {
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chitietphong-ngay-icon-moi {
+  font-size: 22px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.chitietphong-ngay-giatri-moi {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.chitietphong-ngay-thu-moi {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.chitietphong-vach-ngan {
+  position: absolute;
+  right: 0;
+  top: 10%;
+  height: 80%;
+  width: 1px;
+  background-color: #cbd5e1;
+}
+
+.nut-datngay {
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  font-weight: 800;
+  padding: 14px;
+  width: 100%;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(251, 133, 0, 0.3);
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.nut-datngay:hover {
+  background: linear-gradient(135deg, #fb8500, #ffb703);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251, 133, 0, 0.4);
+  color: #fff;
+}
+
+/* Modal Gallery */
+.chitietphong-gallery-modal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.chitietphong-gallery-modal-item img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 15px;
+}
 
 /* Sections */
-.rd-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 24px; margin-bottom: 20px; }
-.rd-section__title { font-size: 16px; font-weight: 700; color: #0f172a; border-bottom: 2px solid #eff6ff; padding-bottom: 12px; margin-bottom: 16px; }
-.rd-section__title i { color: #2563eb; }
+.chitietphong-phan {
+  background: #fff;
+  border: 1px solid #edf2f7;
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-sm);
+}
 
-/* Stat boxes */
-.rd-stat-box { text-align: center; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px 10px; }
-.rd-stat-val { font-size: 20px; font-weight: 800; color: #0f172a; margin: 6px 0 2px; }
-.rd-stat-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+.chitietphong-phan-tieude {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
 
-/* Description */
-.rd-desc p { font-size: 14px; color: #475569; line-height: 1.7; margin-bottom: 0; }
-.rd-surcharge-info { background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; padding: 12px 16px; font-size: 13px; color: #92400e; }
-
-/* Amenities grid */
-.rd-amenities-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
-.rd-amenity-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; color: #334155; }
-.rd-amenity-item i { font-size: 15px; width: 20px; text-align: center; }
-
-/* Availability */
-.rd-avail-banner { padding: 12px 16px; border-radius: 10px; font-size: 13px; font-weight: 600; }
-.rd-avail-banner--green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-.rd-avail-banner--amber { background: #fef9c3; color: #854d0e; border: 1px solid #fde68a; }
-.rd-avail-banner--red { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
-.rd-room-list { display: flex; flex-direction: column; gap: 10px; }
-.rd-room-item { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 16px; }
-.badge-avail-tag { font-size: 11px; background: #dcfce7; color: #166534; border-radius: 20px; padding: 2px 10px; font-weight: 600; }
-.badge-avail-tag--amber { background: #fef9c3; color: #854d0e; }
-.btn-book-amber { background: #b45309; color: #fff; border: none; border-radius: 8px; font-weight: 700; font-size: 12px; }
-.btn-book-amber:hover { background: #f59e0b; color: #fff; }
-.badge-night-sm { font-size: 11px; background: #fef3c7; color: #92400e; border: 1px solid #fde68a; border-radius: 6px; padding: 2px 7px; }
-
-/* Reviews */
-.rd-reviews-list { display: flex; flex-direction: column; }
-.rd-review-item { border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
-.rd-review-item:last-child { border-bottom: none; padding-bottom: 0; }
-.rd-review-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #7c3aed); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
-.rd-review-avatar--sm { width: 28px; height: 28px; font-size: 11px; }
-.rd-review-stars { color: #f59e0b; font-size: 12px; }
-.rd-review-stars .far { color: #e2e8f0; }
-
-/* Sidebar: Rating card */
-.rd-rating-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; }
-.rd-rating-card__score { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.rd-rating-number { font-size: 32px; font-weight: 900; color: #fff; background: #1e3a5f; width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.rd-rating-text { font-size: 15px; color: #0f172a; }
-.rd-rating-card__preview { border-top: 1px solid #f1f5f9; padding-top: 12px; margin-bottom: 10px; }
-.rd-rating-card__link { font-size: 13px; color: #2563eb; text-decoration: none; font-weight: 600; }
-.rd-rating-card__link:hover { text-decoration: underline; }
-
-/* Sidebar: Booking card */
-.rd-booking-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; position: sticky; top: 16px; }
-.rd-booking-card__price-block { margin-bottom: 16px; }
-.rd-price-main { font-size: 28px; font-weight: 900; color: #0f172a; }
-.rd-price-unit { font-size: 16px; font-weight: 600; }
-.rd-price-note { font-size: 12px; color: #64748b; }
-.rd-booking-dates { }
-.rd-date-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; }
-.rd-date-label { font-size: 10px; color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; }
-.rd-date-val { font-size: 13px; font-weight: 700; color: #0f172a; }
+.chitietphong-phan-tieude i {
+  color: #00b4d8;
+  margin-right: 12px;
+}
 
 /* Perks */
-.rd-perks { border-top: 1px solid #f1f5f9; padding-top: 14px; margin-top: 10px; }
-.rd-perks__title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; color: #64748b; margin-bottom: 10px; }
-.rd-perk-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: #475569; margin-bottom: 8px; }
-.rd-perk-item i { font-size: 13px; width: 16px; text-align: center; }
+.chitietphong-loiich {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
 
-/* Hot badge */
-.rd-hot-badge { background: linear-gradient(135deg, #dc2626, #f97316); color: #fff; text-align: center; padding: 12px; border-radius: 10px; font-size: 13px; font-weight: 700; }
+.chitietphong-loiich-muc {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  color: #475569;
+  margin-bottom: 10px;
+}
 
-@media (max-width: 768px) {
-  .rd-gallery { grid-template-columns: 1fr; height: auto; }
-  .rd-gallery__main { height: 200px; }
-  .rd-gallery__grid { grid-template-columns: 1fr 1fr; }
-  .rd-hotel-name { font-size: 18px; }
+/* Responsive */
+@media (max-width: 992px) {
+  .chitietphong-thuvien-khung { height: 350px; }
+  .chitietphong-thuvien-luoi-moi.grid-double,
+  .chitietphong-thuvien-luoi-moi { grid-template-columns: 1fr; }
+  .chitietphong-anh-phu-khung { display: none; }
+}
+
+@media (max-width: 576px) {
+  .chitietphong-thuvien-khung { height: 250px; }
+  .chitietphong-khachsan-ten { font-size: 22px; }
+}
+
+/* Hot badge - Red & Sticky theme */
+.chitietphong-hot-huyhieu {
+  background: #fff5f5;
+  color: #e53e3e;
+  border: 1px solid #fed7d7;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(229, 62, 62, 0.05);
+}
+
+.chitietphong-hot-huyhieu i {
+  color: #e53e3e;
+  animation: pulse-fire 1.5s infinite;
+}
+
+@keyframes pulse-fire {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }

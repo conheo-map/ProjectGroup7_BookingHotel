@@ -9,12 +9,12 @@
     </div>
 </div>
 
-<div class="main-card overflow-hidden">
-    <div class="card-header-clean bg-light">
+<div class="the-chinh overflow-hidden">
+    <div class="the-tieude-sach bg-light">
         <h6 class="fw-bold mb-0">Danh sách tài khoản nội bộ</h6>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover table-clean mb-0">
+        <table class="table table-hover bang-sach mb-0">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -31,11 +31,11 @@
                         <td class="text-muted small">#{{ u.user_id }}</td>
                         <td>
                             <div class="fw-bold">{{ u.username }}</div>
-                            <div class="extra-small text-muted">{{ u.email }}</div>
+                            <div class="kichthuoc-nho-hon text-muted">{{ u.email }}</div>
                         </td>
                         <td>{{ u.full_name }}</td>
                         <td>
-                            <span class="badge badge-clean 
+                            <span class="badge huyhieu-sach 
                                 {% if u.roles == 'Admin' %}bg-danger text-danger
                                 {% elif u.roles == 'Manager' %}bg-primary text-primary
                                 {% else %}bg-secondary text-secondary{% endif %} bg-opacity-10 border border-opacity-25">
@@ -44,12 +44,12 @@
                         </td>
                         <td class="text-end">
                             <form action="/admin/users/{{ u.user_id }}/role" method="POST" class="d-inline-flex gap-1 align-items-center">
-                                <select name="new_role_name" class="form-select form-select-sm form-control-clean py-1">
+                                <select name="new_role_name" class="form-select form-select-sm bieumau-dieukhien-sach py-1">
                                     {% for r in roles %}
                                         <option value="{{ r }}" {% if r == u.roles %}selected{% endif %}>{{ r }}</option>
                                     {% endfor %}
                                 </select>
-                                <button type="submit" class="btn btn-sm btn-blue-booking py-1">Cập nhật</button>
+                                <button type="submit" class="btn btn-sm nut-xanh-datphong py-1">Cập nhật</button>
                             </form>
                             
                             <form action="/admin/users/{{ u.user_id }}/delete" method="POST" class="d-inline-block ms-2">

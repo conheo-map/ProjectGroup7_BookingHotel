@@ -1,50 +1,78 @@
-/* Layout 2 cột kiểu Stripe */
-.pay-layout {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  min-height: calc(100vh - 80px);
-  margin: -24px -15px;
+/* Layout 2 cột kiểu Stripe - FULL SCREEN */
+.thanhtoan-bocuc {
+  display: flex;
+  min-height: 100vh;
+  margin: 0;
+  width: 100vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 9999;
 }
+
 @media (max-width: 900px) {
-  .pay-layout { grid-template-columns: 1fr; }
+  .thanhtoan-bocuc {
+    flex-direction: column;
+  }
 }
 
 /* CỘT TRÁI: Dark summary */
-.pay-summary {
-  background: #1a1a2e;
+.thanhtoan-tomtat {
+  flex: 1;
+  background: var(--mau-xanh-dam);
   color: #e0e0e0;
-  padding: 40px 36px;
+  padding: 60px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Center content horizontally */
 }
-.pay-back {
+
+.thanhtoan-tomtat-inner {
+  width: 100%;
+  max-width: 440px;
+}
+
+.thanhtoan-quaylai {
   color: #94a3b8;
   text-decoration: none;
   font-size: 13px;
   display: inline-block;
   margin-bottom: 24px;
 }
-.pay-back:hover { color: #fff; }
-.pay-summary__title {
+
+.thanhtoan-quaylai:hover {
+  color: #fff;
+}
+
+.thanhtoan-tomtat-tieude {
   font-size: 14px;
   color: #94a3b8;
   margin-bottom: 6px;
 }
-.pay-summary__amount {
+
+.thanhtoan-tomtat__amount {
   font-size: 36px;
   font-weight: 800;
   color: #fff;
   line-height: 1.1;
 }
-.pay-currency { font-size: 20px; font-weight: 600; }
-.pay-summary__note {
+
+.thanhtoan-tiente {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.thanhtoan-tomtat-ghichu {
   font-size: 12px;
   color: #64748b;
   margin-bottom: 28px;
 }
 
 /* Product card */
-.pay-product-card {
-  background: rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.1);
+.thanhtoan-sanpham-the {
+  background: rgba(255, 255, 255, .06);
+  border: 1px solid rgba(255, 255, 255, .1);
   border-radius: 12px;
   padding: 16px;
   display: flex;
@@ -52,22 +80,48 @@
   gap: 14px;
   margin-bottom: 20px;
 }
-.pay-product-card__icon {
-  width: 44px; height: 44px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; flex-shrink: 0;
-}
-.pay-product-card__name { font-weight: 700; color: #fff; font-size: 14px; }
-.pay-product-card__desc { font-size: 12px; color: #94a3b8; }
-.pay-product-card__meta { font-size: 11px; color: #64748b; margin-top: 2px; }
-.pay-product-card__price { margin-left: auto; font-weight: 700; color: #fff; font-size: 14px; white-space: nowrap; }
 
-.pay-deposit-badge {
-  background: rgba(245,158,11,.15);
-  border: 1px solid rgba(245,158,11,.3);
-  color: #fbbf24;
+.thanhtoan-sanpham-the-bieutuong {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--mau-xanh-chinh), var(--mau-phu));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.thanhtoan-sanpham-the-ten {
+  font-weight: 700;
+  color: #fff;
+  font-size: 14px;
+}
+
+.thanhtoan-sanpham-the-mota {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+.thanhtoan-sanpham-the-thongtin {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.thanhtoan-sanpham-the-gia {
+  margin-left: auto;
+  font-weight: 700;
+  color: #fff;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.thanhtoan-datcoc-huyhieu {
+  background: rgba(245, 158, 11, .15);
+  border: 1px solid rgba(245, 158, 11, .3);
+  color: var(--mau-vang-chinh);
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 12px;
@@ -76,132 +130,242 @@
 }
 
 /* Breakdown */
-.pay-breakdown { border-top: 1px solid rgba(255,255,255,.1); padding-top: 16px; }
-.pay-breakdown__row {
-  display: flex; justify-content: space-between;
-  font-size: 13px; color: #94a3b8;
+.thanhtoan-chitiet {
+  border-top: 1px solid rgba(255, 255, 255, .1);
+  padding-top: 16px;
+}
+
+.thanhtoan-chitiet-hang {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #94a3b8;
   padding: 6px 0;
 }
-.pay-breakdown__row--sub { color: #64748b; font-style: italic; }
-.pay-breakdown__total {
-  display: flex; justify-content: space-between;
-  font-size: 14px; font-weight: 700; color: #fff;
-  padding: 12px 0 0; margin-top: 8px;
-  border-top: 1px solid rgba(255,255,255,.15);
+
+.thanhtoan-chitiet-hang-phu {
+  color: #64748b;
+  font-style: italic;
+}
+
+.thanhtoan-chitiet-tong {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  padding: 12px 0 0;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, .15);
 }
 
 /* CỘT PHẢI: White form */
-.pay-form-side {
-  background: #fff;
-  padding: 40px 44px;
-  max-width: 520px;
+.thanhtoan-bieumau-trai {
+  flex: 1;
+  background: #fbfbfb;
+  padding: 60px 40px;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
+
+.thanhtoan-bieumau-trai-inner {
+  width: 100%;
+  max-width: 500px;
+}
+
 @media (max-width: 900px) {
-  .pay-form-side { max-width: 100%; padding: 24px; }
+  .thanhtoan-bieumau-trai {
+    padding: 24px;
+    align-items: stretch;
+  }
+
+  .thanhtoan-bieumau-trai-inner {
+    max-width: 100%;
+  }
 }
 
 /* Sections */
-.pay-section { margin-bottom: 28px; }
-.pay-section__title {
-  font-size: 15px; font-weight: 700; color: #0f172a;
+.thanhtoan-phan {
+  margin-bottom: 28px;
+}
+
+.thanhtoan-phan-tieude {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mau-xanh-dam);
   margin-bottom: 14px;
 }
 
 /* Input styling */
-.pay-input {
+.thanhtoan-nhap {
   width: 100%;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   padding: 10px 14px;
   font-size: 14px;
-  color: #1e293b;
+  color: var(--mau-xanh-dam);
   outline: none;
   transition: border-color .2s, box-shadow .2s;
 }
-.pay-input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+
+.thanhtoan-nhap:focus {
+  border-color: var(--mau-xanh-chinh);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
 }
-.pay-input-box {
+
+.thanhtoan-nhap-hop {
   border: 1px solid #d1d5db;
   border-radius: 10px;
   padding: 6px 14px 8px;
   background: #f9fafb;
 }
-.pay-input-box .pay-input-label {
-  font-size: 11px; color: #94a3b8; font-weight: 600;
-}
-.pay-input-box .pay-input {
-  border: none; padding: 2px 0; background: transparent;
+
+.thanhtoan-nhap-hop .thanhtoan-nhap-nhan {
+  font-size: 11px;
+  color: #94a3b8;
   font-weight: 600;
 }
-.pay-input-box .pay-input:focus { box-shadow: none; }
+
+.thanhtoan-nhap-hop .thanhtoan-nhap {
+  border: none;
+  padding: 2px 0;
+  background: transparent;
+  font-weight: 600;
+}
+
+.thanhtoan-nhap-hop .thanhtoan-nhap:focus {
+  box-shadow: none;
+}
 
 /* Payment method list */
-.pay-method-list { display: flex; flex-direction: column; gap: 0; margin-bottom: 20px; }
-.pay-method-item {
-  display: flex; align-items: center; gap: 8px;
+.thanhtoan-phuongthuc-danhsach {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-bottom: 20px;
+}
+
+.thanhtoan-phuongthuc-muc {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   padding: 14px 16px;
   border: 1px solid #e5e7eb;
-  cursor: pointer; font-size: 14px; color: #374151;
+  cursor: pointer;
+  font-size: 14px;
+  color: #374151;
   transition: background .15s;
 }
-.pay-method-item:first-child { border-radius: 10px 10px 0 0; }
-.pay-method-item:last-child { border-radius: 0 0 10px 10px; }
-.pay-method-item:not(:first-child) { border-top: none; }
-.pay-method-item.active { background: #f0f7ff; }
-.pay-method-item input[type="radio"] { accent-color: #2563eb; }
-.pay-method-brands img { height: 20px; margin-left: 2px; }
+
+.thanhtoan-phuongthuc-muc:first-child {
+  border-radius: 10px 10px 0 0;
+}
+
+.thanhtoan-phuongthuc-muc:last-child {
+  border-radius: 0 0 10px 10px;
+}
+
+.thanhtoan-phuongthuc-muc:not(:first-child) {
+  border-top: none;
+}
+
+.thanhtoan-phuongthuc-muc.active {
+  background: #f0f7ff;
+}
+
+.thanhtoan-phuongthuc-muc input[type="radio"] {
+  accent-color: var(--mau-xanh-chinh);
+}
+
+.thanhtoan-phuongthuc-thuonghieu img {
+  height: 20px;
+  margin-left: 2px;
+}
 
 /* Card form */
-.pay-field-label {
-  font-size: 13px; font-weight: 600; color: #374151;
-  display: block; margin-bottom: 6px;
+.thanhtoan-truong-nhan {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  display: block;
+  margin-bottom: 6px;
 }
-.pay-card-row {
+
+.thanhtoan-the-hang {
   position: relative;
 }
-.pay-card-row .pay-input { padding-right: 90px; }
-.pay-card-brands {
-  position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-  display: flex; gap: 4px; font-size: 20px; color: #94a3b8;
+
+.thanhtoan-the-hang .thanhtoan-nhap {
+  padding-right: 90px;
 }
-.pay-card-row-split {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+
+.thanhtoan-the-thuonghieu {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 4px;
+  font-size: 20px;
+  color: #94a3b8;
 }
-.pay-card-row-split .pay-input {
+
+.thanhtoan-the-hang-chia {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+.thanhtoan-the-hang-chia .thanhtoan-nhap {
   border-radius: 0;
   border-top: none;
 }
-.pay-card-row-split .pay-input:first-child { border-radius: 0 0 0 8px; border-right: none; }
-.pay-card-row-split .pay-input:last-child { border-radius: 0 0 8px 0; }
-.pay-card-row .pay-input--card {
+
+.thanhtoan-the-hang-chia .thanhtoan-nhap:first-child {
+  border-radius: 0 0 0 8px;
+  border-right: none;
+}
+
+.thanhtoan-the-hang-chia .thanhtoan-nhap:last-child {
+  border-radius: 0 0 8px 0;
+}
+
+.thanhtoan-the-hang .thanhtoan-nhap-the {
   border-radius: 8px 8px 0 0;
 }
-.pay-method-detail { margin-top: 16px; }
+
+.thanhtoan-phuongthuc-chitiet {
+  margin-top: 16px;
+}
 
 /* Bank notice */
-.pay-bank-notice, .pay-cash-notice {
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+.thanhtoan-nganhang-luuy,
+.thanhtoan-tienmat-luuy {
+  background: rgba(129, 236, 236, 0.08);
+  border: 1px solid rgba(129, 236, 236, 0.25);
   border-radius: 10px;
   padding: 14px 16px;
   font-size: 13px;
-  color: #1e40af;
+  color: var(--mau-xanh-chinh);
 }
-.pay-cash-notice {
+
+.thanhtoan-tienmat-luuy {
   background: #f0fdf4;
   border-color: #bbf7d0;
   color: #166534;
 }
 
 /* Save info */
-.pay-save-info input[type="checkbox"] { accent-color: #2563eb; }
+.thanhtoan-luu-thongtin input[type="checkbox"] {
+  accent-color: var(--mau-xanh-chinh);
+}
 
 /* Submit */
-.pay-submit-btn {
+.thanhtoan-xacnhan-nut {
   width: 100%;
-  background: #1a1a2e;
+  background: var(--mau-xanh-dam);
   color: #fff;
   border: none;
   padding: 16px;
@@ -211,12 +375,27 @@
   cursor: pointer;
   transition: background .2s;
 }
-.pay-submit-btn:hover { background: #2563eb; }
+
+.thanhtoan-xacnhan-nut:hover {
+  background: var(--mau-xanh-chinh);
+}
 
 /* Trust */
-.pay-trust { margin-top: 24px; text-align: center; }
-.pay-trust__badges {
-  display: flex; justify-content: center; gap: 16px;
-  font-size: 11px; color: #64748b; margin-bottom: 6px;
+.thanhtoan-uytin {
+  margin-top: 24px;
+  text-align: center;
 }
-.pay-trust__text { font-size: 11px; color: #94a3b8; }
+
+.thanhtoan-uytin-huyhieu {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 11px;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.thanhtoan-uytin-chu {
+  font-size: 11px;
+  color: #94a3b8;
+}

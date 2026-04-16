@@ -1,45 +1,45 @@
 {% extends "base.html" %}
 {% block title %}Đăng nhập - Hotel Booking{% endblock %}
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
+<div class="xacthuc-baoboc">
+    <div class="xacthuc-chon">
         <div class="text-center mb-4">
             <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:64px;height:64px;background:rgba(0,53,128,.1)">
-                <i class="fas fa-hotel fa-2x text-booking"></i>
+                <i class="fas fa-hotel fa-2x chu-datphong"></i>
             </div>
-            <h2 class="auth-title">Đăng nhập hệ thống</h2>
-            <p class="auth-subtitle small">Dành cho Khách hàng &amp; Nhân viên nội bộ</p>
+            <h2 class="xacthuc-tieude">Đăng nhập hệ thống</h2>
+            <p class="xacthuc-phude small">Dành cho Khách hàng &amp; Nhân viên nội bộ</p>
         </div>
 
         <form method="POST" action="/login" autocomplete="on">
-            <div class="form-section-clean">
-                <label class="form-label-clean">Tên đăng nhập / Email <span class="text-danger">*</span></label>
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Tên đăng nhập / Email <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-user text-muted"></i></span>
-                    <input type="text" name="username" class="form-control form-control-clean border-start-0" placeholder="email@example.com hoặc username" required autofocus>
+                    <input type="text" name="username" class="form-control bieumau-dieukhien-sach border-start-0" placeholder="email@example.com hoặc username" required autofocus>
                 </div>
             </div>
-            <div class="form-section-clean">
-                <label class="form-label-clean">Mật khẩu <span class="text-danger">*</span></label>
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Mật khẩu <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-lock text-muted"></i></span>
-                    <input type="password" name="password" id="pw" class="form-control form-control-clean border-start-0" placeholder="Nhập mật khẩu" required>
+                    <input type="password" name="password" id="pw" class="form-control bieumau-dieukhien-sach border-start-0" placeholder="Nhập mật khẩu" required>
                     <button type="button" class="btn btn-outline-secondary border-start-0" onclick="var p=document.getElementById('pw');p.type=p.type==='text'?'password':'text';">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
             <div class="d-grid mb-4 mt-2">
-                <button type="submit" class="btn btn-blue-booking py-3 fw-bold">
+                <button type="submit" class="btn nut-xanh-datphong py-3 fw-bold">
                     <i class="fas fa-sign-in-alt me-2"></i>ĐĂNG NHẬP
                 </button>
             </div>
         </form>
 
         <div class="text-center pt-3 border-top">
-            <p class="text-muted small mb-0">Chưa có tài khoản? <a href="/register" class="fw-bold text-booking text-decoration-none">Đăng ký ngay</a></p>
+            <p class="text-muted small mb-0">Chưa có tài khoản? <a href="/register" class="fw-bold chu-datphong text-decoration-none">Đăng ký ngay</a></p>
         </div>
-        <div class="mt-4 p-3 rounded-8 bg-light small text-muted">
+        <div class="mt-4 p-3 bo-goc-8 bg-light small text-muted">
             <i class="fas fa-info-circle me-1 text-primary"></i>
             <strong>Nhân viên nội bộ</strong> đăng nhập bằng <em>username</em> do hệ thống cấp. Khách hàng dùng <em>email</em> đã đăng ký.
         </div>

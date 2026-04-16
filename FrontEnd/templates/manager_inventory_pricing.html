@@ -18,11 +18,11 @@
 </div>
 
 <!-- Hotel filter -->
-<div class="main-card p-3 mb-4">
+<div class="the-chinh p-3 mb-4">
     <form action="/manager/inventory-pricing" method="GET" class="row g-2 align-items-end">
         <div class="col-md-4">
-            <label class="form-label-clean">Lọc theo khách sạn</label>
-            <select name="hotel_id" class="form-select form-control-clean">
+            <label class="bieumau-nhan-sach">Lọc theo khách sạn</label>
+            <select name="hotel_id" class="form-select bieumau-dieukhien-sach">
                 <option value="">-- Tất cả khách sạn --</option>
                 {% for h in hotels %}
                 <option value="{{ h.hotel_id }}" {% if selected_hotel == h.hotel_id %}selected{% endif %}>
@@ -32,7 +32,7 @@
             </select>
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-blue-booking px-4 py-2">
+            <button type="submit" class="btn nut-xanh-datphong px-4 py-2">
                 <i class="fas fa-filter me-1"></i>Lọc
             </button>
         </div>
@@ -40,20 +40,20 @@
 </div>
 
 <!-- Quick price update -->
-<div class="main-card p-4 mb-4">
+<div class="the-chinh p-4 mb-4">
     <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-edit me-2 text-success"></i>Cập nhật giá nhanh</h6>
     <form method="POST" action="/manager/inventory-pricing" class="row g-3 align-items-end">
         <div class="col-md-2">
-            <label class="form-label-clean">Chế độ</label>
-            <select name="mode" class="form-select form-control-clean">
+            <label class="bieumau-nhan-sach">Chế độ</label>
+            <select name="mode" class="form-select bieumau-dieukhien-sach">
                 <option value="type">Theo loại phòng</option>
                 <option value="room">Theo phòng cụ thể</option>
             </select>
         </div>
         <div class="col-md-3">
-            <label class="form-label-clean" id="targetLabel">Chọn Loại phòng</label>
+            <label class="bieumau-nhan-sach" id="targetLabel">Chọn Loại phòng</label>
             <div id="typeSelector">
-                <select name="target_id" class="form-select form-control-clean">
+                <select name="target_id" class="form-select bieumau-dieukhien-sach">
                     <option value="">-- Chọn Loại phòng --</option>
                     {% for rt in inventory %}
                     <option value="{{ rt.room_type_code }}">{{ rt.room_type_code }} ({{ rt.hotel_name }})</option>
@@ -61,26 +61,26 @@
                 </select>
             </div>
             <div id="roomSelector" style="display: none;">
-                <input type="number" name="target_id_manual" class="form-control form-control-clean" placeholder="Nhập ID phòng (VD: 101)">
+                <input type="number" name="target_id_manual" class="form-control bieumau-dieukhien-sach" placeholder="Nhập ID phòng (VD: 101)">
             </div>
         </div>
         <div class="col-md-2">
-            <label class="form-label-clean">Từ ngày</label>
-            <input type="date" name="start_date" class="form-control form-control-clean" required>
+            <label class="bieumau-nhan-sach">Từ ngày</label>
+            <input type="date" name="start_date" class="form-control bieumau-dieukhien-sach" required>
         </div>
         <div class="col-md-2">
-            <label class="form-label-clean">Đến ngày</label>
-            <input type="date" name="end_date" class="form-control form-control-clean" required>
+            <label class="bieumau-nhan-sach">Đến ngày</label>
+            <input type="date" name="end_date" class="form-control bieumau-dieukhien-sach" required>
         </div>
         <div class="col-md-2">
-            <label class="form-label-clean">Giá mới (đ/đêm)</label>
-            <input type="number" name="new_price" class="form-control form-control-clean"
+            <label class="bieumau-nhan-sach">Giá mới (đ/đêm)</label>
+            <input type="number" name="new_price" class="form-control bieumau-dieukhien-sach"
                    min="0" step="1000" required placeholder="500000">
         </div>
         <div class="col-md-1">
             <div class="form-check mt-4">
                 <input class="form-check-input" type="checkbox" name="is_holiday" id="isHoliday">
-                <label class="form-check-label extra-small" for="isHoliday">Ngày lễ</label>
+                <label class="form-check-label kichthuoc-nho-hon" for="isHoliday">Ngày lễ</label>
             </div>
         </div>
         <div class="col-12">
@@ -94,8 +94,8 @@
 <!-- Inventory table -->
 {% if inventory %}
 {% for rt in inventory %}
-<div class="main-card p-0 overflow-hidden mb-3">
-    <div class="card-header-clean px-4 py-3 d-flex justify-content-between align-items-center">
+<div class="the-chinh p-0 overflow-hidden mb-3">
+    <div class="the-tieude-sach px-4 py-3 d-flex justify-content-between align-items-center">
         <div>
             <span class="fw-bold">{{ rt.room_type_code }}</span>
             {% if rt.hotel_name %}
@@ -103,16 +103,16 @@
             {% endif %}
             <a href="/manager/room-edit/{{ rt.room_type_id }}" class="btn btn-sm btn-outline-primary ms-2 py-0 px-2"
                title="Chỉnh sửa chi tiết">
-                <i class="fas fa-pen-alt me-1"></i><span class="extra-small">Chỉnh sửa</span>
+                <i class="fas fa-pen-alt me-1"></i><span class="kichthuoc-nho-hon">Chỉnh sửa</span>
             </a>
         </div>
         {% set total_rooms = rt.physical_rooms|length if rt.physical_rooms else 0 %}
         {% set clean_rooms = rt.physical_rooms|selectattr('housekeeping_status','equalto','Clean')|list|length if rt.physical_rooms else 0 %}
-        <div class="d-flex gap-3 align-items-center extra-small text-muted">
+        <div class="d-flex gap-3 align-items-center kichthuoc-nho-hon text-muted">
             <span><i class="fas fa-user me-1"></i>{{ rt.max_adults }}</span>
             <span><i class="fas fa-child me-1"></i>{{ rt.max_children }}</span>
-            <span class="fw-bold text-booking">{{ rt.base_price|vnd }}/đêm</span>
-            <span class="badge-clean {% if total_rooms > 0 %}bg-success bg-opacity-10 text-success border-success{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
+            <span class="fw-bold chu-datphong">{{ rt.base_price|vnd }}/đêm</span>
+            <span class="huyhieu-sach {% if total_rooms > 0 %}bg-success bg-opacity-10 text-success border-success{% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
                 {{ clean_rooms }}/{{ total_rooms }} sạch
             </span>
         </div>
@@ -120,14 +120,14 @@
     
     <!-- Lịch giá tuần -->
     <div class="px-4 py-2 border-top bg-light d-flex align-items-center gap-3">
-        <div class="extra-small fw-bold text-muted text-uppercase" style="min-width: 100px;">
+        <div class="kichthuoc-nho-hon fw-bold text-muted text-uppercase" style="min-width: 100px;">
             <i class="fas fa-calendar-alt me-1"></i>Lịch giá tuần:
         </div>
         <div class="d-flex flex-grow-1 justify-content-between overflow-auto">
             {% for wp in rt.weekly_prices %}
             <div class="text-center px-2 py-1 rounded {% if wp.is_holiday %}bg-danger bg-opacity-10{% endif %}" style="min-width: 60px;">
-                <div class="extra-small text-muted">{{ wp.date[8:10] }}/{{ wp.date[5:7] }}</div>
-                <div class="fw-bold small {% if wp.is_holiday %}text-danger{% else %}text-booking{% endif %}">
+                <div class="kichthuoc-nho-hon text-muted">{{ wp.date[8:10] }}/{{ wp.date[5:7] }}</div>
+                <div class="fw-bold small {% if wp.is_holiday %}text-danger{% else %}chu-datphong{% endif %}">
                     {{ (wp.price / 1000)|int }}k
                 </div>
             </div>
@@ -137,7 +137,7 @@
 
     {% if rt.physical_rooms %}
     <div class="table-responsive">
-        <table class="table-clean">
+        <table class="bang-sach">
             <thead>
                 <tr>
                     <th style="width: 60px;">ID</th>
@@ -154,7 +154,7 @@
                     <td class="text-muted small">#{{ pr.physical_room_id }}</td>
                     <td class="fw-bold">{{ pr.room_name }}</td>
                     <td>
-                        <span class="badge-clean extra-small
+                        <span class="huyhieu-sach kichthuoc-nho-hon
                             {% if pr.housekeeping_status == 'Clean' %}bg-success bg-opacity-10 text-success border-success
                             {% elif pr.housekeeping_status == 'Dirty' %}bg-danger bg-opacity-10 text-danger border-danger
                             {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
@@ -162,11 +162,11 @@
                         </span>
                     </td>
                     <td class="small text-muted">—</td>
-                    <td class="fw-bold small text-booking">{{ rt.base_price|vnd }}</td>
+                    <td class="fw-bold small chu-datphong">{{ rt.base_price|vnd }}</td>
                     <td class="text-end">
                         <a href="/manager/physical-room-edit/{{ pr.physical_room_id }}"
                            class="btn btn-sm btn-outline-primary py-0 px-2" title="Chỉnh sửa phòng">
-                            <i class="fas fa-pen-alt me-1"></i><span class="extra-small">Sửa</span>
+                            <i class="fas fa-pen-alt me-1"></i><span class="kichthuoc-nho-hon">Sửa</span>
                         </a>
                     </td>
                 </tr>
@@ -178,7 +178,7 @@
 </div>
 {% endfor %}
 {% else %}
-<div class="main-card p-5 text-center text-muted">
+<div class="the-chinh p-5 text-center text-muted">
     <i class="fas fa-hotel fa-3x opacity-25 mb-3 d-block"></i>
     <p>Chưa có dữ liệu kho phòng.</p>
 </div>

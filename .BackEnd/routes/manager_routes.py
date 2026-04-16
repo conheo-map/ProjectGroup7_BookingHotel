@@ -23,6 +23,11 @@ def _set_cached(cache_key, data):
     """Lưu dữ liệu vào cache với timestamp hiện tại."""
     _analytics_cache[cache_key] = {'data': data, 'ts': time.time()}
 
+def invalidate_pricing_caches():
+    """Xóa tất cả dữ liệu cache liên quan đến giá và analytics."""
+    _analytics_cache.clear()
+    print("[BACKEND] Pricing/Analytics caches invalidated.")
+
 
 
 # ─── INVENTORY & DIMENSION CRUD ──────────────────────────────────────────────
@@ -210,6 +215,7 @@ def api_physical_room_detail(pr_id):
         cursor.execute("""
             SELECT pr.*, drt.room_type_code, drt.base_price, drt.max_adults, drt.max_children,
                    drt.description AS rt_description, drt.amenities AS rt_amenities,
+                   drt.main_image AS rt_main_image, drt.images AS rt_images,
                    dh.hotel AS hotel_name
             FROM Physical_Room pr
             JOIN Dim_RoomType drt ON pr.room_type_id = drt.room_type_id
@@ -223,8 +229,10 @@ def api_physical_room_detail(pr_id):
         room = dict(row)
         try:
             room['images'] = _json.loads(room.get('images') or '[]')
+            room['rt_images'] = _json.loads(room.get('rt_images') or '[]')
         except Exception:
             room['images'] = []
+            room['rt_images'] = []
         return jsonify({'success': True, 'room': room})
 
     # ── DELETE: soft-delete ──
@@ -275,108 +283,6 @@ def api_physical_room_detail(pr_id):
     return jsonify({'success': True, 'message': 'Cap nhat phong thanh cong'})
 
 
-@manager_bp.route('/api/room-detail/<int:pr_id>/upload-image', methods=['POST'])
-def api_upload_physical_room_image(pr_id):
-    """Upload ảnh cho phòng thực tế."""
-    auth_err = require_token()
-    if auth_err is not None:
-        return auth_err
-    caller_role = get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff')
-    if caller_role not in ('Manager', 'Admin'):
-        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
-
-    if 'image' not in request.files:
-        return jsonify({'success': False, 'message': 'Khong co file anh'}), 400
-    file = request.files['image']
-    if not file.filename or not _allowed_file(file.filename):
-        return jsonify({'success': False, 'message': 'Dinh dang file khong hop le (JPG/PNG/WebP)'}), 400
-
-    file.seek(0, 2)
-    size = file.tell()
-    file.seek(0)
-    if size > _MAX_FILE_SIZE:
-        return jsonify({'success': False, 'message': 'File qua lon (toi da 5MB)'}), 400
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT images FROM Physical_Room WHERE physical_room_id = ?", (pr_id,))
-    row = cursor.fetchone()
-    if not row:
-        conn.close()
-        return jsonify({'success': False, 'message': 'Khong tim thay phong'}), 404
-
-    try:
-        current_images = _json.loads(row['images'] or '[]')
-    except Exception:
-        current_images = []
-
-    if len(current_images) >= _MAX_IMAGES:
-        conn.close()
-        return jsonify({'success': False, 'message': f'Toi da {_MAX_IMAGES} anh'}), 400
-
-    _os.makedirs(_UPLOAD_DIR, exist_ok=True)
-    ext = file.filename.rsplit('.', 1)[1].lower()
-    unique_name = f"pr_{pr_id}_{_uuid.uuid4().hex[:8]}.{ext}"
-    filepath = _os.path.join(_UPLOAD_DIR, unique_name)
-    file.save(filepath)
-
-    web_path = f"/static/uploads/rooms/{unique_name}"
-    current_images.append(web_path)
-
-    cursor.execute("UPDATE Physical_Room SET images = ? WHERE physical_room_id = ?",
-                   (_json.dumps(current_images, ensure_ascii=False), pr_id))
-    conn.commit()
-    conn.close()
-    return jsonify({'success': True, 'image_url': web_path, 'images': current_images})
-
-
-@manager_bp.route('/api/room-detail/<int:pr_id>/delete-image', methods=['POST'])
-def api_delete_physical_room_image(pr_id):
-    """Xóa 1 ảnh cụ thể khỏi phòng thực tế."""
-    auth_err = require_token()
-    if auth_err is not None:
-        return auth_err
-    caller_role = get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff')
-    if caller_role not in ('Manager', 'Admin'):
-        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
-
-    data = request.get_json() or {}
-    image_url = data.get('image_url', '').strip()
-    if not image_url:
-        return jsonify({'success': False, 'message': 'Thieu image_url'}), 400
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-    cursor.execute("SELECT images FROM Physical_Room WHERE physical_room_id = ?", (pr_id,))
-    row = cursor.fetchone()
-    if not row:
-        conn.close()
-        return jsonify({'success': False, 'message': 'Khong tim thay phong'}), 404
-
-    try:
-        current_images = _json.loads(row['images'] or '[]')
-    except Exception:
-        current_images = []
-
-    if image_url not in current_images:
-        conn.close()
-        return jsonify({'success': False, 'message': 'Anh khong ton tai trong danh sach'}), 404
-
-    current_images.remove(image_url)
-    cursor.execute("UPDATE Physical_Room SET images = ? WHERE physical_room_id = ?",
-                   (_json.dumps(current_images, ensure_ascii=False), pr_id))
-    conn.commit()
-    conn.close()
-
-    if image_url.startswith('/static/uploads/rooms/'):
-        disk_path = _os.path.join(_UPLOAD_DIR, _os.path.basename(image_url))
-        if _os.path.exists(disk_path):
-            try:
-                _os.remove(disk_path)
-            except Exception:
-                pass
-
-    return jsonify({'success': True, 'images': current_images})
 
 
 # ─── ROOM TYPE IMAGE MANAGEMENT ──────────────────────────────────────────────
@@ -384,6 +290,7 @@ def api_delete_physical_room_image(pr_id):
 @manager_bp.route('/api/room-types/<int:room_type_id>/upload-image', methods=['POST'])
 def api_upload_room_image(room_type_id):
     """Upload ảnh cho loại phòng. Nhận multipart/form-data."""
+    print(f"[BACKEND] api_upload_room_image: RT={room_type_id}")
     auth_err = require_token()
     if auth_err is not None:
         return auth_err
@@ -422,19 +329,37 @@ def api_upload_room_image(room_type_id):
         return jsonify({'success': False, 'message': f'Toi da {_MAX_IMAGES} anh'}), 400
 
     # Save file
-    _os.makedirs(_UPLOAD_DIR, exist_ok=True)
-    ext = file.filename.rsplit('.', 1)[1].lower()
-    unique_name = f"{room_type_id}_{_uuid.uuid4().hex[:8]}.{ext}"
-    filepath = _os.path.join(_UPLOAD_DIR, unique_name)
-    file.save(filepath)
+    try:
+        _os.makedirs(_UPLOAD_DIR, exist_ok=True)
+        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'jpg'
+        unique_name = f"{room_type_id}_{_uuid.uuid4().hex[:8]}.{ext}"
+        filepath = _os.path.join(_UPLOAD_DIR, unique_name)
+        file.save(filepath)
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': f'Lỗi lưu file: {str(e)}'}), 500
 
     web_path = f"/static/uploads/rooms/{unique_name}"
     current_images.append(web_path)
 
-    cursor.execute("UPDATE Dim_RoomType SET images = ? WHERE room_type_id = ?",
-                   (_json.dumps(current_images, ensure_ascii=False), room_type_id))
-    conn.commit()
-    conn.close()
+    try:
+        # Nếu chưa có main_image thì lấy ảnh này làm main
+        cursor.execute("SELECT main_image FROM Dim_RoomType WHERE room_type_id = ?", (room_type_id,))
+        row_main = cursor.fetchone()
+        
+        if not row_main or not row_main['main_image']:
+            cursor.execute("UPDATE Dim_RoomType SET images = ?, main_image = ? WHERE room_type_id = ?",
+                           (_json.dumps(current_images, ensure_ascii=False), web_path, room_type_id))
+        else:
+            cursor.execute("UPDATE Dim_RoomType SET images = ? WHERE room_type_id = ?",
+                           (_json.dumps(current_images, ensure_ascii=False), room_type_id))
+        
+        conn.commit()
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Lỗi cập nhật DB: {str(e)}'}), 500
+    finally:
+        conn.close()
+
     return jsonify({'success': True, 'image_url': web_path, 'images': current_images})
 
 
@@ -471,8 +396,16 @@ def api_delete_room_image(room_type_id):
         return jsonify({'success': False, 'message': 'Anh khong ton tai trong danh sach'}), 404
 
     current_images.remove(image_url)
-    cursor.execute("UPDATE Dim_RoomType SET images = ? WHERE room_type_id = ?",
-                   (_json.dumps(current_images, ensure_ascii=False), room_type_id))
+    
+    # Nếu ảnh bị xóa đang là main_image thì xóa main_image hoặc chọn ảnh khác
+    cursor.execute("SELECT main_image FROM Dim_RoomType WHERE room_type_id = ?", (room_type_id,))
+    row_main = cursor.fetchone()
+    new_main = row_main['main_image'] if row_main else None
+    if row_main and row_main['main_image'] == image_url:
+        new_main = current_images[0] if current_images else None
+        
+    cursor.execute("UPDATE Dim_RoomType SET images = ?, main_image = ? WHERE room_type_id = ?",
+                   (_json.dumps(current_images, ensure_ascii=False), new_main, room_type_id))
     conn.commit()
     conn.close()
 
@@ -485,6 +418,169 @@ def api_delete_room_image(room_type_id):
             except Exception:
                 pass
 
+    return jsonify({'success': True, 'images': current_images})
+
+
+@manager_bp.route('/api/room-types/<int:room_type_id>/set-main-image', methods=['POST'])
+def api_set_main_image_room_type(room_type_id):
+    auth_err = require_token()
+    if auth_err is not None:
+        return auth_err
+    if get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff') not in ('Manager', 'Admin'):
+        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
+    
+    data = request.get_json() or {}
+    image_url = data.get('image_url', '').strip()
+    if not image_url:
+        return jsonify({'success': False, 'message': 'Thieu image_url'}), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Dim_RoomType SET main_image = ? WHERE room_type_id = ?", (image_url, room_type_id))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True, 'message': 'Da dat anh dai dien thanh cong'})
+
+@manager_bp.route('/api/room-detail/<int:pr_id>/set-main-image', methods=['POST'])
+def api_set_main_image_physical_room(pr_id):
+    auth_err = require_token()
+    if auth_err is not None:
+        return auth_err
+    if get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff') not in ('Manager', 'Admin'):
+        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
+    
+    data = request.get_json() or {}
+    image_url = data.get('image_url', '').strip()
+    if not image_url:
+        return jsonify({'success': False, 'message': 'Thieu image_url'}), 400
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("UPDATE Physical_Room SET main_image = ? WHERE physical_room_id = ?", (image_url, pr_id))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True, 'message': 'Da dat anh dai dien thanh cong'})
+
+
+@manager_bp.route('/api/room-detail/<int:pr_id>/upload-image', methods=['POST'])
+def api_upload_physical_room_image(pr_id):
+    """Upload ảnh riêng cho từng phòng vật lý."""
+    print(f"[BACKEND] api_upload_physical_room_image: PR={pr_id}")
+    auth_err = require_token()
+    if auth_err is not None:
+        return auth_err
+    if get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff') not in ('Manager', 'Admin'):
+        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
+
+    if 'image' not in request.files:
+        return jsonify({'success': False, 'message': 'Khong co file anh'}), 400
+    file = request.files['image']
+    if not file.filename or not _allowed_file(file.filename):
+        return jsonify({'success': False, 'message': 'Dinh dang file khong hop le'}), 400
+
+    # Check file size
+    file.seek(0, 2)
+    size = file.tell()
+    file.seek(0)
+    if size > _MAX_FILE_SIZE:
+        return jsonify({'success': False, 'message': 'File qua lon (toi da 5MB)'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT images FROM Physical_Room WHERE physical_room_id = ?", (pr_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Khong tim thay phong'}), 404
+
+    try:
+        current_images = _json.loads(row['images'] or '[]')
+    except:
+        current_images = []
+
+    if len(current_images) >= _MAX_IMAGES:
+        conn.close()
+        return jsonify({'success': False, 'message': f'Toi da {_MAX_IMAGES} anh'}), 400
+
+    # Save
+    try:
+        _os.makedirs(_UPLOAD_DIR, exist_ok=True)
+        ext = file.filename.rsplit('.', 1)[1].lower() if '.' in file.filename else 'jpg'
+        unique_name = f"pr_{pr_id}_{_uuid.uuid4().hex[:8]}.{ext}"
+        filepath = _os.path.join(_UPLOAD_DIR, unique_name)
+        file.save(filepath)
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'message': f'Loi luu file: {str(e)}'}), 500
+
+    web_path = f"/static/uploads/rooms/{unique_name}"
+    current_images.append(web_path)
+
+    try:
+        cursor.execute("SELECT main_image FROM Physical_Room WHERE physical_room_id = ?", (pr_id,))
+        row_main = cursor.fetchone()
+        if not row_main or not row_main['main_image']:
+            cursor.execute("UPDATE Physical_Room SET images = ?, main_image = ? WHERE physical_room_id = ?",
+                           (_json.dumps(current_images, ensure_ascii=False), web_path, pr_id))
+        else:
+            cursor.execute("UPDATE Physical_Room SET images = ? WHERE physical_room_id = ?",
+                           (_json.dumps(current_images, ensure_ascii=False), pr_id))
+        conn.commit()
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Loi DB: {str(e)}'}), 500
+    finally:
+        conn.close()
+
+    return jsonify({'success': True, 'image_url': web_path, 'images': current_images})
+
+
+@manager_bp.route('/api/room-detail/<int:pr_id>/delete-image', methods=['POST'])
+def api_delete_physical_room_image(pr_id):
+    """Xóa ảnh của phòng vật lý."""
+    auth_err = require_token()
+    if auth_err is not None:
+        return auth_err
+    if get_user_role_from_db(g.api_user_id, g.api_account_type or 'staff') not in ('Manager', 'Admin'):
+        return jsonify({'success': False, 'message': 'Khong co quyen'}), 403
+
+    data = request.get_json() or {}
+    image_url = data.get('image_url', '').strip()
+    if not image_url:
+        return jsonify({'success': False, 'message': 'Thieu image_url'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT images, main_image FROM Physical_Room WHERE physical_room_id = ?", (pr_id,))
+    row = cursor.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({'success': False, 'message': 'Khong tim thay phong'}), 404
+
+    try:
+        current_images = _json.loads(row['images'] or '[]')
+    except:
+        current_images = []
+
+    if image_url in current_images:
+        current_images.remove(image_url)
+        new_main = row['main_image']
+        if row['main_image'] == image_url:
+            new_main = current_images[0] if current_images else None
+        
+        cursor.execute("UPDATE Physical_Room SET images = ?, main_image = ? WHERE physical_room_id = ?",
+                       (_json.dumps(current_images, ensure_ascii=False), new_main, pr_id))
+        conn.commit()
+
+        # Delete disk
+        if image_url.startswith('/static/uploads/rooms/'):
+            disk_path = _os.path.join(_UPLOAD_DIR, _os.path.basename(image_url))
+            if _os.path.exists(disk_path):
+                try:
+                    _os.remove(disk_path)
+                except:
+                    pass
+
+    conn.close()
     return jsonify({'success': True, 'images': current_images})
 
 

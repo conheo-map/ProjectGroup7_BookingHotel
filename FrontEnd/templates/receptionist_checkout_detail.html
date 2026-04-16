@@ -17,8 +17,8 @@
 <div class="row g-4">
     <!-- Left: Info + Add service -->
     <div class="col-lg-7">
-        <div class="main-card p-4 mb-4">
-            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-bed me-2 text-booking"></i>Thông tin đặt phòng</h6>
+        <div class="the-chinh p-4 mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-bed me-2 chu-datphong"></i>Thông tin đặt phòng</h6>
             <div class="row g-2">
                 <div class="col-6">
                     <div class="small text-muted">Khách hàng</div>
@@ -41,9 +41,9 @@
 
         <!-- Extra services added -->
         {% if extra_services %}
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-concierge-bell me-2 text-warning"></i>Dịch vụ đã dùng</h6>
-            <table class="table-clean">
+            <table class="bang-sach">
                 <thead><tr><th>Dịch vụ</th><th>SL</th><th>Đơn giá</th><th>Tiền</th></tr></thead>
                 <tbody>
                     {% for s in extra_services %}
@@ -67,12 +67,12 @@
 
         <!-- Add service -->
         {% if catalog %}
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Thêm dịch vụ</h6>
             <form method="POST" action="/receptionist/add-service/{{ booking_id }}" class="row g-2 align-items-end">
                 <div class="col-md-5">
-                    <label class="form-label-clean">Dịch vụ từ danh mục</label>
-                    <select name="catalog_id" class="form-select form-control-clean" id="catalogSelect">
+                    <label class="bieumau-nhan-sach">Dịch vụ từ danh mục</label>
+                    <select name="catalog_id" class="form-select bieumau-dieukhien-sach" id="catalogSelect">
                         <option value="">-- Chọn dịch vụ --</option>
                         {% for c in catalog %}
                         <option value="{{ c.catalog_id }}"
@@ -84,18 +84,18 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="form-label-clean">Tên dịch vụ (tùy chỉnh)</label>
-                    <input type="text" name="service_name" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Tên dịch vụ (tùy chỉnh)</label>
+                    <input type="text" name="service_name" class="form-control bieumau-dieukhien-sach"
                            id="svcName" placeholder="Hoặc nhập tên...">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label-clean">Số lượng</label>
-                    <input type="number" name="quantity" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Số lượng</label>
+                    <input type="number" name="quantity" class="form-control bieumau-dieukhien-sach"
                            min="1" value="1">
                 </div>
                 <div class="col-md-2">
-                    <label class="form-label-clean">Đơn giá</label>
-                    <input type="number" name="unit_price" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Đơn giá</label>
+                    <input type="number" name="unit_price" class="form-control bieumau-dieukhien-sach"
                            id="svcPrice" min="0" step="1000" value="0">
                 </div>
                 <div class="col-12">
@@ -110,8 +110,8 @@
 
     <!-- Right: Summary + Confirm checkout -->
     <div class="col-lg-5">
-        <div class="main-card p-4 mb-4">
-            <h6 class="fw-bold mb-3"><i class="fas fa-calculator me-2 text-booking"></i>Tổng kết</h6>
+        <div class="the-chinh p-4 mb-4">
+            <h6 class="fw-bold mb-3"><i class="fas fa-calculator me-2 chu-datphong"></i>Tổng kết</h6>
             <div class="d-flex justify-content-between mb-2 small">
                 <span class="text-muted">Tiền phòng</span>
                 <span class="fw-bold">{{ booking.total_price|vnd if booking.total_price else '—' }}</span>
@@ -130,7 +130,7 @@
             {% endif %}
             <div class="border-top pt-3 mt-2 d-flex justify-content-between">
                 <span class="fw-bold">Tổng thanh toán</span>
-                <span class="fw-bold fs-5 text-booking">
+                <span class="fw-bold fs-5 chu-datphong">
                     {% if booking.total_price %}
                     {{ (booking.total_price + (extra_grand_total or 0) - (booking.deposit_paid or 0))|vnd }}
                     {% else %}—{% endif %}
@@ -138,7 +138,7 @@
             </div>
         </div>
 
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3"><i class="fas fa-sign-out-alt me-2 text-success"></i>Xác nhận trả phòng</h6>
             <p class="small text-muted mb-3">Xác nhận rằng khách hàng đã thanh toán đầy đủ và bàn giao phòng.</p>
             <form method="POST" action="/receptionist/checkout/{{ booking_id }}">

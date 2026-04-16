@@ -19,12 +19,12 @@
 </div>
 
 <!-- Filter -->
-<div class="main-card p-3 mb-4">
+<div class="the-chinh p-3 mb-4">
     <form action="/manager/room-pricing-detailed" method="GET" class="row g-2 align-items-end">
         <input type="hidden" name="start_date" value="{{ start_date }}">
         <div class="col-md-4">
-            <label class="form-label-clean">Chọn khách sạn</label>
-            <select name="hotel_id" class="form-select form-control-clean">
+            <label class="bieumau-nhan-sach">Chọn khách sạn</label>
+            <select name="hotel_id" class="form-select bieumau-dieukhien-sach">
                 <option value="">-- Tất cả khách sạn --</option>
                 {% for h in hotels %}
                 <option value="{{ h.hotel_id }}" {% if selected_hotel == h.hotel_id %}selected{% endif %}>
@@ -34,7 +34,7 @@
             </select>
         </div>
         <div class="col-auto">
-            <button type="submit" class="btn btn-blue-booking px-4 py-2">
+            <button type="submit" class="btn nut-xanh-datphong px-4 py-2">
                 <i class="fas fa-search me-1"></i>Xem lịch
             </button>
         </div>
@@ -42,15 +42,15 @@
 </div>
 
 <!-- Date Navigation -->
-<div class="d-flex justify-content-between align-items-center mb-4 p-3 main-card bg-light bg-opacity-50">
+<div class="d-flex justify-content-between align-items-center mb-4 p-3 the-chinh bg-light bg-opacity-50">
     <div class="d-flex align-items-center gap-3">
         <a href="/manager/room-pricing-detailed?start_date={{ prev_week }}{% if selected_hotel %}&hotel_id={{ selected_hotel }}{% endif %}" 
            class="btn btn-outline-primary btn-sm rounded-pill px-3">
             <i class="fas fa-chevron-left me-1"></i> Tuần trước
         </a>
         <div class="text-center px-4 border-start border-end">
-            <div class="extra-small text-muted uppercase fw-bold ls-1">Đang xem giai đoạn</div>
-            <div class="fw-bold text-booking">
+            <div class="kichthuoc-nho-hon text-muted uppercase fw-bold ls-1">Đang xem giai đoạn</div>
+            <div class="fw-bold chu-datphong">
                 {{ dates[0]|date_parse|format_date('%d/%m/%Y') }} - {{ dates[-1]|date_parse|format_date('%d/%m/%Y') }}
             </div>
         </div>
@@ -71,14 +71,14 @@
     {% for rt in inventory %}
     <div class="mb-5">
         <div class="d-flex align-items-center mb-3">
-            <h5 class="fw-bold mb-0 text-booking">{{ rt.room_type_code }}</h5>
+            <h5 class="fw-bold mb-0 chu-datphong">{{ rt.room_type_code }}</h5>
             <span class="badge bg-light text-dark ms-2 border small fw-normal">{{ rt.physical_rooms|length }} phòng</span>
-            <div class="ms-auto extra-small text-muted">
+            <div class="ms-auto kichthuoc-nho-hon text-muted">
                 Giá gốc loại phòng: <span class="fw-bold">{{ rt.base_price|vnd }}</span>
             </div>
         </div>
 
-        <div class="main-card p-0 overflow-hidden shadow-sm">
+        <div class="the-chinh p-0 overflow-hidden shadow-sm">
             <div class="table-responsive">
                 <table class="table table-hover mb-0" style="min-width: 900px;">
                     <thead class="bg-light border-bottom">
@@ -86,7 +86,7 @@
                             <th class="ps-4 py-3 border-end" style="width: 250px;">Phòng & Trạng thái</th>
                             {% for d_str in dates %}
                             <th class="text-center py-3">
-                                <div class="extra-small text-muted">{{ d_str[8:10] }}/{{ d_str[5:7] }}</div>
+                                <div class="kichthuoc-nho-hon text-muted">{{ d_str[8:10] }}/{{ d_str[5:7] }}</div>
                                 <div class="small fw-bold">{{ d_str|date_parse|format_date('%a') if d_str|date_parse else '' }}</div>
                             </th>
                             {% endfor %}
@@ -97,7 +97,7 @@
                         <tr class="align-middle">
                             <td class="ps-4 py-3 border-end">
                                 <div class="fw-bold text-dark mb-0">{{ pr.room_name }}</div>
-                                <div class="extra-small text-muted d-flex align-items-center gap-2">
+                                <div class="kichthuoc-nho-hon text-muted d-flex align-items-center gap-2">
                                     <span>ID: <code class="text-primary">{{ pr.physical_room_id }}</code></span>
                                     <span>•</span>
                                     <span class="{% if pr.housekeeping_status == 'Clean' %}text-success{% else %}text-warning{% endif %}">
@@ -107,13 +107,13 @@
                             </td>
                             {% for wp in pr.weekly_prices %}
                             <td class="text-center p-2">
-                                <div class="pricing-bubble p-2 rounded-3 border transition-all hover-scale cursor-pointer 
+                                <div class="gia-bongbong p-2 rounded-3 border transition-all hover-scale contro-chuot 
                                     {% if wp.is_holiday %}bg-danger bg-opacity-10 border-danger border-opacity-25{% else %}bg-white border-light{% endif %}"
                                      data-bs-toggle="tooltip" title="{{ wp.date }}">
-                                    <div class="fw-bold small {% if wp.is_holiday %}text-danger{% else %}text-booking{% endif %}">
+                                    <div class="fw-bold small {% if wp.is_holiday %}text-danger{% else %}chu-datphong{% endif %}">
                                         {{ (wp.price / 1000)|int }}k
                                     </div>
-                                    <div class="extra-small opacity-75" style="font-size: 0.65rem;">
+                                    <div class="kichthuoc-nho-hon opacity-75" style="font-size: 0.65rem;">
                                         {% if wp.is_holiday %}Lễ{% else %}Thường{% endif %}
                                     </div>
                                 </div>

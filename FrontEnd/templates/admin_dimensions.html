@@ -12,12 +12,12 @@
 <div class="row g-4">
     <!-- KHÁCH SẠN (READ ONLY OR CORE) -->
     <div class="col-lg-5">
-        <div class="main-card overflow-hidden shadow-sm border-0 rounded-8 bg-white h-100">
-            <div class="card-header-clean bg-light">
+        <div class="the-chinh overflow-hidden shadow-sm border-0 bo-goc-8 bg-white h-100">
+            <div class="the-tieude-sach bg-light">
                 <h6 class="fw-bold mb-0">Danh sách Khách sạn (Partner Hotels)</h6>
             </div>
             <div class="table-responsive">
-                <table class="table table-clean mb-0">
+                <table class="table bang-sach mb-0">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -35,22 +35,22 @@
                 </table>
             </div>
             <div class="p-3 bg-light bg-opacity-50 border-top mt-auto">
-                <p class="extra-small text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Để thêm chi nhánh mới, vui lòng liên hệ Bộ phận Kỹ thuật để thiết lập hạ tầng.</p>
+                <p class="kichthuoc-nho-hon text-muted mb-0"><i class="fas fa-info-circle me-1"></i> Để thêm chi nhánh mới, vui lòng liên hệ Bộ phận Kỹ thuật để thiết lập hạ tầng.</p>
             </div>
         </div>
     </div>
 
     <!-- LOẠI PHÒNG (CRUD) -->
     <div class="col-lg-7">
-        <div class="main-card overflow-hidden shadow-sm border-0 rounded-8 bg-white h-100">
-            <div class="card-header-clean bg-light d-flex justify-content-between align-items-center">
+        <div class="the-chinh overflow-hidden shadow-sm border-0 bo-goc-8 bg-white h-100">
+            <div class="the-tieude-sach bg-light d-flex justify-content-between align-items-center">
                 <h6 class="fw-bold mb-0">Quản lý Loại phòng Đặc thù</h6>
-                <button class="btn btn-sm btn-blue-booking px-3" data-bs-toggle="modal" data-bs-target="#addRTModal">
+                <button class="btn btn-sm nut-xanh-datphong px-3" data-bs-toggle="modal" data-bs-target="#addRTModal">
                     <i class="fas fa-plus me-1"></i> Thêm mới
                 </button>
             </div>
             <div class="table-responsive">
-                <table class="table table-hover table-clean mb-0">
+                <table class="table table-hover bang-sach mb-0">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -62,13 +62,13 @@
                         {% if room_types %}
                             {% for rt in room_types %}
                             <tr class="align-middle {% if not rt.is_active %}opacity-50{% endif %}">
-                                <td class="extra-small text-muted fw-bold">#{{ rt.room_type_id }}</td>
+                                <td class="kichthuoc-nho-hon text-muted fw-bold">#{{ rt.room_type_id }}</td>
                                 <td>
                                     <form method="POST" action="/admin/dimensions" class="d-flex gap-2 align-items-center">
                                         <input type="hidden" name="action" value="update_room_type">
                                         <input type="hidden" name="room_type_id" value="{{ rt.room_type_id }}">
                                         <input type="text" name="room_type_code" value="{{ rt.room_type_code }}" 
-                                               class="form-control form-control-sm form-control-clean border-primary border-opacity-10 fw-bold"
+                                               class="form-control form-control-sm bieumau-dieukhien-sach border-primary border-opacity-10 fw-bold"
                                                {% if not rt.is_active %}readonly{% endif %}>
                                         {% if not rt.is_active %}
                                             <span class="badge bg-secondary">Vô hiệu hóa</span>
@@ -114,13 +114,13 @@
                 </div>
                 <div class="modal-body p-4">
                     <div class="mb-0">
-                        <label class="form-label-clean">Mã loại phòng mới</label>
-                        <input type="text" name="room_type_code" class="form-control form-control-clean text-uppercase fw-bold" placeholder="VD: VIP_SUITE" required>
+                        <label class="bieumau-nhan-sach">Mã loại phòng mới</label>
+                        <input type="text" name="room_type_code" class="form-control bieumau-dieukhien-sach text-uppercase fw-bold" placeholder="VD: VIP_SUITE" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
-                    <button type="submit" class="btn btn-blue-booking px-4">Xác nhận</button>
+                    <button type="submit" class="btn nut-xanh-datphong px-4">Xác nhận</button>
                 </div>
             </form>
         </div>

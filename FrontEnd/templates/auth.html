@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}{% if form_mode == 'register' %}Đăng ký{% else %}Đăng nhập{% endif %} - Hotel Booking{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/auth.css') }}">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<style>
+  header,
+  footer,
+  .thanhben-chunha,
+  #public-layout {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background: #f6f8fd !important;
+    overflow: hidden;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <a href="/" class="back-home">
+    <i class="fas fa-arrow-left"></i> Về trang chủ
+  </a>
+
+  <!-- Container chính đánh dấu thuộc tính init mode từ Backend -->
+  <div class="auth-container" id="auth-container" data-init-mode="{{ form_mode|default('login') }}">
+
+    <!-- form Đăng Ký (Bên trái) -->
+    <div class="auth-form-container sign-up-container">
+      <form method="POST" action="/register" autocomplete="on">
+        <h2 class="auth-title">Tạo Tài Khoản</h2>
+        <div class="auth-subtitle">Trở thành thành viên để nhận ưu đãi hạng sang</div>
+
+        <!-- Cảnh báo Flash (nếu có lỗi từ backend) -->
+        {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages and form_mode == 'register' %}
+        <div class="alert alert-danger p-2 small mb-3">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="auth-input-group">
+          <label>Họ và tên</label>
+          <i class="fas fa-user auth-input-icon"></i>
+          <input type="text" name="customer_name" class="auth-input" placeholder="Nguyễn Văn A">
+        </div>
+        <div class="auth-input-group">
+          <label>Email <span class="text-danger">*</span></label>
+          <i class="fas fa-envelope auth-input-icon"></i>
+          <input type="email" name="email" class="auth-input" placeholder="example@email.com" required>
+        </div>
+        <div class="auth-input-group mb-2">
+          <label>Mật khẩu <span class="text-danger">*</span></label>
+          <i class="fas fa-lock auth-input-icon"></i>
+          <input type="password" name="password" id="pw1" class="auth-input" placeholder="Tối thiểu 6 ký tự" required
+            minlength="6">
+        </div>
+        <div class="auth-input-group">
+          <label>Xác nhận <span class="text-danger">*</span></label>
+          <i class="fas fa-check-circle auth-input-icon"></i>
+          <input type="password" name="confirm_password" id="pw2" class="auth-input" placeholder="Nhập lại mật khẩu"
+            required>
+        </div>
+
+        <button type="submit" class="auth-btn mt-2">Đăng Ký Khách Hàng</button>
+      </form>
+    </div>
+
+    <!-- form Đăng Nhập (Bên phải) -->
+    <div class="auth-form-container sign-in-container">
+      <form method="POST" action="/login" autocomplete="on">
+        <div class="d-flex justify-content-center mb-2">
+          <i class="fas fa-water fa-2x" style="color: #E1B12C;"></i>
+        </div>
+        <h2 class="auth-title">Đăng Nhập</h2>
+        <div class="auth-subtitle">Sẵn sàng đắm chìm tại Saigon-Condao Resort</div>
+
+        <!-- Cảnh báo Flash -->
+        {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages and form_mode != 'register' %}
+        <div class="alert alert-danger p-2 small mb-3">{{ messages[0] }}</div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="auth-input-group">
+          <label>Email / Username <span class="text-danger">*</span></label>
+          <i class="fas fa-envelope auth-input-icon"></i>
+          <input type="text" name="username" class="auth-input" placeholder="Nhập email của bạn" required autofocus>
+        </div>
+        <div class="auth-input-group">
+          <label>Mật khẩu <span class="text-danger">*</span></label>
+          <i class="fas fa-lock auth-input-icon"></i>
+          <input type="password" name="password" class="auth-input" placeholder="Nhập mật khẩu" required>
+        </div>
+        <div style="font-size: 12px; color: #64748b; margin-top:-5px; margin-bottom:15px; text-align:right;">
+        </div>
+
+        <button type="submit" class="auth-btn">Mở Cửa Nghỉ Dưỡng</button>
+      </form>
+    </div>
+
+    <!-- Khối Overlay Hình Ảnh Điển Tích GSAP -->
+    <div class="auth-overlay-container">
+      <div class="auth-overlay">
+        <!-- Khối nằm bên trái Overlay (Nội dung Đưa qua form Login) -->
+        <div class="auth-overlay-panel auth-overlay-left">
+          <h2 class="auth-overlay-title">Chào mừng rạng rỡ!</h2>
+          <p class="auth-overlay-text">Nếu bạn đã có tài khoản, hãy đăng nhập để tiếp tục hành trình thượng lưu.</p>
+          <button class="auth-ghost-btn" id="signIn">Đăng Nhập Tới Cửa</button>
+        </div>
+        <!-- Khối nằm bên phải Overlay (Nội dung Đưa qua form Đăng Ký) -->
+        <div class="auth-overlay-panel auth-overlay-right">
+          <h2 class="auth-overlay-title">Chưa từng tới đây?</h2>
+          <p class="auth-overlay-text">Hãy mở ra đặc quyền riêng dành cho giới tinh hoa tại Saigon-Condao Resort.</p>
+          <button class="auth-ghost-btn" id="signUp">Khơi Dậy Hội Viên</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/pages/auth.js') }}"></script>
+{% endblock %}

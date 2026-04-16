@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Đặt phòng thành công - Hotel Booking{% endblock %}
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card text-center">
+<div class="xacthuc-baoboc">
+    <div class="xacthuc-chon text-center">
         <div class="mb-4">
             <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow"
                  style="width:80px;height:80px;background:rgba(16,185,129,.12)">
@@ -13,12 +13,12 @@
         <p class="text-muted small mb-4">Cảm ơn bạn đã sử dụng dịch vụ. Chúng tôi sẽ liên hệ xác nhận sớm nhất.</p>
 
         {% if booking and booking.booking_id %}
-        <div class="main-card p-4 mb-4 text-start">
-            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-receipt me-2 text-booking"></i>Thông tin đặt phòng</h6>
+        <div class="the-chinh p-4 mb-4 text-start">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-receipt me-2 chu-datphong"></i>Thông tin đặt phòng</h6>
             <div class="row g-2">
                 <div class="col-6">
                     <div class="text-muted small">Mã đặt phòng</div>
-                    <div class="fw-bold text-booking">#{{ booking.booking_id }}</div>
+                    <div class="fw-bold chu-datphong">#{{ booking.booking_id }}</div>
                 </div>
                 {% if booking.invoice_number %}
                 <div class="col-6">
@@ -28,7 +28,7 @@
                 {% endif %}
                 <div class="col-6 mt-2">
                     <div class="text-muted small">Tổng tiền</div>
-                    <div class="fw-bold fs-5 text-booking">{{ booking.total_price|vnd }}</div>
+                    <div class="fw-bold fs-5 chu-datphong">{{ booking.total_price|vnd }}</div>
                 </div>
                 {% if booking.deposit_paid %}
                 <div class="col-6 mt-2">
@@ -62,7 +62,7 @@
         </div>
 
         <div class="d-grid gap-2">
-            <a href="/history" class="btn btn-blue-booking py-2 fw-bold">
+            <a href="/history" class="btn nut-xanh-datphong py-2 fw-bold">
                 <i class="fas fa-list me-2"></i>Xem lịch sử đặt phòng
             </a>
             <a href="/" class="btn btn-outline-secondary py-2">

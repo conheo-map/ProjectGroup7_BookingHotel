@@ -16,20 +16,20 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <form method="POST" action="/receptionist/walkin">
 
                 <!-- Guest info -->
                 <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-user me-2 text-primary"></i>Thông tin khách hàng</h6>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label-clean">Họ và tên <span class="text-danger">*</span></label>
-                        <input type="text" name="customer_name" class="form-control form-control-clean"
+                        <label class="bieumau-nhan-sach">Họ và tên <span class="text-danger">*</span></label>
+                        <input type="text" name="customer_name" class="form-control bieumau-dieukhien-sach"
                                placeholder="Nguyễn Văn A" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Số điện thoại</label>
-                        <input type="tel" name="customer_phone" class="form-control form-control-clean"
+                        <label class="bieumau-nhan-sach">Số điện thoại</label>
+                        <input type="tel" name="customer_phone" class="form-control bieumau-dieukhien-sach"
                                placeholder="0912345678">
                     </div>
                 </div>
@@ -38,8 +38,8 @@
                 <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-bed me-2 text-success"></i>Thông tin phòng</h6>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label-clean">Khách sạn <span class="text-danger">*</span></label>
-                        <select name="hotel_id" class="form-select form-control-clean" required>
+                        <label class="bieumau-nhan-sach">Khách sạn <span class="text-danger">*</span></label>
+                        <select name="hotel_id" class="form-select bieumau-dieukhien-sach" required>
                             <option value="">-- Chọn khách sạn --</option>
                             {% for h in hotels %}
                             <option value="{{ h.hotel_id }}">{{ h.hotel_name }}</option>
@@ -47,8 +47,8 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Loại phòng <span class="text-danger">*</span></label>
-                        <select name="room_type_id" class="form-select form-control-clean" required>
+                        <label class="bieumau-nhan-sach">Loại phòng <span class="text-danger">*</span></label>
+                        <select name="room_type_id" class="form-select bieumau-dieukhien-sach" required>
                             <option value="">-- Chọn loại phòng --</option>
                             {% for rt in room_types %}
                             {% for pr in rt.physical_rooms if pr.housekeeping_status == 'Clean' %}
@@ -62,8 +62,8 @@
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Phòng cụ thể <span class="text-danger">*</span></label>
-                        <select name="physical_room_id" class="form-select form-control-clean" required>
+                        <label class="bieumau-nhan-sach">Phòng cụ thể <span class="text-danger">*</span></label>
+                        <select name="physical_room_id" class="form-select bieumau-dieukhien-sach" required>
                             <option value="">-- Chọn phòng --</option>
                             {% for rt in room_types %}
                             {% for pr in rt.physical_rooms %}
@@ -76,24 +76,24 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label-clean">Người lớn</label>
-                        <select name="adults" class="form-select form-control-clean">
+                        <label class="bieumau-nhan-sach">Người lớn</label>
+                        <select name="adults" class="form-select bieumau-dieukhien-sach">
                             {% for i in range(1, 6) %}<option value="{{ i }}" {% if i==2 %}selected{% endif %}>{{ i }}</option>{% endfor %}
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label-clean">Trẻ em</label>
-                        <select name="children" class="form-select form-control-clean">
+                        <label class="bieumau-nhan-sach">Trẻ em</label>
+                        <select name="children" class="form-select bieumau-dieukhien-sach">
                             {% for i in range(0, 5) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Ngày nhận phòng <span class="text-danger">*</span></label>
-                        <input type="date" name="checkin_date" class="form-control form-control-clean" required>
+                        <label class="bieumau-nhan-sach">Ngày nhận phòng <span class="text-danger">*</span></label>
+                        <input type="date" name="checkin_date" class="form-control bieumau-dieukhien-sach" required>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Ngày trả phòng <span class="text-danger">*</span></label>
-                        <input type="date" name="checkout_date" class="form-control form-control-clean" required>
+                        <label class="bieumau-nhan-sach">Ngày trả phòng <span class="text-danger">*</span></label>
+                        <input type="date" name="checkout_date" class="form-control bieumau-dieukhien-sach" required>
                     </div>
                 </div>
 
@@ -101,26 +101,26 @@
                 <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-money-bill me-2 text-warning"></i>Thanh toán</h6>
                 <div class="row g-3 mb-4">
                     <div class="col-md-6">
-                        <label class="form-label-clean">Phương thức thanh toán</label>
-                        <select name="payment_method" class="form-select form-control-clean">
+                        <label class="bieumau-nhan-sach">Phương thức thanh toán</label>
+                        <select name="payment_method" class="form-select bieumau-dieukhien-sach">
                             <option value="cash">Tiền mặt</option>
                             <option value="credit_card">Thẻ tín dụng</option>
                             <option value="bank_transfer">Chuyển khoản</option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label-clean">Đặt cọc (nếu có)</label>
-                        <input type="number" name="deposit_paid" class="form-control form-control-clean"
+                        <label class="bieumau-nhan-sach">Đặt cọc (nếu có)</label>
+                        <input type="number" name="deposit_paid" class="form-control bieumau-dieukhien-sach"
                                min="0" step="1000" placeholder="0">
                     </div>
                     <div class="col-12">
-                        <label class="form-label-clean">Yêu cầu đặc biệt</label>
-                        <textarea name="special_requests" class="form-control form-control-clean" rows="2"
+                        <label class="bieumau-nhan-sach">Yêu cầu đặc biệt</label>
+                        <textarea name="special_requests" class="form-control bieumau-dieukhien-sach" rows="2"
                                   placeholder="Phòng tầng cao, không hút thuốc..."></textarea>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-blue-booking w-100 py-2 fw-bold">
+                <button type="submit" class="btn nut-xanh-datphong w-100 py-2 fw-bold">
                     <i class="fas fa-check me-2"></i>Tạo đặt phòng Walk-in
                 </button>
             </form>

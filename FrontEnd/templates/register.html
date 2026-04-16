@@ -1,46 +1,46 @@
 {% extends "base.html" %}
 {% block title %}Đăng ký - Hotel Booking{% endblock %}
 {% block content %}
-<div class="auth-wrapper">
-    <div class="auth-card">
+<div class="xacthuc-baoboc">
+    <div class="xacthuc-chon">
         <div class="text-center mb-4">
             <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:64px;height:64px;background:rgba(0,53,128,.1)">
-                <i class="fas fa-user-plus fa-2x text-booking"></i>
+                <i class="fas fa-user-plus fa-2x chu-datphong"></i>
             </div>
-            <h2 class="auth-title">Tạo tài khoản</h2>
-            <p class="auth-subtitle small">Đăng ký để tích điểm và quản lý đặt phòng dễ dàng hơn.</p>
+            <h2 class="xacthuc-tieude">Tạo tài khoản</h2>
+            <p class="xacthuc-phude small">Đăng ký để tích điểm và quản lý đặt phòng dễ dàng hơn.</p>
         </div>
 
         <form method="POST" action="/register" autocomplete="on">
-            <div class="form-section-clean">
-                <label class="form-label-clean">Họ và tên đầy đủ</label>
-                <input type="text" name="customer_name" class="form-control form-control-clean" placeholder="Nguyễn Văn A">
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Họ và tên đầy đủ</label>
+                <input type="text" name="customer_name" class="form-control bieumau-dieukhien-sach" placeholder="Nguyễn Văn A">
             </div>
-            <div class="form-section-clean">
-                <label class="form-label-clean">Email <span class="text-danger">*</span></label>
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Email <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0"><i class="fas fa-envelope text-muted"></i></span>
-                    <input type="email" name="email" class="form-control form-control-clean border-start-0" placeholder="example@email.com" required>
+                    <input type="email" name="email" class="form-control bieumau-dieukhien-sach border-start-0" placeholder="example@email.com" required>
                 </div>
             </div>
-            <div class="form-section-clean">
-                <label class="form-label-clean">Mật khẩu <span class="text-danger">*</span></label>
-                <input type="password" name="password" id="pw1" class="form-control form-control-clean" placeholder="Tối thiểu 6 ký tự" required minlength="6">
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Mật khẩu <span class="text-danger">*</span></label>
+                <input type="password" name="password" id="pw1" class="form-control bieumau-dieukhien-sach" placeholder="Tối thiểu 6 ký tự" required minlength="6">
             </div>
-            <div class="form-section-clean">
-                <label class="form-label-clean">Xác nhận mật khẩu <span class="text-danger">*</span></label>
-                <input type="password" name="confirm_password" id="pw2" class="form-control form-control-clean" placeholder="Nhập lại mật khẩu" required>
-                <div id="pw-mismatch" class="text-danger extra-small mt-1 d-none">Mật khẩu không khớp</div>
+            <div class="bieumau-phan-sach">
+                <label class="bieumau-nhan-sach">Xác nhận mật khẩu <span class="text-danger">*</span></label>
+                <input type="password" name="confirm_password" id="pw2" class="form-control bieumau-dieukhien-sach" placeholder="Nhập lại mật khẩu" required>
+                <div id="pw-mismatch" class="text-danger kichthuoc-nho-hon mt-1 d-none">Mật khẩu không khớp</div>
             </div>
             <div class="d-grid mt-2 mb-4">
-                <button type="submit" class="btn btn-blue-booking py-3 fw-bold">
+                <button type="submit" class="btn nut-xanh-datphong py-3 fw-bold">
                     <i class="fas fa-user-plus me-2"></i>TẠO TÀI KHOẢN
                 </button>
             </div>
         </form>
 
         <div class="text-center pt-3 border-top">
-            <p class="text-muted small mb-0">Đã có tài khoản? <a href="/login" class="fw-bold text-booking text-decoration-none">Đăng nhập</a></p>
+            <p class="text-muted small mb-0">Đã có tài khoản? <a href="/login" class="fw-bold chu-datphong text-decoration-none">Đăng nhập</a></p>
         </div>
     </div>
 </div>

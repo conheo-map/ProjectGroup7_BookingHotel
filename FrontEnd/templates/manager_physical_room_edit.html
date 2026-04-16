@@ -29,26 +29,25 @@
     </div>
 </div>
 
-<form method="POST" action="/manager/physical-room-edit/{{ room.physical_room_id }}" id="editForm">
 <div class="row g-4">
-
     {# ═══ CỘT TRÁI: THÔNG TIN PHÒNG ═══ #}
     <div class="col-lg-7">
+        <form method="POST" action="/manager/physical-room-edit/{{ room.physical_room_id }}" id="editForm">
 
         {# ── Thông tin cơ bản ── #}
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2">
                 <i class="fas fa-info-circle me-2 text-primary"></i>Thông tin phòng
             </h6>
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label-clean">Tên / Số phòng <span class="text-danger">*</span></label>
+                    <label class="bieumau-nhan-sach">Tên / Số phòng <span class="text-danger">*</span></label>
                     <input type="text" name="room_name" value="{{ room.room_name }}"
-                           class="form-control form-control-clean fw-bold" required maxlength="50">
+                           class="form-control bieumau-dieukhien-sach fw-bold" required maxlength="50">
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label-clean">Loại phòng <span class="text-danger">*</span></label>
-                    <select name="room_type_id" class="form-select form-control-clean" required>
+                    <label class="bieumau-nhan-sach">Loại phòng <span class="text-danger">*</span></label>
+                    <select name="room_type_id" class="form-select bieumau-dieukhien-sach" required>
                         {% for rt in room_types %}
                         <option value="{{ rt.room_type_id }}" {% if room.room_type_id == rt.room_type_id %}selected{% endif %}>
                             {{ rt.room_type_code }}
@@ -57,8 +56,8 @@
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label-clean">Trạng thái dọn phòng</label>
-                    <select name="housekeeping_status" class="form-select form-control-clean">
+                    <label class="bieumau-nhan-sach">Trạng thái dọn phòng</label>
+                    <select name="housekeeping_status" class="form-select bieumau-dieukhien-sach">
                         {% for status in ['Clean', 'Dirty', 'Inspected', 'Out of Service'] %}
                         <option value="{{ status }}" {% if room.housekeeping_status == status %}selected{% endif %}>
                             {{ status }}
@@ -83,14 +82,14 @@
         </div>
 
         {# ── Mô tả & Tiện nghi riêng phòng ── #}
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2">
                 <i class="fas fa-file-alt me-2 text-success"></i>Mô tả & Tiện nghi riêng
             </h6>
             <div class="row g-3">
                 <div class="col-12">
-                    <label class="form-label-clean">Mô tả chi tiết phòng</label>
-                    <textarea name="description" class="form-control form-control-clean" rows="4"
+                    <label class="bieumau-nhan-sach">Mô tả chi tiết phòng</label>
+                    <textarea name="description" class="form-control bieumau-dieukhien-sach" rows="4"
                               placeholder="Phòng có view biển, tầng cao, đã sửa chữa mới...">{{ room.description or '' }}</textarea>
                     {% if room.rt_description %}
                     <div class="small text-muted mt-1">
@@ -99,8 +98,8 @@
                     {% endif %}
                 </div>
                 <div class="col-12">
-                    <label class="form-label-clean">Tiện nghi riêng <span class="text-muted extra-small">(phân cách bằng dấu phẩy)</span></label>
-                    <textarea name="amenities" class="form-control form-control-clean" rows="2"
+                    <label class="bieumau-nhan-sach">Tiện nghi riêng <span class="text-muted kichthuoc-nho-hon">(phân cách bằng dấu phẩy)</span></label>
+                    <textarea name="amenities" class="form-control bieumau-dieukhien-sach" rows="2"
                               placeholder="Ban công, View biển, Máy pha cà phê, Bồn tắm jacuzzi...">{{ room.amenities or '' }}</textarea>
                     <div class="mt-2 d-flex flex-wrap gap-1" id="amenityPreview"></div>
                     {% if room.rt_amenities %}
@@ -114,38 +113,47 @@
 
         {# ── Nút lưu ── #}
         <div class="d-flex gap-2 mb-4">
-            <button type="submit" class="btn btn-blue-booking px-5 py-2 fw-bold">
+            <button type="submit" class="btn nut-xanh-datphong px-5 py-2 fw-bold">
                 <i class="fas fa-save me-2"></i>Lưu thay đổi
             </button>
             <a href="/manager/inventory-pricing" class="btn btn-light px-4 py-2">Hủy</a>
         </div>
+        </form>
     </div>
 
     {# ═══ CỘT PHẢI: ẢNH + THÔNG TIN LOẠI PHÒNG ═══ #}
     <div class="col-lg-5">
 
         {# ── Hình ảnh phòng ── #}
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2">
                 <i class="fas fa-images me-2 text-warning"></i>Hình ảnh phòng
                 <span class="badge bg-secondary ms-2">{{ room.images|length }}/8</span>
             </h6>
 
             {% if room.images and room.images|length > 0 %}
-            <div class="re-gallery mb-3">
+            <div class="suaphong-thuvien mb-3">
                 {% for img in room.images %}
-                <div class="re-gallery__item">
-                    <img src="{{ img }}" alt="Ảnh {{ loop.index }}" class="re-gallery__img" loading="lazy">
-                    <div class="re-gallery__overlay">
+                <div class="suaphong-thuvien-muc">
+                    <img src="{{ img }}" alt="Ảnh {{ loop.index }}" class="suaphong-thuvien-anh {% if room.main_image == img %}border border-3 border-warning{% endif %}" loading="lazy">
+                    <div class="suaphong-thuvien-phu">
+                        <form method="POST" action="/manager/physical-room-edit/{{ room.physical_room_id }}/set-main"
+                              class="d-inline">
+                            <input type="hidden" name="image_url" value="{{ img }}">
+                            <button type="submit" class="btn btn-sm {% if room.main_image == img %}btn-warning{% else %}btn-light{% endif %} rounded-circle me-1"
+                                    title="Đặt làm ảnh đại diện">
+                                <i class="fas fa-star {% if room.main_image == img %}text-white{% else %}text-warning{% endif %}"></i>
+                            </button>
+                        </form>
                         <form method="POST" action="/manager/physical-room-edit/{{ room.physical_room_id }}/delete-image"
                               class="d-inline">
                             <input type="hidden" name="image_url" value="{{ img }}">
-                            <button type="submit" class="btn btn-sm btn-danger rounded-circle re-gallery__del"
+                            <button type="submit" class="btn btn-sm btn-danger rounded-circle suaphong-thuvien-xoa"
                                     title="Xóa ảnh này">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </form>
-                        <span class="re-gallery__idx">{{ loop.index }}</span>
+                        <span class="suaphong-thuvien-chi">{{ loop.index }}</span>
                     </div>
                 </div>
                 {% endfor %}
@@ -158,19 +166,19 @@
             {% endif %}
 
             {% if room.images|length < 8 %}
-            <div class="re-upload-zone" id="uploadZone">
+            <div class="suaphong-tai-khu" id="uploadZone">
                 <form method="POST" action="/manager/physical-room-edit/{{ room.physical_room_id }}/upload"
                       enctype="multipart/form-data" id="uploadForm">
                     <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/webp,image/gif"
                            class="d-none" onchange="previewAndSubmit(this)">
-                    <div class="re-upload-zone__content" onclick="document.getElementById('imageInput').click()">
+                    <div class="suaphong-tai-khu-noidung" onclick="document.getElementById('imageInput').click()">
                         <i class="fas fa-cloud-upload-alt fa-2x text-primary mb-2"></i>
                         <p class="mb-1 fw-bold small">Kéo thả hoặc bấm để chọn ảnh</p>
-                        <p class="extra-small text-muted mb-0">JPG, PNG, WebP · Tối đa 5MB</p>
+                        <p class="kichthuoc-nho-hon text-muted mb-0">JPG, PNG, WebP · Tối đa 5MB</p>
                     </div>
-                    <div id="uploadPreview" class="re-upload-preview d-none">
+                    <div id="uploadPreview" class="suaphong-tai-xemtruoc d-none">
                         <img id="previewImg" src="" alt="Preview">
-                        <div class="re-upload-preview__actions">
+                        <div class="suaphong-tai-xemtruoc-hanhdong">
                             <button type="submit" class="btn btn-sm btn-success">
                                 <i class="fas fa-upload me-1"></i>Upload
                             </button>
@@ -187,20 +195,20 @@
         </div>
 
         {# ── Thông tin loại phòng (tham khảo) ── #}
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2">
                 <i class="fas fa-layer-group me-2 text-info"></i>Thông tin loại phòng
                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 ms-2">{{ room.room_type_code }}</span>
             </h6>
             <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="badge-clean bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
+                <span class="huyhieu-sach bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">
                     <i class="fas fa-user me-1"></i>{{ room.max_adults }} người lớn
                 </span>
-                <span class="badge-clean bg-info bg-opacity-10 text-info border border-info border-opacity-25">
+                <span class="huyhieu-sach bg-info bg-opacity-10 text-info border border-info border-opacity-25">
                     <i class="fas fa-child me-1"></i>{{ room.max_children }} trẻ em
                 </span>
             </div>
-            <div class="fw-bold text-booking fs-5 mb-2">
+            <div class="fw-bold chu-datphong fs-5 mb-2">
                 {{ "{:,.0f}".format(room.base_price or 0) }}đ / đêm
             </div>
             {% if room.rt_description %}

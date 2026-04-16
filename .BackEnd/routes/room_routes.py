@@ -114,6 +114,7 @@ def api_search_rooms():
                COALESCE(drt.extra_bed_capacity, 0) AS extra_bed_capacity,
                COALESCE(drt.extra_adult_fee, 0.0) AS extra_adult_fee,
                COALESCE(drt.child_breakfast_fee, 0.0) AS child_breakfast_fee,
+               drt.images, drt.main_image,
                dh.hotel_id, dh.hotel AS hotel_name,
                COALESCE(dh.star_rating, 3) AS star_rating,
                COALESCE(dh.hotel_type, 'City Hotel') AS hotel_type,
@@ -207,11 +208,18 @@ def api_search_rooms():
             'promo_price_max': round(promo_price_max, 2),
             'checkin_date': checkin_date_str,
             'checkout_date': checkout_date_str,
+            'main_image': room_type_row['main_image'],
+            'images': room_type_row['images'],
         }
 
         # Expand each physical room into its own result entry
         if filter_availability != 'fragmented':
             for phys in continuous_rooms:
+                import json
+                try:
+                    p_images = json.loads(phys.get('images') or '[]')
+                except:
+                    p_images = []
                 all_rooms.append({
                     **shared_info,
                     'physical_room_id': phys['physical_room_id'],
@@ -219,10 +227,17 @@ def api_search_rooms():
                     'housekeeping_status': phys.get('housekeeping_status', 'Clean'),
                     'availability_type': 'continuous',
                     'free_nights': phys.get('free_nights', []),
+                    'main_image': phys.get('main_image') or shared_info['main_image'],
+                    'images': p_images if p_images else (json.loads(shared_info['images']) if isinstance(shared_info['images'], str) else shared_info['images'])
                 })
 
         if filter_availability != 'continuous':
             for phys in fragmented_rooms:
+                import json
+                try:
+                    p_images = json.loads(phys.get('images') or '[]')
+                except:
+                    p_images = []
                 all_rooms.append({
                     **shared_info,
                     'physical_room_id': phys['physical_room_id'],
@@ -230,6 +245,8 @@ def api_search_rooms():
                     'housekeeping_status': phys.get('housekeeping_status', 'Clean'),
                     'availability_type': 'fragmented',
                     'free_nights': phys.get('free_nights', []),
+                    'main_image': phys.get('main_image') or shared_info['main_image'],
+                    'images': p_images if p_images else (json.loads(shared_info['images']) if isinstance(shared_info['images'], str) else shared_info['images'])
                 })
 
         seen_room_types[room_type_code] = True
@@ -291,7 +308,7 @@ def api_room_detail():
 
     cursor.execute("""
         SELECT drt.room_type_id, drt.room_type_code, drt.max_adults, drt.max_children,
-               drt.base_price, drt.description, drt.amenities,
+               drt.base_price, drt.description, drt.amenities, drt.images, drt.main_image,
                dh.hotel_id, dh.hotel AS hotel_name
         FROM Dim_RoomType drt
         JOIN Dim_Hotel dh ON dh.hotel_id = drt.hotel_id
@@ -301,6 +318,13 @@ def api_room_detail():
     if not room_type_row:
         conn.close()
         return jsonify({'success': False, 'message': 'Khong tim thay loai phong'}), 404
+    
+    rt_data = dict(room_type_row)
+    import json
+    try:
+        rt_data['images'] = json.loads(rt_data.get('images') or '[]')
+    except:
+        rt_data['images'] = []
 
     cursor.execute("""
         SELECT rv.review_id, rv.rating, rv.comment, rv.review_date,
@@ -329,7 +353,7 @@ def api_room_detail():
     conn.close()
     return jsonify({
         'success': True,
-        'room_type': dict(room_type_row),
+        'room_type': rt_data,
         'reviews': reviews_list,
         'avg_rating': round(rating_summary['avg_rating'] or 0, 1),
         'review_count': rating_summary['total'] or 0,

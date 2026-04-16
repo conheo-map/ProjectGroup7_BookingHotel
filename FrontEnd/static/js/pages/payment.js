@@ -1,13 +1,13 @@
 function switchPaymentMethod(method) {
-  document.querySelectorAll('.pay-method-detail').forEach(function(el) {
+  document.querySelectorAll('.thanhtoan-phuongthuc-chitiet').forEach(function(el) {
     el.classList.add('d-none');
   });
   var target = document.getElementById('form-' + method);
   if (target) target.classList.remove('d-none');
-  document.querySelectorAll('.pay-method-item').forEach(function(el) {
+  document.querySelectorAll('.thanhtoan-phuongthuc-muc').forEach(function(el) {
     el.classList.remove('active');
   });
-  event.target.closest('.pay-method-item').classList.add('active');
+  event.target.closest('.thanhtoan-phuongthuc-muc').classList.add('active');
 }
 
 function formatCardNumber(input) {

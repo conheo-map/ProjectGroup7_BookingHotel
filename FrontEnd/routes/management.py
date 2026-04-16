@@ -369,15 +369,23 @@ def room_edit_upload(room_type_id):
     err = _require_manager()
     if err:
         return err
+    print(f"[FRONTEND] room_edit_upload: RT={room_type_id}")
     if 'image' not in request.files:
-        flash('Chưa chọn file ảnh.', 'error')
-        return redirect(url_for('management.room_edit', room_type_id=room_type_id))
+        print("[FRONTEND] Error: No 'image' in request.files")
+        return jsonify({'success': False, 'message': 'Chưa chọn file ảnh.'})
+    
     file = request.files['image']
+    print(f"[FRONTEND] Received file: {file.filename}")
+
     result = api_upload(f'/api/room-types/{room_type_id}/upload-image',
                         files={'image': (file.filename, file.stream, file.content_type)})
-    flash('Upload ảnh thành công!' if result.get('success') else result.get('message', 'Upload thất bại'),
-          'success' if result.get('success') else 'error')
-    return redirect(url_for('management.room_edit', room_type_id=room_type_id))
+    
+    print(f"[FRONTEND] Backend result: {result}")
+    return jsonify({
+        'success': result.get('success', False),
+        'message': result.get('message', 'Upload xong'),
+        'image_url': result.get('image_url')
+    })
 
 
 @management_bp.route('/manager/room-edit/<int:room_type_id>/delete-image', methods=['POST'])
@@ -388,6 +396,18 @@ def room_edit_delete_image(room_type_id):
     image_url = request.form.get('image_url', '').strip()
     result = api_post(f'/api/room-types/{room_type_id}/delete-image', {'image_url': image_url})
     flash('Đã xóa ảnh.' if result.get('success') else result.get('message', 'Xóa thất bại'),
+          'success' if result.get('success') else 'error')
+    return redirect(url_for('management.room_edit', room_type_id=room_type_id))
+
+
+@management_bp.route('/manager/room-edit/<int:room_type_id>/set-main', methods=['POST'])
+def room_edit_set_main(room_type_id):
+    err = _require_manager()
+    if err:
+        return err
+    image_url = request.form.get('image_url', '').strip()
+    result = api_post(f'/api/room-types/{room_type_id}/set-main-image', {'image_url': image_url})
+    flash('Đã đặt làm ảnh đại diện.' if result.get('success') else result.get('message', 'Thất bại'),
           'success' if result.get('success') else 'error')
     return redirect(url_for('management.room_edit', room_type_id=room_type_id))
 
@@ -435,15 +455,23 @@ def physical_room_edit_upload(pr_id):
     err = _require_manager()
     if err:
         return err
+    print(f"[FRONTEND] physical_room_edit_upload: PR={pr_id}")
     if 'image' not in request.files:
-        flash('Chưa chọn file ảnh.', 'error')
-        return redirect(url_for('management.physical_room_edit', pr_id=pr_id))
+        print("[FRONTEND] Error: No 'image' in request.files")
+        return jsonify({'success': False, 'message': 'Chưa chọn file ảnh.'})
+    
     file = request.files['image']
+    print(f"[FRONTEND] Received file: {file.filename}")
+
     result = api_upload(f'/api/room-detail/{pr_id}/upload-image',
                         files={'image': (file.filename, file.stream, file.content_type)})
-    flash('Upload ảnh thành công!' if result.get('success') else result.get('message', 'Upload thất bại'),
-          'success' if result.get('success') else 'error')
-    return redirect(url_for('management.physical_room_edit', pr_id=pr_id))
+    
+    print(f"[FRONTEND] Backend result: {result}")
+    return jsonify({
+        'success': result.get('success', False),
+        'message': result.get('message', 'Upload xong'),
+        'image_url': result.get('image_url')
+    })
 
 
 @management_bp.route('/manager/physical-room-edit/<int:pr_id>/delete-image', methods=['POST'])
@@ -454,6 +482,18 @@ def physical_room_edit_delete_image(pr_id):
     image_url = request.form.get('image_url', '').strip()
     result = api_post(f'/api/room-detail/{pr_id}/delete-image', {'image_url': image_url})
     flash('Đã xóa ảnh.' if result.get('success') else result.get('message', 'Xóa thất bại'),
+          'success' if result.get('success') else 'error')
+    return redirect(url_for('management.physical_room_edit', pr_id=pr_id))
+
+
+@management_bp.route('/manager/physical-room-edit/<int:pr_id>/set-main', methods=['POST'])
+def physical_room_edit_set_main(pr_id):
+    err = _require_manager()
+    if err:
+        return err
+    image_url = request.form.get('image_url', '').strip()
+    result = api_post(f'/api/room-detail/{pr_id}/set-main-image', {'image_url': image_url})
+    flash('Đã đặt làm ảnh đại diện.' if result.get('success') else result.get('message', 'Thất bại'),
           'success' if result.get('success') else 'error')
     return redirect(url_for('management.physical_room_edit', pr_id=pr_id))
 

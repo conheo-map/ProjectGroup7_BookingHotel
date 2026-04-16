@@ -1,94 +1,139 @@
 {% extends "base.html" %}
-{% block title %}Lịch sử đặt phòng - Hotel Booking{% endblock %}
-{% block content %}
+{% block title %}Lịch Sử Hành Trình - Saigon-Condao Resort{% endblock %}
 
-<div class="row mb-4 align-items-center">
-    <div class="col">
-        <h2 class="fw-bold mb-1">Chuyến đi của bạn</h2>
-        <p class="text-muted d-none d-md-block">Xem lại các đặt phòng hiện tại và lịch sử lưu trú trước đây.</p>
-    </div>
-</div>
-
-<div class="main-card overflow-hidden">
-    <div class="card-header-clean bg-light">
-        <h6 class="fw-bold mb-0">Danh sách đặt phòng</h6>
-    </div>
-    <div class="table-responsive">
-        <table class="table table-hover table-clean mb-0">
-            <thead>
-                <tr>
-                    <th>Mã số</th>
-                    <th>Chỗ nghỉ / Loại phòng</th>
-                    <th>Thông tin lưu trú</th>
-                    <th class="text-end">Tổng tiền</th>
-                    <th class="text-center">Trạng thái</th>
-                    <th class="text-end">Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if bookings %}
-                    {% for b in bookings %}
-                    <tr>
-                        <td class="text-muted small">#{{ b.booking_id }}</td>
-                        <td>
-                            <div class="fw-bold text-primary">{{ b.hotel_name }}</div>
-                            <div class="extra-small text-muted">{{ b.room_type_code }} / {{ b.physical_room_name }}</div>
-                            <span class="badge badge-clean bg-light text-muted border extra-small mt-1">
-                                {{ 'Liên tục' if b.booking_type == 'continuous' else 'Ngắt quãng' }}
-                            </span>
-                        </td>
-                        <td class="small">
-                            {% if b.booking_type == 'continuous' %}
-                                <div class="fw-bold text-dark">{{ b.arrival_date }}</div>
-                                <div class="text-muted">đến {{ b.departure_date }}</div>
-                            {% else %}
-                                <div class="text-muted italic">Các đêm: {{ b.selected_nights }}</div>
-                            {% endif %}
-                        </td>
-                        <td class="text-end">
-                            <div class="fw-bold">{{ (b.total_price or 0)|vnd }}</div>
-                            <div class="extra-small text-success mb-1">Đã cọc: {{ (b.deposit_paid or 0)|vnd }}</div>
-                            {% set balance = (b.total_price or 0) - (b.deposit_paid or 0) %}
-                            {% if balance > 0 %}
-                                <div class="extra-small text-danger fw-bold">Còn nợ: {{ balance|vnd }}</div>
-                            {% else %}
-                                <div class="extra-small text-success">Đã thanh toán đủ</div>
-                            {% endif %}
-                        </td>
-                        <td class="text-center">
-                            {% if b.is_canceled %}
-                                <span class="badge badge-clean bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25">Đã Hủy</span>
-                            {% elif b.status_detail == 'Checked-Out' %}
-                                <span class="badge badge-clean bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25">Hoàn tất</span>
-                            {% elif b.status_detail == 'Checked-In' %}
-                                <span class="badge badge-clean bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25">Đang ở</span>
-                            {% else %}
-                                <span class="badge badge-clean bg-success bg-opacity-10 text-success border border-success border-opacity-25">{{ b.status_detail }}</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-end">
-                            {% if not b.is_canceled and b.status_detail in ('Confirmed', 'Pending') %}
-                                <a href="/cancel-preview/{{ b.booking_id }}" class="btn btn-sm btn-outline-danger py-1">Hủy phòng</a>
-                            {% elif b.status_detail == 'Checked-Out' %}
-                                <a href="/booking/review/{{ b.booking_id }}" class="btn btn-sm btn-light py-1">Đánh giá</a>
-                            {% else %}
-                                <span class="text-muted extra-small italic">Không thể thao tác</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                {% else %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted small">
-                            <i class="fas fa-suitcase-rolling fa-2x mb-2 d-block opacity-25"></i>
-                            Bạn chưa có bất kỳ đặt phòng nào. <br>
-                            <a href="/search" class="text-primary fw-bold text-decoration-none">Khám phá ngay!</a>
-                        </td>
-                    </tr>
-                {% endif %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}">
 {% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="profile-hero"></div>
+
+<div class="container profile-content mb-5">
+    <div class="profile-header">
+        <h1 class="fw-bold mb-2">Hành Trình Trải Nghiệm</h1>
+        <p class="opacity-75 fs-5">Lưu giữ những khoảnh khắc tuyệt vời trong từng kỳ lưu trú của bạn</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-4 text-white">
+                <h4 class="fw-bold mb-0">Danh sách đơn đặt phòng</h4>
+                <a href="/search" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                    <i class="fas fa-plus me-1"></i> Đặt kỳ nghỉ mới
+                </a>
+            </div>
+
+            {% if bookings %}
+                {% for b in bookings %}
+                <div class="journey-card">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="journey-img-container">
+                                <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80" class="journey-img" alt="Room preview">
+                                <div class="journey-status-float">
+                                    {% if b.is_canceled %}
+                                        <div class="status-vip-badge status-canceled">Đã Hủy</div>
+                                    {% elif b.status_detail == 'Checked-Out' %}
+                                        <div class="status-vip-badge status-completed">Hoàn tất</div>
+                                    {% elif b.status_detail == 'Checked-In' %}
+                                        <div class="status-vip-badge status-staying">Đang ở</div>
+                                    {% else %}
+                                        <div class="status-vip-badge status-confirmed">{{ b.status_detail }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="journey-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <div class="journey-id">Booking ID: #{{ b.booking_id }}</div>
+                                        <h3 class="journey-hotel">{{ b.hotel_name }}</h3>
+                                        <div class="journey-room">
+                                            <i class="fas fa-door-open me-2"></i>{{ b.room_type_code }} / {{ b.physical_room_name }}
+                                            <span class="ms-2 badge bg-light text-muted border fw-normal">
+                                                {{ 'Liên tục' if b.booking_type == 'continuous' else 'Ngắt quãng' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="journey-actions">
+                                        {% if not b.is_canceled and b.status_detail in ('Confirmed', 'Pending') %}
+                                            <a href="/cancel-preview/{{ b.booking_id }}" class="btn btn-outline-danger btn-sm">Hủy phòng</a>
+                                        {% elif b.status_detail == 'Checked-Out' %}
+                                            <a href="/booking/review/{{ b.booking_id }}" class="btn nut-xanh-datphong btn-sm">Gửi đánh giá</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="journey-info-grid">
+                                    <div class="info-item">
+                                        <i class="far fa-calendar-check"></i>
+                                        <div>
+                                            <div class="small text-muted">Check-in</div>
+                                            <div class="fw-bold fs-6">{{ b.arrival_date }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="far fa-calendar-times"></i>
+                                        <div>
+                                            <div class="small text-muted">Check-out</div>
+                                            <div class="fw-bold fs-6">{{ b.departure_date if b.booking_type == 'continuous' else 'Linh hoạt' }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="info-item">
+                                        <i class="fas fa-moon"></i>
+                                        <div>
+                                            <div class="small text-muted">Lưu trú</div>
+                                            <div class="fw-bold fs-6">
+                                                {% if b.booking_type == 'continuous' %}
+                                                    Liên tục
+                                                {% else %}
+                                                    {{ b.selected_nights }} đêm
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="journey-price-area">
+                                    <div class="d-flex gap-4">
+                                        <div>
+                                            <div class="price-label">Đã thanh toán</div>
+                                            <div class="price-deposit">{{ (b.deposit_paid or 0)|vnd }}</div>
+                                        </div>
+                                        {% set balance = (b.total_price or 0) - (b.deposit_paid or 0) %}
+                                        {% if balance > 0 %}
+                                        <div>
+                                            <div class="price-label">Còn lại</div>
+                                            <div class="price-balance">{{ balance|vnd }}</div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="price-box">
+                                        <div class="price-label">Tổng giá trị đơn</div>
+                                        <div class="price-value">{{ (b.total_price or 0)|vnd }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="profile-glass-card text-center py-5">
+                    <div class="mb-4">
+                        <i class="fas fa- suitcase-rolling fa-4x text-muted opacity-25"></i>
+                    </div>
+                    <h4 class="fw-bold">Chưa có hành trình nào</h4>
+                    <p class="text-muted mb-4 px-5">Bạn chưa có bất kỳ đặt phòng nào tại Saigon-Condao Resort. Hãy để chúng tôi đồng hành cùng kỳ nghỉ mơ ước của bạn.</p>
+                    <a href="/search" class="btn nut-xanh-datphong px-5 py-3 fw-bold rounded-pill">
+                        Khám phá các hạng phòng ngay
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

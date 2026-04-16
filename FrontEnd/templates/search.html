@@ -1,55 +1,74 @@
 {% extends "base.html" %}
 {% block title %}Tìm phòng - Hotel Booking{% endblock %}
-{% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/search.css') }}">
-{% endblock %}
-
 {% block content %}
 
 {# ── THANH TÌM KIẾM TRÊN CÙNG ── #}
-<div class="search-hero mb-4">
+{# ── MODERN SEARCH BAR ── #}
+<div class="modern-search-container mb-5">
   <form action="/search" method="GET" id="search-form">
-    <div class="search-bar-wrap d-flex justify-content-center align-items-center gap-2 flex-wrap">
-
-      {# Ngày #}
-      <div class="sb-group d-flex align-items-center gap-1 px-3 py-2 rounded-3 bg-white border">
-        <i class="fas fa-calendar-alt text-muted small"></i>
-        <div>
-          <div class="sb-label">Nhận phòng</div>
-          <input type="date" name="checkin_date" class="sb-input" value="{{ params.checkin_date }}" required>
-        </div>
-        <span class="text-muted mx-1">→</span>
-        <div>
-          <div class="sb-label">Trả phòng</div>
-          <input type="date" name="checkout_date" class="sb-input" value="{{ params.checkout_date }}" required>
-        </div>
-      </div>
-
-      {# Khách #}
-      <div class="sb-group d-flex align-items-center gap-2 px-3 py-2 rounded-3 bg-white border">
-        <i class="fas fa-user-friends text-muted small"></i>
-        <div>
-          <div class="sb-label">Người lớn</div>
-          <input type="number" name="adults" class="sb-input" value="{{ params.adults }}" min="1" max="10" style="width:48px">
-        </div>
-        <div>
-          <div class="sb-label">Trẻ em</div>
-          <input type="number" name="children" class="sb-input" value="{{ params.children }}" min="0" max="5" style="width:48px">
+    <div class="modern-search-bar shadow-sm">
+      
+      {# Phân đoạn Ngày #}
+      <div class="ms-segment ms-dates">
+        <div class="d-flex align-items-center gap-3">
+          <div class="ms-date-box">
+             <i class="far fa-calendar-alt ms-icon"></i>
+             <input type="date" name="checkin_date" value="{{ params.checkin_date }}" required class="ms-input-date">
+          </div>
+          <span class="ms-separator-dash">—</span>
+          <div class="ms-date-box">
+             <i class="far fa-calendar-alt ms-icon"></i>
+             <input type="date" name="checkout_date" value="{{ params.checkout_date }}" required class="ms-input-date">
+          </div>
         </div>
       </div>
 
-      {# Ẩn bộ lọc sidebar khi submit form #}
-      {% for sr in params.star_ratings %}<input type="hidden" name="star_ratings[]" value="{{ sr }}">{% endfor %}
-      {% for ht in params.hotel_types %}<input type="hidden" name="hotel_types[]" value="{{ ht }}">{% endfor %}
-      {% for rtc in params.room_type_codes %}<input type="hidden" name="room_type_codes[]" value="{{ rtc }}">{% endfor %}
-      {% if params.min_price %}<input type="hidden" name="min_price" value="{{ params.min_price }}">{% endif %}
-      {% if params.max_price %}<input type="hidden" name="max_price" value="{{ params.max_price }}">{% endif %}
-      <input type="hidden" name="sort_by" id="hidden-sort" value="{{ params.sort_by or 'price_asc' }}">
+      <div class="ms-v-divider"></div>
 
-      <button type="submit" class="btn btn-search">
-        <i class="fas fa-search me-2"></i>Tìm kiếm
-      </button>
+      {# Phân đoạn Khách #}
+      <div class="ms-segment ms-guests" id="guestDropdownTrigger">
+        <div class="d-flex align-items-center gap-2">
+          <i class="far fa-user ms-icon-user"></i>
+          <div class="ms-guest-text">
+            <span id="guestDisplay">
+              {{ params.adults if params.adults else 2 }} người lớn · {{ params.children if params.children else 0 }} trẻ em
+            </span>
+          </div>
+          <i class="fas fa-caret-down ms-caret"></i>
+        </div>
+
+        {# Dropdown chọn khách #}
+        <div class="ms-dropdown-box d-none" id="guestDropdown">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-bold small text-dark">Người lớn</div>
+            <div class="ms-counter">
+              <button type="button" class="btn-count" onclick="updateGuest('adults', -1)">-</button>
+              <input type="number" name="adults" id="inputAdults" value="{{ params.adults if params.adults else 2 }}" readonly>
+              <button type="button" class="btn-count" onclick="updateGuest('adults', 1)">+</button>
+            </div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="fw-bold small text-dark">Trẻ em</div>
+            <div class="ms-counter">
+              <button type="button" class="btn-count" onclick="updateGuest('children', -1)">-</button>
+              <input type="number" name="children" id="inputChildren" value="{{ params.children if params.children else 0 }}" readonly>
+              <button type="button" class="btn-count" onclick="updateGuest('children', 1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# Nút Tìm #}
+      <button type="submit" class="ms-btn-find">Tìm</button>
     </div>
+
+    {# Ẩn bộ lọc sidebar khi submit form #}
+    {% for sr in params.star_ratings %}<input type="hidden" name="star_ratings[]" value="{{ sr }}">{% endfor %}
+    {% for ht in params.hotel_types %}<input type="hidden" name="hotel_types[]" value="{{ ht }}">{% endfor %}
+    {% for rtc in params.room_type_codes %}<input type="hidden" name="room_type_codes[]" value="{{ rtc }}">{% endfor %}
+    {% if params.min_price %}<input type="hidden" name="min_price" value="{{ params.min_price }}">{% endif %}
+    {% if params.max_price %}<input type="hidden" name="max_price" value="{{ params.max_price }}">{% endif %}
+    <input type="hidden" name="sort_by" id="hidden-sort" value="{{ params.sort_by or 'price_asc' }}">
   </form>
 </div>
 
@@ -62,21 +81,35 @@
      CỘT TRÁI: SIDEBAR BỘ LỌC
   ══════════════════════════════════════════════════ #}
   <div class="col-lg-3 col-md-4">
+                    <div style="overflow: hidden; border-radius: 1rem; position: relative; height: 180px; margin-bottom: 10px;">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923.6!2d106.6!3d8.68!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNDAnNDguMCJOIDEwNsKwMzYnMDAuMCJF!5e0!3m2!1svi!2s!4v1!5m2!1svi!2s"
+                            style="border:0; position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 110px);" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
     <form action="/search" method="GET" id="filter-form">
       {# Preserve search params #}
       <input type="hidden" name="checkin_date" value="{{ params.checkin_date }}">
       <input type="hidden" name="checkout_date" value="{{ params.checkout_date }}">
       <input type="hidden" name="adults" value="{{ params.adults }}">
       <input type="hidden" name="children" value="{{ params.children }}">
+      {% if params.promo_code %}<input type="hidden" name="promo_code" value="{{ params.promo_code }}">{% endif %}
       <input type="hidden" name="sort_by" value="{{ params.sort_by or 'price_asc' }}">
 
       <div class="filter-panel">
-        {# Header bộ lọc #}
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        {# Mobile Header with Toggle #}
+        <div class="d-flex justify-content-between align-items-center mb-0 mb-md-3" id="filterToggleHeader">
           <h6 class="fw-bold mb-0"><i class="fas fa-sliders-h me-2 text-primary"></i>Bộ lọc</h6>
-          <a href="/search?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}&adults={{ params.adults }}&children={{ params.children }}"
-             class="btn-clear-filter small text-muted">Xóa tất cả</a>
+          <div class="d-flex align-items-center gap-2">
+            <a href="/search?checkin_date={{ params.checkin_date }}&checkout_date={{ params.checkout_date }}&adults={{ params.adults }}&children={{ params.children }}"
+               class="btn-clear-filter small text-muted">Xóa tất cả</a>
+            <button class="btn btn-sm btn-outline-primary d-md-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#filterContent" aria-expanded="false" aria-controls="filterContent">
+              <i class="fas fa-chevron-down"></i>
+            </button>
+          </div>
         </div>
+
+        {# Collapsible content #}
+        <div class="collapse d-md-block mt-3" id="filterContent">
 
         {# KHOẢNG GIÁ #}
         <div class="filter-section">
@@ -149,6 +182,7 @@
         <button type="submit" class="btn btn-apply-filter w-100 mt-3">
           <i class="fas fa-check me-1"></i>Áp dụng bộ lọc
         </button>
+        </div> {# end filterContent #}
       </div>
     </form>
   </div>
@@ -211,7 +245,12 @@
 
       {# Ảnh bên trái #}
       <div class="result-card__img flex-shrink-0">
-        {% if room.availability_type == 'continuous' %}
+        {% if room.main_image %}
+          <img src="{{ room.main_image }}" alt="{{ room.room_name }}" class="w-100 h-100 object-fit-cover">
+          <div class="img-badge {% if room.availability_type == 'fragmented' %}img-badge--amber{% endif %}">
+            {% if room.availability_type == 'continuous' %}PHÒNG TRỐNG{% else %}ƯU ĐÃI ĐÊM LẺ{% endif %}
+          </div>
+        {% elif room.availability_type == 'continuous' %}
           <div class="img-placeholder img-placeholder--blue">
             <i class="fas fa-door-open fa-2x text-white opacity-60"></i>
             <div class="img-badge">PHÒNG TRỐNG</div>
@@ -250,10 +289,13 @@
 
             {# Tiện nghi (amenities) #}
             {% if room.amenities %}
-            <div class="d-flex flex-wrap gap-1 mb-2">
-              {% for am in room.amenities.split(',')[:4] %}
-              <span class="badge-amenity">{{ am.strip() }}</span>
+            <div class="d-flex flex-wrap gap-1 mb-2 mt-1">
+              {% for am in room.amenities.split(',')[:5] %}
+              <span class="huyhieu-tienich"><i class="fas fa-check text-success me-1" style="font-size:10px"></i>{{ am.strip() }}</span>
               {% endfor %}
+              {% if room.amenities.split(',')|length > 5 %}
+                <span class="huyhieu-tienich fw-bold">+{{ room.amenities.split(',')|length - 5 }}</span>
+              {% endif %}
             </div>
             {% endif %}
 
@@ -300,11 +342,11 @@
             <div class="mt-auto">
               {% if room.promo_price_min < room.effective_price_max %}
               <div class="price-original text-muted text-decoration-line-through small">
-                {{ "{:,.0f}".format(room.effective_price_max) }}đ
+                {{ room.effective_price_max | vnd }}
               </div>
               {% endif %}
               <div class="price-final {% if room.availability_type == 'continuous' %}text-primary{% else %}text-warning{% endif %}">
-                {{ "{:,.0f}".format(room.promo_price_min) }}<span class="price-unit">đ</span>
+                {{ room.promo_price_min | vnd }}
               </div>
               <div class="text-muted" style="font-size:11px">Giá mỗi đêm</div>
             </div>
@@ -340,8 +382,376 @@
 </div>{# end row #}
 
 {# ── CSS nội tuyến cho trang search ── #}
+<style>
+/* --- MODERN SEARCH BAR (Pill Style) --- */
+.modern-search-container {
+    display: flex;
+    justify-content: center;
+}
 
+.modern-search-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-radius: 50px;
+    padding: 6px 12px 6px 30px;
+    border: 2px solid var(--mau-xanh-chinh); /* Đổi sang màu xanh đặc trưng và tăng độ dày */
+    max-width: 1000px;
+}
 
-<script src="{{ url_for('static', filename='js/pages/search.js') }}"></script>
+.ms-segment {
+    padding: 10px 15px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.ms-input-date {
+    border: none;
+    outline: none;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    background: transparent;
+    width: 140px;
+}
+
+.ms-icon { color: #64748b; font-size: 16px; margin-right: 8px; }
+.ms-icon-user { color: #64748b; font-size: 18px; }
+.ms-separator-dash { color: #cbd5e1; font-weight: 300; }
+.ms-v-divider { width: 1px; height: 36px; background: #e2e8f0; margin: 0 10px; }
+
+/* Responsive Search Bar */
+@media (max-width: 900px) {
+    .modern-search-bar {
+        flex-direction: column;
+        border-radius: 20px;
+        padding: 15px;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .ms-segment {
+        padding: 8px 0;
+        width: 100%;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    
+    .ms-segment:last-of-type {
+        border-bottom: none;
+    }
+
+    .ms-dates .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+    
+    .ms-v-divider, .ms-separator-dash {
+        display: none;
+    }
+    
+    .ms-input-date {
+        width: 100%;
+    }
+    
+    .ms-guest-text span {
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .ms-btn-find {
+        width: 100%;
+        margin-top: 10px;
+        padding: 14px;
+        border-radius: 12px;
+    }
+
+    .ms-dropdown-box {
+        width: 100%;
+        top: 100%;
+        left: 0;
+        position: relative;
+        box-shadow: none;
+        padding: 15px 0;
+        border: none;
+    }
+}
+
+.ms-guest-text span {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #0f172a;
+    display: block;
+    min-width: 180px;
+}
+
+.ms-caret { font-size: 12px; color: #64748b; }
+
+.ms-btn-find {
+    background: #0047AB;
+    color: #fff;
+    border: none;
+    padding: 10px 35px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.ms-btn-find:hover {
+    background: #003380;
+    transform: scale(1.02);
+}
+
+/* Guest Dropdown */
+.ms-dropdown-box {
+    position: absolute;
+    top: 65px;
+    left: 0;
+    width: 260px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    padding: 20px;
+    z-index: 1000;
+    border: 1px solid #f1f5f9;
+}
+
+.ms-counter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-count {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #0047AB;
+    background: #fff;
+    color: #0047AB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    transition: all 0.2s;
+}
+
+.btn-count:hover { background: #f0f7ff; }
+
+.ms-counter input {
+    width: 30px;
+    text-align: center;
+    border: none;
+    font-weight: 700;
+    color: #0f172a;
+    outline: none;
+}
+
+/* Sidebar Filter Panel */
+.filter-panel { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; position: sticky; top: 16px; }
+.filter-section { border-top: 1px solid #f1f5f9; padding: 14px 0; }
+.filter-title { font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .5px; }
+.filter-check { margin-bottom: 6px; }
+.filter-check .form-check-label { font-size: 13px; cursor: pointer; }
+.btn-clear-filter { font-size: 12px; text-decoration: none; }
+.btn-clear-filter:hover { color: #dc2626 !important; }
+.btn-hotel-type { padding: 5px 14px; border-radius: 20px; border: 1.5px solid #cbd5e1; background: #fff; font-size: 12px; font-weight: 600; cursor: pointer; color: #374151; transition: all .2s; }
+.btn-hotel-type.active { background: #0047AB; color: #fff; border-color: #0047AB; }
+.btn-apply-filter { background: #1e3a5f; color: #fff; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+.btn-apply-filter:hover { background: #0047AB; color: #fff; }
+
+/* Sort Buttons */
+.sort-btn { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 1.5px solid #e2e8f0; background: #fff; color: #64748b; text-decoration: none; font-weight: 600; transition: all .2s; }
+.sort-btn.active, .sort-btn:hover { background: #0047AB; color: #fff; border-color: #0047AB; }
+
+/* Availability Badges */
+.badge-avail { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+.badge-avail.continuous { background: #dcfce7; color: #166534; }
+.badge-avail.fragmented { background: #fef9c3; color: #854d0e; }
+
+/* Result Card */
+.result-card { 
+    background: #fff; 
+    border: 1px solid #e2e8f0; 
+    border-radius: 18px; 
+    overflow: hidden; 
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+.result-card:hover { 
+    box-shadow: 0 15px 45px rgba(15, 23, 42, 0.12); 
+    transform: translateY(-4px); 
+    border-color: var(--mau-xanh-chinh);
+}
+.result-card--fragmented { border-color: #fbbf24; }
+
+/* Card Image */
+.result-card__img { 
+    width: 320px; /* Tăng rộng theo yêu cầu: Gần bằng 1 ảnh ngang */
+    min-width: 320px; 
+    position: relative;
+    overflow: hidden;
+}
+.img-placeholder { 
+    width: 100%; 
+    height: 100%; 
+    min-height: 220px; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 12px; 
+    position: relative; 
+}
+.img-placeholder--blue { background: linear-gradient(135deg, var(--mau-xanh-chinh) 0%, #1e3a5f 100%); }
+.img-placeholder--amber { background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); }
+.img-badge { 
+    position: absolute; 
+    top: 15px; 
+    left: 15px; 
+    background: rgba(15, 23, 42, 0.8); 
+    backdrop-filter: blur(4px);
+    color: #fff; 
+    font-size: 11px; 
+    font-weight: 700; 
+    padding: 4px 12px; 
+    border-radius: 6px; 
+    letter-spacing: 0.5px; 
+    z-index: 2;
+}
+
+/* Card body */
+.result-card__name { font-size: 19px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+.result-card__desc { line-height: 1.5; color: #64748b; font-size: 14px; }
+.badge-room-type { font-size: 11px; background: #f0f7ff; color: #0047AB; border: 1px solid #dbeafe; border-radius: 4px; padding: 4px 10px; font-weight: 700; }
+.badge-hotel-type { font-size: 11px; background: #f0fdf4; color: #166534; border: 1px solid #dcfce7; border-radius: 20px; padding: 4px 10px; font-weight: 700; }
+.badge-amenity { font-size: 12px; background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 10px; }
+.badge-night { font-size: 11px; background: #fffbeb; color: #92400e; border: 1px solid #fef3c7; border-radius: 6px; padding: 3px 8px; font-weight: 600; }
+
+/* Price block */
+.rating-box { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+    background: #1e293b; 
+    color: #fff; 
+    border-radius: 10px; 
+    padding: 8px 12px; 
+}
+.rating-label { font-size: 11px; font-weight: 600; text-transform: uppercase; opacity: 0.8; }
+.rating-score { font-size: 19px; font-weight: 800; color: #fbbf24; }
+.price-final { font-size: 26px; font-weight: 900; line-height: 1; color: var(--mau-xanh-chinh); }
+.price-unit { font-size: 13px; color: #64748b; font-weight: 500; }
+
+/* CTA Buttons */
+.btn-book { 
+    background: var(--mau-xanh-chinh); 
+    color: #fff !important; 
+    border: none; 
+    padding: 12px 24px; 
+    border-radius: 10px; 
+    font-size: 14px; 
+    font-weight: 800; 
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.btn-book:hover { background: #003380; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 71, 171, 0.3); }
+.btn-book--amber { background: var(--mau-vang-chinh); color: var(--mau-xanh-chinh) !important; }
+.btn-book--amber:hover { background: #f1c40f; color: var(--mau-xanh-chinh) !important; }
+
+.btn-outline-detail { 
+    background: transparent; 
+    color: var(--mau-xanh-chinh); 
+    border: 1.5px solid var(--mau-xanh-chinh); 
+    padding: 10px 20px; 
+    border-radius: 10px; 
+    font-size: 13px; 
+    font-weight: 700; 
+    transition: all 0.2s;
+}
+.btn-outline-detail:hover { background: rgba(0, 71, 171, 0.05); color: var(--mau-xanh-chinh); }
+
+/* Empty state */
+.empty-state { background: #fff; border: 1px solid #e2e8f0; border-radius: 18px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+
+@media (max-width: 768px) {
+  .result-card { flex-direction: column; }
+  .result-card__img { width: 100%; min-height: 140px; }
+  .result-card__price { align-items: flex-start !important; }
+}
+</style>
+
+<script>
+// --- LOGIC CHO DROPDOWN CHỌN KHÁCH ---
+(function() {
+    const trigger = document.getElementById('guestDropdownTrigger');
+    const dropdown = document.getElementById('guestDropdown');
+    const display = document.getElementById('guestDisplay');
+
+    if (trigger && dropdown) {
+        // Đóng mở dropdown khi click vào vùng chọn khách
+        trigger.addEventListener('click', function(e) {
+            // Không đóng khi bấm vào phân đoạn tăng/giảm bên trong dropdown
+            if (e.target.closest('.ms-counter')) return; 
+            
+            dropdown.classList.toggle('d-none');
+            e.stopPropagation();
+        });
+
+        // Đóng dropdown khi click ra ngoài
+        document.addEventListener('click', function(e) {
+            if (!dropdown.contains(e.target) && !trigger.contains(e.target)) {
+                dropdown.classList.add('d-none');
+            }
+        });
+    }
+
+    // Hàm global để các nút button onclick có thể gọi được
+    window.updateGuest = function(type, delta) {
+        const id = type === 'adults' ? 'inputAdults' : 'inputChildren';
+        const input = document.getElementById(id);
+        if (!input) return;
+        
+        let val = parseInt(input.value);
+        val += delta;
+        
+        // Giới hạn số lượng (Người lớn: 1-10, Trẻ em: 0-5)
+        if (type === 'adults' && val < 1) val = 1;
+        if (type === 'adults' && val > 10) val = 10;
+        if (type === 'children' && val < 0) val = 0;
+        if (type === 'children' && val > 5) val = 5;
+        
+        input.value = val;
+        updateDisplayText();
+    };
+
+    function updateDisplayText() {
+        const adsInput = document.getElementById('inputAdults');
+        const chsInput = document.getElementById('inputChildren');
+        if (adsInput && chsInput && display) {
+            display.innerText = `${adsInput.value} người lớn · ${chsInput.value} trẻ em`;
+        }
+    }
+})();
+
+// Logic cũ cho Sidebar (Bộ lọc loại khách sạn)
+function toggleHotelType(btn, type) {
+  btn.classList.toggle('active');
+  const container = document.getElementById('hotel-type-inputs');
+  const existing = container.querySelector(`input[value="${type}"]`);
+  if (existing) {
+    existing.remove();
+  } else {
+    const inp = document.createElement('input');
+    inp.type = 'hidden';
+    inp.name = 'hotel_types[]';
+    inp.value = type;
+    container.appendChild(inp);
+  }
+}
+</script>
 
 {% endblock %}

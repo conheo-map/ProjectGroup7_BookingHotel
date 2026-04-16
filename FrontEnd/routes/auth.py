@@ -33,7 +33,7 @@ def login():
             flash(f"Chào mừng, {result.get('full_name') or result['username']}!", 'success')
             return _role_home(result['role'])
         flash(result.get('message', 'Sai thông tin đăng nhập'), 'error')
-    return render_template('login.html')
+    return render_template('auth.html', form_mode='login')
 
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -47,7 +47,7 @@ def register():
         name = request.form.get('customer_name', '').strip()
         if password != confirm:
             flash('Mật khẩu xác nhận không khớp', 'error')
-            return render_template('register.html')
+            return render_template('auth.html', form_mode='register')
         result = api_post('/api/register', {
             'email': email,
             'password': password,
@@ -57,7 +57,7 @@ def register():
             flash('Đăng ký thành công! Vui lòng đăng nhập.', 'success')
             return redirect(url_for('auth.login'))
         flash(result.get('message', 'Đăng ký thất bại'), 'error')
-    return render_template('register.html')
+    return render_template('auth.html', form_mode='register')
 
 
 @auth_bp.route('/logout')

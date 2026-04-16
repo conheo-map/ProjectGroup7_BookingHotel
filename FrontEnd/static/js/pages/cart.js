@@ -17,11 +17,11 @@ document.addEventListener('DOMContentLoaded', function() {
             clearInterval(interval);
             if(timerEl) timerEl.textContent = '00:00';
             if(bannerEl) {
-                bannerEl.className = 'alert alert-danger d-flex align-items-center shadow-sm small py-2 rounded-8 mb-4';
+                bannerEl.className = 'alert alert-danger d-flex align-items-center shadow-sm small py-2 bo-goc-8 mb-4';
                 bannerEl.innerHTML = '<i class="fas fa-exclamation-triangle me-2 fs-4"></i><div><strong>Hết thời gian!</strong> Phòng đã được mở khóa. Vui lòng quay lại tìm kiếm.</div>';
             }
             // Disable submit button
-            var submitBtn = document.querySelector('button[type="submit"].btn-blue-booking');
+            var submitBtn = document.querySelector('button[type="submit"].nut-xanh-datphong');
             if(submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'ĐÃ HẾT HẠN';

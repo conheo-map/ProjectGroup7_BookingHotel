@@ -18,7 +18,7 @@
     <div class="col-lg-7">
         {% if preview %}
         <!-- Refund preview -->
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-info-circle me-2 text-info"></i>Thông tin hoàn tiền</h6>
             <div class="row g-3">
                 <div class="col-6">
@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-money-bill-wave me-2 text-success"></i>Chi tiết hoàn tiền</h6>
             <div class="d-flex justify-content-between mb-2">
                 <span class="text-muted small">Tổng tiền đặt phòng</span>
@@ -59,7 +59,7 @@
                 <span class="fw-bold fs-5 text-success">{{ preview.refund_amount|vnd if preview.refund_amount else '0đ' }}</span>
             </div>
             {% if preview.refund_percent == 0 %}
-            <div class="alert alert-warning border-0 py-2 extra-small mt-3 mb-0">
+            <div class="alert alert-warning border-0 py-2 kichthuoc-nho-hon mt-3 mb-0">
                 <i class="fas fa-exclamation-triangle me-1"></i>
                 Hủy trong vòng {{ preview.hours_until_checkin|round(1) }} giờ — không được hoàn tiền theo chính sách.
             </div>
@@ -70,12 +70,12 @@
         {% endif %}
 
         <!-- Cancel form -->
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3"><i class="fas fa-times-circle me-2 text-danger"></i>Xác nhận hủy</h6>
             <form method="POST" action="/receptionist/cancel/{{ booking_id }}">
                 <div class="mb-3">
-                    <label class="form-label-clean">Lý do hủy</label>
-                    <textarea name="cancel_reason" class="form-control form-control-clean" rows="3"
+                    <label class="bieumau-nhan-sach">Lý do hủy</label>
+                    <textarea name="cancel_reason" class="form-control bieumau-dieukhien-sach" rows="3"
                               placeholder="Nhập lý do hủy đặt phòng..."></textarea>
                 </div>
                 <div class="d-flex gap-2">

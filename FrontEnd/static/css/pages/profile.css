@@ -1,0 +1,526 @@
+/* ─ Hero Banner ─ */
+.profile-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 480px;
+    background: url('/static/images/condao.png') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.profile-hero::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(to bottom, rgba(4, 25, 59, 0.6) 0%, rgba(4, 25, 59, 0.9) 100%);
+}
+
+.profile-header {
+    position: relative;
+    z-index: 10;
+    padding-top: 150px; /* Push down past navbar */
+    color: white;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+/* ─ Glassmorphism Content Area ─ */
+.profile-content {
+    position: relative;
+    z-index: 10;
+    margin-top: -30px;
+}
+
+.profile-glass-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    padding: 30px;
+}
+
+.caidat-nhan {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.caidat-input {
+    border-radius: 12px;
+    padding: 14px 18px;
+    border: 2px solid #e2e8f0;
+    background-color: #f8fafc;
+    transition: all 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.caidat-input:focus {
+    background-color: #fff;
+    border-color: var(--mau-vang-chinh);
+    box-shadow: 0 0 0 4px rgba(225, 177, 44, 0.2);
+}
+
+.caidat-input:disabled {
+    background-color: #e2e8f0;
+    cursor: not-allowed;
+    border-color: #cbd5e1;
+    color: #64748b;
+}
+
+/* ─ VIP Loyalty Card ─ */
+.loyalty-the-vip {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1.586; /* Standard credit card ratio */
+    border-radius: 20px;
+    padding: 24px;
+    color: #fff;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.loyalty-the-vip::before {
+    content: '\f219'; /* fa-monument or any subtle geometry */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    font-size: 150px;
+    color: rgba(255, 255, 255, 0.1);
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+/* Chip */
+.vip-chip {
+    width: 45px;
+    height: 35px;
+    background: linear-gradient(135deg, #e0b354, #d19f3a, #f7d273, #e0b354);
+    border-radius: 5px;
+    margin-bottom: 15px;
+    position: relative;
+}
+.vip-chip::after {
+    content: '';
+    position: absolute;
+    top: 50%; left: 0; width: 100%; height: 1px;
+    background: rgba(0,0,0,0.1);
+}
+
+/* Mức thẻ */
+.vip-bg-newbie {
+    background: linear-gradient(135deg, #2c3e50 0%, #1a252f 100%);
+    border: 1px solid #4a5c6e;
+}
+
+.vip-bg-silver {
+    background: linear-gradient(135deg, #a5b1c2 0%, #778ca3 100%);
+    color: #2f3542;
+    border: 1px solid #d1d8e0;
+}
+.vip-bg-silver .loyalty-the-vip::before { color: rgba(255,255,255,0.4); }
+
+.vip-bg-gold {
+    background: linear-gradient(135deg, #d4af37 0%, #aa8410 50%, #f6e27a 100%);
+    color: #3b2c00;
+    border: 1px solid #ffeaa7;
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.4);
+}
+.vip-bg-gold .loyalty-the-vip::before { color: rgba(255,255,255,0.4); }
+
+.vip-tier-name {
+    font-size: 24px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.vip-member-name {
+    font-size: 16px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ─ Tiến trình điểm ─ */
+.progress-vip {
+    height: 10px;
+    border-radius: 10px;
+    background-color: #e2e8f0;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-vip-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #aa8410, #f6e27a);
+    border-radius: 10px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Quick Links hover effects */
+.lienkiet-nhanh {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 14px;
+    background: #f8fafc;
+    color: var(--mau-xanh-dam);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 14px;
+    border: 1px solid transparent;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lienkiet-nhanh:hover {
+    background: #fff;
+    border-color: var(--mau-vang-chinh);
+    transform: translateX(8px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    color: var(--mau-xanh-dam);
+}
+.lienkiet-nhanh i {
+    font-size: 20px;
+    width: 32px;
+    text-align: center;
+}
+
+/* ─ Loyalty Specific Styles ─ */
+.loyalty-hero {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 480px;
+    background: url('/static/images/condao.png') no-repeat center center;
+    background-size: cover;
+    z-index: 0;
+}
+
+.loyalty-hero::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(to bottom, rgba(4, 25, 59, 0.6) 0%, rgba(4, 25, 59, 0.9) 100%);
+}
+
+/* Roadmap / Timeline */
+.tier-timeline {
+    position: relative;
+    padding-left: 30px;
+}
+.tier-step {
+    position: relative;
+    padding-bottom: 40px;
+    padding-left: 40px;
+}
+.tier-step::before {
+    content: "";
+    position: absolute;
+    left: -15px;
+    top: 10px;
+    width: 2px;
+    height: 100%;
+    background: #e2e8f0;
+    z-index: 1;
+}
+.tier-step:last-child::before {
+    display: none;
+}
+.tier-indicator {
+    position: absolute;
+    left: -32px;
+    top: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+.tier-step.active .tier-indicator {
+    border-color: var(--mau-vang-chinh);
+    color: var(--mau-vang-chinh);
+    box-shadow: 0 0 15px rgba(225, 177, 44, 0.3);
+}
+
+/* Benefit Cards */
+.benefit-card {
+    background: white;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.benefit-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.06);
+    border-color: var(--mau-vang-chinh);
+}
+.benefit-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: rgba(225, 177, 44, 0.1);
+    color: var(--mau-vang-chinh);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+}
+
+/* ─ Booking History Card ─ */
+.journey-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.journey-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+}
+
+.journey-img-container {
+    height: 100%;
+    min-height: 180px;
+    position: relative;
+}
+
+.journey-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.journey-status-float {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 5;
+}
+
+.status-vip-badge {
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-confirmed { background: #dcfce7; color: #15803d; }
+.status-canceled { background: #fee2e2; color: #b91c1c; }
+.status-staying { background: #dbeafe; color: #1d4ed8; }
+.status-completed { background: #f1f5f9; color: #475569; }
+
+.journey-body {
+    padding: 25px;
+}
+
+.journey-id {
+    color: #94a3b8;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.journey-hotel {
+    color: var(--mau-xanh-dam);
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+
+.journey-room {
+    color: #64748b;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+.journey-info-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 15px 0;
+    border-top: 1px dashed #e2e8f0;
+    border-bottom: 1px dashed #e2e8f0;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+}
+.info-item i {
+    width: 32px;
+    height: 32px;
+    background: #f8fafc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    color: var(--mau-xanh-dam);
+    font-size: 14px;
+}
+
+.journey-price-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.price-box {
+    text-align: right;
+}
+
+.price-label {
+    font-size: 12px;
+    color: #94a3b8;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+
+.price-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--mau-xanh-dam);
+}
+
+.price-deposit { font-size: 13px; color: #059669; }
+.price-balance { font-size: 13px; color: #dc2626; font-weight: 700; }
+
+.journey-actions .btn {
+    border-radius: 12px;
+    font-weight: 700;
+    padding: 10px 20px;
+    font-size: 14px;
+}
+
+/* ─ Review & Testimonial Styles ─ */
+.review-scorecard {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 35px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(225, 177, 44, 0.2);
+}
+
+.review-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    border: 1px solid #f1f5f9;
+    height: 100%;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+}
+
+.avatar-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--mau-xanh-dam);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(4, 25, 59, 0.2);
+}
+
+.review-quote {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 40px;
+    color: #f1f5f9;
+    font-family: serif;
+    z-index: 0;
+}
+
+.review-content {
+    position: relative;
+    z-index: 1;
+    font-style: italic;
+    color: #475569;
+    line-height: 1.7;
+}
+
+/* Star Rating Animation */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23cbd5e1%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolygon%20points%3D%2212%202%2015.09%208.26%2022%209.27%2017%2014.14%2018.18%2021.02%2012%2017.77%205.82%2021.02%207%2014.14%202%209.27%208.91%208.26%2012%202%22%3E%3C%2Fpolygon%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 32px;
+    transition: transform .2s;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label,
+.star-rating input:checked ~ label {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23eab308%22%20stroke%3D%22%23eab308%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolygon%20points%3D%2212%202%2015.09%208.26%2022%209.27%2017%2014.14%2018.18%2021.02%2012%2017.77%205.82%2021.02%207%2014.14%202%209.27%208.91%208.26%2012%202%22%3E%3C%2Fpolygon%3E%3C%2Fsvg%3E");
+}
+
+.star-rating label:active {
+    transform: scale(0.9);
+}
+
+.review-post-context {
+    background: rgba(4, 25, 59, 0.05);
+    border-radius: 16px;
+    padding: 15px 20px;
+    border-left: 4px solid var(--mau-vang-chinh);
+    margin-bottom: 30px;
+}
+
+
+

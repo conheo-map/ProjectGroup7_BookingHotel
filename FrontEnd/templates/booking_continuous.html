@@ -2,8 +2,8 @@
 {% block title %}Xác nhận Giữ phòng - Hotel Booking{% endblock %}
 {% block content %}
 
-<div class="auth-wrapper">
-    <div class="auth-card text-center">
+<div class="xacthuc-baoboc">
+    <div class="xacthuc-chon text-center">
         <div class="mb-4">
             <div class="d-inline-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary rounded-circle shadow-sm">
                 <i class="fas fa-lock fa-2x"></i>
@@ -15,29 +15,29 @@
 
         <div class="row g-3 mb-4 text-start">
             <div class="col-6">
-                <div class="main-card p-3 bg-light border-0">
-                    <div class="extra-small text-muted uppercase fw-bold mb-1">Loại phòng</div>
+                <div class="the-chinh p-3 bg-light border-0">
+                    <div class="kichthuoc-nho-hon text-muted uppercase fw-bold mb-1">Loại phòng</div>
                     <div class="fw-bold text-dark">{{ room_type.room_type_code }}</div>
-                    <div class="extra-small text-muted italic">Mã phòng: {{ physical_room_id }}</div>
+                    <div class="kichthuoc-nho-hon text-muted italic">Mã phòng: {{ physical_room_id }}</div>
                 </div>
             </div>
             <div class="col-6">
-                <div class="main-card p-3 bg-light border-0">
-                    <div class="extra-small text-muted uppercase fw-bold mb-1">Thời gian lưu trú</div>
+                <div class="the-chinh p-3 bg-light border-0">
+                    <div class="kichthuoc-nho-hon text-muted uppercase fw-bold mb-1">Thời gian lưu trú</div>
                     <div class="fw-bold text-dark">{{ checkin_date }}</div>
-                    <div class="extra-small text-muted italic">đến {{ checkout_date }}</div>
+                    <div class="kichthuoc-nho-hon text-muted italic">đến {{ checkout_date }}</div>
                 </div>
             </div>
         </div>
 
-        <div class="main-card p-3 border-danger border-opacity-25 bg-danger bg-opacity-10 mb-5">
+        <div class="the-chinh p-3 border-danger border-opacity-25 bg-danger bg-opacity-10 mb-5">
             <h6 class="fw-bold text-danger mb-1"><i class="fas fa-hourglass-half me-1"></i> Thời hạn giữ phòng</h6>
             <div class="fs-5 fw-bold text-dark">{{ locked_until }}</div>
-            <p class="extra-small text-muted mb-0">Sau thời gian này, phòng sẽ được mở lại cho khách khác.</p>
+            <p class="kichthuoc-nho-hon text-muted mb-0">Sau thời gian này, phòng sẽ được mở lại cho khách khác.</p>
         </div>
 
         <div class="d-grid gap-2 mb-3">
-            <a href="/booking/checkout" class="btn btn-blue-booking py-3 fw-bold rounded-4 shadow-sm">
+            <a href="/booking/checkout" class="btn nut-xanh-datphong py-3 fw-bold rounded-4 shadow-sm">
                 TIẾP TỤC ĐẾN THANH TOÁN
             </a>
             <form action="/booking/release" method="POST" class="m-0">
@@ -46,7 +46,7 @@
         </div>
 
         <div class="mt-4 pt-3 border-top">
-            <p class="extra-small text-muted mb-0 italic">Lưu ý: Bạn vẫn có thể thêm dịch vụ gia tăng ở bước tiếp theo.</p>
+            <p class="kichthuoc-nho-hon text-muted mb-0 italic">Lưu ý: Bạn vẫn có thể thêm dịch vụ gia tăng ở bước tiếp theo.</p>
         </div>
     </div>
 </div>

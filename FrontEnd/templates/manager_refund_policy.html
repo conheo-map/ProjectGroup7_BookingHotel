@@ -17,30 +17,30 @@
 <div class="row g-4">
     <!-- Add policy -->
     <div class="col-lg-4">
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Thêm chính sách</h6>
             <form method="POST" action="/manager/refund-policy">
                 <input type="hidden" name="action" value="create">
                 <div class="mb-3">
-                    <label class="form-label-clean">Số giờ trước nhận phòng <span class="text-danger">*</span></label>
-                    <input type="number" name="hours_before_checkin" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Số giờ trước nhận phòng <span class="text-danger">*</span></label>
+                    <input type="number" name="hours_before_checkin" class="form-control bieumau-dieukhien-sach"
                            min="0" step="1" required placeholder="VD: 48">
-                    <div class="extra-small text-muted mt-1">Áp dụng khi hủy trước X giờ</div>
+                    <div class="kichthuoc-nho-hon text-muted mt-1">Áp dụng khi hủy trước X giờ</div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label-clean">Số ngày trước nhận phòng</label>
-                    <input type="number" name="days_before_arrival" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Số ngày trước nhận phòng</label>
+                    <input type="number" name="days_before_arrival" class="form-control bieumau-dieukhien-sach"
                            min="0" step="0.5" placeholder="VD: 2">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label-clean">Tỷ lệ hoàn tiền (%) <span class="text-danger">*</span></label>
-                    <input type="number" name="refund_percent" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Tỷ lệ hoàn tiền (%) <span class="text-danger">*</span></label>
+                    <input type="number" name="refund_percent" class="form-control bieumau-dieukhien-sach"
                            min="0" max="100" step="1" required placeholder="100">
-                    <div class="extra-small text-muted mt-1">0 = không hoàn, 100 = hoàn full</div>
+                    <div class="kichthuoc-nho-hon text-muted mt-1">0 = không hoàn, 100 = hoàn full</div>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label-clean">Mô tả</label>
-                    <textarea name="description" class="form-control form-control-clean" rows="2"
+                    <label class="bieumau-nhan-sach">Mô tả</label>
+                    <textarea name="description" class="form-control bieumau-dieukhien-sach" rows="2"
                               placeholder="Hủy trước 48 giờ được hoàn 100%..."></textarea>
                 </div>
                 <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
@@ -52,13 +52,13 @@
 
     <!-- Policies list -->
     <div class="col-lg-8">
-        <div class="main-card p-0 overflow-hidden">
-            <div class="card-header-clean px-4 py-3">
+        <div class="the-chinh p-0 overflow-hidden">
+            <div class="the-tieude-sach px-4 py-3">
                 <span class="fw-bold"><i class="fas fa-undo me-2"></i>Danh sách chính sách</span>
             </div>
             {% if policies %}
             <div class="table-responsive">
-                <table class="table-clean">
+                <table class="bang-sach">
                     <thead>
                         <tr>
                             <th>Giờ trước nhận phòng</th>

@@ -11,6 +11,10 @@ from services.api_auth import init_auth_context
 from database import get_db_connection
 from services.db_setup import init_database
 from services.booking_service import cleanup_expired_locks
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 def cleanup_locks_job():

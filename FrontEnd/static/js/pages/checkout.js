@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (priceDisplay) {
             priceDisplay.textContent = total.toLocaleString('vi-VN') + 'đ';
             if (paymentType === 'deposit') {
-                priceDisplay.innerHTML += ' <div class="extra-small text-danger fw-normal mt-1">Còn nợ: ' + (baseTotal * 0.5).toLocaleString('vi-VN') + 'đ</div>';
+                priceDisplay.innerHTML += ' <div class="kichthuoc-nho-hon text-danger fw-normal mt-1">Còn nợ: ' + (baseTotal * 0.5).toLocaleString('vi-VN') + 'đ</div>';
             }
         }
         if (labelDisplay) {

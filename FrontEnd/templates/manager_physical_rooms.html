@@ -17,13 +17,13 @@
 <div class="row g-4">
     <!-- Add room form -->
     <div class="col-lg-4">
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-plus-circle me-2 text-success"></i>Thêm phòng mới</h6>
             <form method="POST" action="/manager/physical-rooms">
                 <input type="hidden" name="action" value="create">
                 <div class="mb-3">
-                    <label class="form-label-clean">Loại phòng <span class="text-danger">*</span></label>
-                    <select name="room_type_id" class="form-select form-control-clean" required>
+                    <label class="bieumau-nhan-sach">Loại phòng <span class="text-danger">*</span></label>
+                    <select name="room_type_id" class="form-select bieumau-dieukhien-sach" required>
                         <option value="">-- Chọn loại phòng --</option>
                         {% for rt in room_types %}
                         <option value="{{ rt.room_type_id }}">{{ rt.room_type_code }}</option>
@@ -31,8 +31,8 @@
                     </select>
                 </div>
                 <div class="mb-4">
-                    <label class="form-label-clean">Tên phòng <span class="text-danger">*</span></label>
-                    <input type="text" name="room_name" class="form-control form-control-clean"
+                    <label class="bieumau-nhan-sach">Tên phòng <span class="text-danger">*</span></label>
+                    <input type="text" name="room_name" class="form-control bieumau-dieukhien-sach"
                            placeholder="VD: 101, Suite A..." required>
                 </div>
                 <button type="submit" class="btn btn-success w-100 py-2 fw-bold">
@@ -46,14 +46,14 @@
     <div class="col-lg-8">
         {% if inventory %}
         {% for rt in inventory %}
-        <div class="main-card p-0 overflow-hidden mb-3">
-            <div class="card-header-clean px-4 py-3 d-flex justify-content-between align-items-center">
+        <div class="the-chinh p-0 overflow-hidden mb-3">
+            <div class="the-tieude-sach px-4 py-3 d-flex justify-content-between align-items-center">
                 <span class="fw-bold">{{ rt.room_type_code }}</span>
-                <span class="extra-small text-muted">{{ rt.physical_rooms|length if rt.physical_rooms else 0 }} phòng</span>
+                <span class="kichthuoc-nho-hon text-muted">{{ rt.physical_rooms|length if rt.physical_rooms else 0 }} phòng</span>
             </div>
             {% if rt.physical_rooms %}
             <div class="table-responsive">
-                <table class="table-clean">
+                <table class="bang-sach">
                     <thead>
                         <tr>
                             <th>Tên phòng</th>
@@ -70,7 +70,7 @@
                                 <form method="POST" action="/manager/physical-rooms" class="d-inline">
                                     <input type="hidden" name="action" value="update_status">
                                     <input type="hidden" name="physical_room_id" value="{{ pr.physical_room_id }}">
-                                    <select name="housekeeping_status" class="form-select form-control-clean form-select-sm"
+                                    <select name="housekeeping_status" class="form-select bieumau-dieukhien-sach form-select-sm"
                                             onchange="this.form.submit()">
                                         {% for s in ['Clean', 'Dirty', 'Maintenance'] %}
                                         <option value="{{ s }}" {% if pr.housekeeping_status == s %}selected{% endif %}>{{ s }}</option>
@@ -80,7 +80,7 @@
                             </td>
                             <td class="small text-muted">
                                 {% if pr.current_booking_id %}
-                                <a href="/receptionist/invoice/{{ pr.current_booking_id }}" class="text-decoration-none text-booking">
+                                <a href="/receptionist/invoice/{{ pr.current_booking_id }}" class="text-decoration-none chu-datphong">
                                     #{{ pr.current_booking_id }}
                                 </a>
                                 {% else %}—{% endif %}
@@ -97,7 +97,7 @@
                                     </button>
                                 </form>
                                 {% else %}
-                                <span class="extra-small text-muted">Đang sử dụng</span>
+                                <span class="kichthuoc-nho-hon text-muted">Đang sử dụng</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -111,7 +111,7 @@
         </div>
         {% endfor %}
         {% else %}
-        <div class="main-card p-5 text-center text-muted">
+        <div class="the-chinh p-5 text-center text-muted">
             <i class="fas fa-door-open fa-3x opacity-25 mb-3 d-block"></i>
             <p>Chưa có dữ liệu phòng. Hãy thêm phòng mới.</p>
         </div>

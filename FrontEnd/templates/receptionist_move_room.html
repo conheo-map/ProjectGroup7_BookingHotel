@@ -18,8 +18,8 @@
     <div class="col-lg-7">
         <!-- Current booking info -->
         {% if booking %}
-        <div class="main-card p-4 mb-4">
-            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-bed me-2 text-booking"></i>Phòng hiện tại</h6>
+        <div class="the-chinh p-4 mb-4">
+            <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-bed me-2 chu-datphong"></i>Phòng hiện tại</h6>
             <div class="row g-2">
                 <div class="col-6">
                     <div class="small text-muted">Khách hàng</div>
@@ -42,18 +42,18 @@
         {% endif %}
 
         <!-- Move form -->
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-exchange-alt me-2 text-info"></i>Phòng mới</h6>
             <form method="POST" action="/receptionist/move-room/{{ booking_id }}">
                 <div class="mb-4">
-                    <label class="form-label-clean">Chọn phòng mới <span class="text-danger">*</span></label>
+                    <label class="bieumau-nhan-sach">Chọn phòng mới <span class="text-danger">*</span></label>
                     {% if room_types %}
                     {% for rt in room_types %}
                     {% if rt.physical_rooms %}
                     <div class="mb-2">
-                        <div class="extra-small text-muted text-uppercase letter-spacing-1 mb-1 fw-bold">{{ rt.room_type_code }}</div>
+                        <div class="kichthuoc-nho-hon text-muted text-uppercase khoangcach-chu-1 mb-1 fw-bold">{{ rt.room_type_code }}</div>
                         {% for pr in rt.physical_rooms %}
-                        <div class="form-check d-flex align-items-center gap-2 p-2 rounded-8 {% if pr.housekeeping_status != 'Clean' %}opacity-50{% endif %}">
+                        <div class="form-check d-flex align-items-center gap-2 p-2 bo-goc-8 {% if pr.housekeeping_status != 'Clean' %}opacity-50{% endif %}">
                             <input class="form-check-input" type="radio" name="new_physical_room_id"
                                    value="{{ pr.physical_room_id }}" id="pr{{ pr.physical_room_id }}"
                                    required
@@ -61,14 +61,14 @@
                                    {% if booking and pr.physical_room_id == booking.physical_room_id %}disabled{% endif %}>
                             <label class="form-check-label d-flex align-items-center gap-2 small" for="pr{{ pr.physical_room_id }}">
                                 <span class="fw-bold">{{ pr.room_name }}</span>
-                                <span class="badge-clean extra-small
+                                <span class="huyhieu-sach kichthuoc-nho-hon
                                     {% if pr.housekeeping_status == 'Clean' %}bg-success bg-opacity-10 text-success border-success
                                     {% elif pr.housekeeping_status == 'Dirty' %}bg-danger bg-opacity-10 text-danger border-danger
                                     {% else %}bg-secondary bg-opacity-10 text-secondary{% endif %} border">
                                     {{ pr.housekeeping_status }}
                                 </span>
                                 {% if booking and pr.physical_room_id == booking.physical_room_id %}
-                                <span class="extra-small text-muted">(phòng hiện tại)</span>
+                                <span class="kichthuoc-nho-hon text-muted">(phòng hiện tại)</span>
                                 {% endif %}
                             </label>
                         </div>
@@ -82,8 +82,8 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label-clean">Lý do chuyển phòng</label>
-                    <textarea name="reason" class="form-control form-control-clean" rows="2"
+                    <label class="bieumau-nhan-sach">Lý do chuyển phòng</label>
+                    <textarea name="reason" class="form-control bieumau-dieukhien-sach" rows="2"
                               placeholder="Yêu cầu của khách, hỏng thiết bị, v.v..."></textarea>
                 </div>
 

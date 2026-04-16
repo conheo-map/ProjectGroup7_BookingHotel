@@ -17,111 +17,115 @@
 
     {% if is_staff %}
     {# ══════════ STAFF LAYOUT: Sidebar + Content ══════════ #}
-    <div class="sb-layout">
+    <div class="thanhben-bocuc">
 
         {# ── SIDEBAR ── #}
-        <aside class="sb-sidebar" id="staff-sidebar">
-            <div class="sb-toggle" onclick="toggleSidebar()" title="Thu/Mở sidebar">
+        <aside class="thanhben-chunha" id="staff-sidebar">
+            <div class="thanhben-nut-chuyen" onclick="toggleSidebar()" title="Thu/Mở sidebar">
                 <i class="fas fa-bars"></i>
             </div>
 
-            <div class="sb-brand">
-                <span class="sb-brand-text"></span>
+            <div class="thanhben-thuonghieu">
+                <span class="thanhben-thuonghieu-chu"></span>
             </div>
 
-            <nav class="sb-nav">
+            <nav class="thanhben-dieuhuong">
                 {% if auth.role in ('Receptionist', 'Manager', 'Admin') %}
-                <div class="sb-section-title">Lễ tân</div>
-                <a class="sb-nav-link {% if request.path == '/receptionist' %}active{% endif %}" href="/receptionist">
-                    <i class="fas fa-concierge-bell"></i><span class="sb-label">Quản lý đặt phòng</span>
+                <div class="thanhben-phan-tieude">Lễ tân</div>
+                <a class="thanhben-dieuhuong-lienket {% if request.path == '/receptionist' %}active{% endif %}"
+                    href="/receptionist">
+                    <i class="fas fa-concierge-bell"></i><span class="thanhben-nhan">Quản lý đặt phòng</span>
                 </a>
-                <a class="sb-nav-link {% if '/room-plan' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/room-plan' in request.path %}active{% endif %}"
                     href="/receptionist/room-plan">
-                    <i class="fas fa-th"></i><span class="sb-label">Sơ đồ phòng</span>
+                    <i class="fas fa-th"></i><span class="thanhben-nhan">Sơ đồ phòng</span>
                 </a>
-                <a class="sb-nav-link {% if '/walkin' in request.path %}active{% endif %}" href="/receptionist/walkin">
-                    <i class="fas fa-walking"></i><span class="sb-label">Walk-in</span>
+                <a class="thanhben-dieuhuong-lienket {% if '/walkin' in request.path %}active{% endif %}"
+                    href="/receptionist/walkin">
+                    <i class="fas fa-walking"></i><span class="thanhben-nhan">Walk-in</span>
                 </a>
                 {% endif %}
 
                 {% if auth.role in ('Housekeeper', 'Receptionist', 'Manager', 'Admin') %}
-                <div class="sb-section-title">Buồng phòng</div>
-                <a class="sb-nav-link {% if '/housekeeping' in request.path %}active{% endif %}" href="/housekeeping">
-                    <i class="fas fa-broom"></i><span class="sb-label">Dọn phòng</span>
+                <div class="thanhben-phan-tieude">Buồng phòng</div>
+                <a class="thanhben-dieuhuong-lienket {% if '/housekeeping' in request.path %}active{% endif %}"
+                    href="/housekeeping">
+                    <i class="fas fa-broom"></i><span class="thanhben-nhan">Dọn phòng</span>
                 </a>
                 {% endif %}
 
                 {% if auth.role in ('Manager', 'Admin') %}
-                <div class="sb-section-title">Quản lý</div>
-                <!-- <a class="sb-nav-link {% if request.path == '/manager' %}active{% endif %}" href="/manager">
-                    <i class="fas fa-tachometer-alt"></i><span class="sb-label">Dashboard</span>
+                <div class="thanhben-phan-tieude">Quản lý</div>
+                <!-- <a class="thanhben-dieuhuong-lienket {% if request.path == '/manager' %}active{% endif %}" href="/manager">
+                    <i class="fas fa-tachometer-alt"></i><span class="thanhben-nhan">Dashboard</span>
                 </a> -->
-                <a class="sb-nav-link {% if '/manager/room-catalog' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/manager/room-catalog' in request.path %}active{% endif %}"
                     href="/manager/room-catalog">
-                    <i class="fas fa-list"></i><span class="sb-label">Danh mục loại phòng</span>
+                    <i class="fas fa-list"></i><span class="thanhben-nhan">Danh mục loại phòng</span>
                 </a>
-                <a class="sb-nav-link {% if '/manager/physical-rooms' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/manager/physical-rooms' in request.path %}active{% endif %}"
                     href="/manager/physical-rooms">
-                    <i class="fas fa-door-open"></i><span class="sb-label">Quản lý phòng vật lý</span>
+                    <i class="fas fa-door-open"></i><span class="thanhben-nhan">Quản lý phòng vật lý</span>
                 </a>
-                <a class="sb-nav-link {% if '/inventory' in request.path and 'detailed' not in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/inventory' in request.path and 'detailed' not in request.path %}active{% endif %}"
                     href="/manager/inventory-pricing">
-                    <i class="fas fa-cubes"></i><span class="sb-label">Kho & Giá</span>
+                    <i class="fas fa-cubes"></i><span class="thanhben-nhan">Kho & Giá</span>
                 </a>
-                <a class="sb-nav-link {% if 'detailed' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if 'detailed' in request.path %}active{% endif %}"
                     href="/manager/room-pricing-detailed">
-                    <i class="fas fa-calendar-alt"></i><span class="sb-label">Lịch giá chi tiết</span>
+                    <i class="fas fa-calendar-alt"></i><span class="thanhben-nhan">Lịch giá chi tiết</span>
                 </a>
-                <a class="sb-nav-link {% if '/promotions' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/promotions' in request.path %}active{% endif %}"
                     href="/manager/promotions">
-                    <i class="fas fa-tags"></i><span class="sb-label">Khuyến mãi</span>
+                    <i class="fas fa-tags"></i><span class="thanhben-nhan">Khuyến mãi</span>
                 </a>
-                <a class="sb-nav-link {% if '/manager/refund-policy' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/manager/refund-policy' in request.path %}active{% endif %}"
                     href="/manager/refund-policy">
-                    <i class="fas fa-undo"></i><span class="sb-label">Chính sách hoàn tiền</span>
+                    <i class="fas fa-undo"></i><span class="thanhben-nhan">Chính sách hoàn tiền</span>
                 </a>
-                <!-- <a class="sb-nav-link {% if '/reports' in request.path or '/analytics' in request.path %}active{% endif %}"
+                <!-- <a class="thanhben-dieuhuong-lienket {% if '/reports' in request.path or '/analytics' in request.path %}active{% endif %}"
                     href="/manager/reports">
-                    <i class="fas fa-chart-bar"></i><span class="sb-label">Báo cáo</span>
+                    <i class="fas fa-chart-bar"></i><span class="thanhben-nhan">Báo cáo</span>
                 </a> -->
                 {% endif %}
 
                 {% if auth.role == 'Admin' %}
-                <div class="sb-section-title">Hệ thống</div>
-                <a class="sb-nav-link {% if '/admin/users' in request.path %}active{% endif %}" href="/admin/users">
-                    <i class="fas fa-users-cog"></i><span class="sb-label">Nhân sự</span>
+                <div class="thanhben-phan-tieude">Hệ thống</div>
+                <a class="thanhben-dieuhuong-lienket {% if '/admin/users' in request.path %}active{% endif %}"
+                    href="/admin/users">
+                    <i class="fas fa-users-cog"></i><span class="thanhben-nhan">Nhân sự</span>
                 </a>
-                <a class="sb-nav-link {% if '/admin/dimensions' in request.path %}active{% endif %}"
+                <a class="thanhben-dieuhuong-lienket {% if '/admin/dimensions' in request.path %}active{% endif %}"
                     href="/admin/dimensions">
-                    <i class="fas fa-cog"></i><span class="sb-label">Cấu hình</span>
+                    <i class="fas fa-cog"></i><span class="thanhben-nhan">Cấu hình</span>
                 </a>
                 {% endif %}
             </nav>
 
-            <div class="sb-user">
-                <div class="sb-user-avatar">{{ (auth.full_name or auth.username or '?')[0] | upper }}</div>
-                <div class="sb-user-info">
-                    <div class="sb-user-name">{{ auth.full_name or auth.username }}</div>
-                    <div class="sb-user-role">{{ auth.role }}</div>
+            <div class="thanhben-nguoidung">
+                <div class="thanhben-nguoidung-anh">{{ (auth.full_name or auth.username or '?')[0] | upper }}</div>
+                <div class="thanhben-nguoidung-thongtin">
+                    <div class="thanhben-nguoidung-ten">{{ auth.full_name or auth.username }}</div>
+                    <div class="thanhben-nguoidung-vaitro">{{ auth.role }}</div>
                 </div>
-                <a href="/logout" class="sb-logout" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></a>
+                <a href="/logout" class="thanhben-dangxuat" title="Đăng xuất"><i class="fas fa-sign-out-alt"></i></a>
             </div>
         </aside>
 
-        <div class="sb-overlay" id="sb-overlay" onclick="closeMobileSidebar()"></div>
+        <div class="thanhben-phu" id="thanhben-phu" onclick="closeMobileSidebar()"></div>
 
-        <div class="sb-content">
-            <div class="sb-topbar">
-                <div class="sb-topbar__left">
-                    <button class="sb-topbar__hamburger" onclick="openMobileSidebar()">
+        <div class="thanhben-noidung">
+            <div class="thanhben-thanh-tren">
+                <div class="thanhben-thanh-tren-trai">
+                    <button class="thanhben-thanh-tren-menu" onclick="openMobileSidebar()">
                         <i class="fas fa-bars"></i>
                     </button>
-                    <span class="sb-topbar__breadcrumb">
+                    <span class="thanhben-thanh-tren-duongdan">
                         <i class="fas fa-home me-1"></i>{% block topbar_title %}Trang quản trị{% endblock %}
                     </span>
                 </div>
                 <div class="d-flex align-items-center gap-2">
-                    <span class="badge badge-clean
+                    <span class="badge huyhieu-sach
           {% if auth.role == 'Admin' %}bg-danger{% elif auth.role == 'Manager' %}bg-warning text-dark{% elif auth.role == 'Receptionist' %}bg-info{% else %}bg-secondary{% endif %}
         ">{{ auth.role }}</span>
                     <span class="text-muted small fw-bold">{{ auth.full_name or auth.username }}</span>
@@ -130,36 +134,65 @@
             <div class="px-4 mt-4 mb-5">
                 {% else %}
                 {# ══════════ CUSTOMER / GUEST LAYOUT: Top Navbar ══════════ #}
-                <nav id="customerNavbar" class="navbar navbar-dark top-navbar sticky-top glass-nav" style="padding: 0; height: 92px;">
-                    <div class="nav-bubble-bg"></div>
-                    <div class="container-fluid position-relative d-flex align-items-center h-100" style="padding: 0 40px;">
-                        
+                <nav id="customerNavbar" class="navbar navbar-dark navbar-apple sticky-top">
+                    <div class="dieu-huong-nen-bong"></div>
+                    <div class="container-fluid d-flex align-items-center h-100">
+
                         <!-- Logo Content (Left) -->
-                        <a class="navbar-brand m-0 d-flex align-items-center nav-fade-element text-decoration-none" style="padding: 0; z-index: 1;" href="/">
-                            <i class="fas fa-water text-white me-3" style="font-size: 2.5rem; opacity: 0.9;"></i>
+                        <a class="navbar-brand m-0 d-flex align-items-center dieu-huong-phan-tu-mo text-decoration-none"
+                            style="padding: 0; z-index: 1;" href="/">
+                            <i class="fas fa-water me-3" style="font-size: 2.5rem; color: #E1B12C; opacity: 0.9;"></i>
                             <div class="d-flex flex-column lh-1">
-                                <div class="fw-bold text-white mb-1" style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1.6rem; letter-spacing: 0.5px;">SAIGON-CONDAO</div>
-                                <div class="text-center w-100 mb-1" style="color: #cbd5e1; font-size: 0.85rem; font-style: italic; font-family: 'Georgia', serif;">Islands Resort</div>
-                                <div class="d-flex align-items-center justify-content-center" style="font-size: 0.65rem;">
+                                <div class="fw-bold text-white mb-1"
+                                    style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 1.6rem; letter-spacing: 0.5px;">
+                                    SAIGON-CONDAO</div>
+                                <div class="text-center w-100 mb-1"
+                                    style="color: #E1B12C; font-size: 0.85rem; font-style: italic; font-family: 'Georgia', serif; opacity: 0.8;">
+                                    Islands Resort</div>
+                                <div class="d-flex align-items-center justify-content-center"
+                                    style="font-size: 0.65rem;">
                                     <span class="text-white me-1">A member of</span>
-                                    <img src="/static/images/cropped-logo-1.png" style="height: 14px; object-fit: contain;" alt="Saigontourist Group">
+                                    <img src="/static/images/cropped-logo-1.png"
+                                        style="height: 14px; object-fit: contain;" alt="Saigontourist Group">
                                 </div>
                             </div>
                         </a>
 
                         <!-- Desktop Links (Center-Right) -->
-                        <div class="d-none d-lg-flex align-items-center gap-4 ms-auto me-4 nav-fade-element" style="z-index: 1;">
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khu nghỉ dưỡng</a>
-                            <a href="/search" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Phòng nghỉ</a>
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Ẩm thực</a>
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Dịch vụ</a>
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khuyến mãi</a>
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Tin tức</a>
-                            <a href="#" class="text-white text-decoration-none text-uppercase fw-semibold nav-item-hover" style="font-size: 0.8rem; letter-spacing: 0.5px;">Liên hệ</a>
+                        <div class="d-none d-lg-flex align-items-center gap-4 ms-auto me-4 dieu-huong-phan-tu-mo"
+                            style="z-index: 1;">
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="resort" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khu nghỉ
+                                dưỡng</a>
+                            <!-- <a href="/search" class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot" 
+                               style="font-size: 0.8rem; letter-spacing: 0.5px;">Phòng nghỉ</a> -->
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="dining" style="font-size: 0.8rem; letter-spacing: 0.5px;">Ẩm
+                                thực</a>
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="services" style="font-size: 0.8rem; letter-spacing: 0.5px;">Dịch
+                                vụ</a>
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="promotions" style="font-size: 0.8rem; letter-spacing: 0.5px;">Khuyến
+                                mãi</a>
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="news" style="font-size: 0.8rem; letter-spacing: 0.5px;">Tin tức</a>
+                            <a href="javascript:void(0)"
+                                class="text-white text-decoration-none text-uppercase fw-semibold dieu-huong-muck-di-chuot"
+                                data-panel-trigger="contact" style="font-size: 0.8rem; letter-spacing: 0.5px;">Liên
+                                hệ</a>
                         </div>
 
                         <!-- Hamburger Menu Bubble Toggle -->
-                        <button class="navbar-toggler ms-lg-0 ms-auto" id="navToggler" style="display: flex; justify-content: center; align-items: center; border: none; outline: none; padding: 0; width: 44px; height: 44px; z-index: 2;" type="button" data-bs-toggle="offcanvas" data-bs-target="#customerSidebar" aria-controls="customerSidebar">
+                        <button class="navbar-toggler ms-lg-0 ms-auto" id="navToggler"
+                            style="display: flex; justify-content: center; align-items: center; border: none; outline: none; padding: 0; width: 44px; height: 44px; z-index: 2;"
+                            type="button" data-bs-toggle="offcanvas" data-bs-target="#customerSidebar"
+                            aria-controls="customerSidebar">
                             <span class="navbar-toggler-icon" style="width: 1.2rem; height: 1.2rem;"></span>
                         </button>
                     </div>
@@ -168,7 +201,7 @@
                 {# OFF-CANVAS CUSTOMER SIDEBAR #}
                 <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="customerSidebar"
                     aria-labelledby="customerSidebarLabel"
-                    style="width: 280px; background: linear-gradient(180deg, #001f42 0%, #003580 100%) !important;">
+                    style="width: 280px; background: linear-gradient(180deg, #002a66 0%, #0047AB 100%) !important;">
                     <div class="offcanvas-header border-bottom border-secondary" style="padding: 20px;">
                         <h5 class="offcanvas-title fw-bold text-white" id="customerSidebarLabel">Menu</h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
@@ -176,37 +209,48 @@
                     </div>
                     <div class="offcanvas-body d-flex flex-column p-0">
                         <div class="flex-grow-1 p-3">
-                            <a class="sb-nav-link {% if request.path == '/search' %}active{% endif %}" href="/search">
-                                <i class="fas fa-search"></i><span class="sb-label">Tìm phòng</span>
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/' %}active{% endif %}"
+                                href="/">
+                                <i class="fas fa-home"></i><span class="thanhben-nhan">Trang chủ</span>
                             </a>
-                            <a class="sb-nav-link {% if request.path == '/reviews' %}active{% endif %}" href="/reviews">
-                                <i class="fas fa-star"></i><span class="sb-label">Đánh giá</span>
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/search' %}active{% endif %}"
+                                href="/search">
+                                <i class="fas fa-search"></i><span class="thanhben-nhan">Tìm phòng</span>
+                            </a>
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/reviews' %}active{% endif %}"
+                                href="/reviews">
+                                <i class="fas fa-star"></i><span class="thanhben-nhan">Đánh giá</span>
                             </a>
 
                             {% if auth.is_logged_in and auth.account_type == 'customer' %}
-                            <!-- <div class="sb-section-title mt-4 mb-2 text-muted small fw-bold text-uppercase px-2">Cá nhân</div> -->
-                            <a class="sb-nav-link {% if request.path == '/history' %}active{% endif %}" href="/history">
-                                <i class="fas fa-list"></i><span class="sb-label">Lịch sử đặt phòng</span>
+                            <!-- <div class="thanhben-phan-tieude mt-4 mb-2 text-muted small fw-bold text-uppercase px-2">Cá nhân</div> -->
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/history' %}active{% endif %}"
+                                href="/history">
+                                <i class="fas fa-list"></i><span class="thanhben-nhan">Lịch sử đặt phòng</span>
                             </a>
-                            <a class="sb-nav-link {% if request.path == '/loyalty' %}active{% endif %}" href="/loyalty">
-                                <i class="fas fa-award"></i><span class="sb-label">Loyalty</span>
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/loyalty' %}active{% endif %}"
+                                href="/loyalty">
+                                <i class="fas fa-award"></i><span class="thanhben-nhan">Loyalty</span>
                             </a>
-                            <a class="sb-nav-link {% if request.path == '/profile' %}active{% endif %}" href="/profile">
-                                <i class="fas fa-user"></i><span class="sb-label">Hồ sơ</span>
+                            <a class="thanhben-dieuhuong-lienket {% if request.path == '/profile' %}active{% endif %}"
+                                href="/profile">
+                                <i class="fas fa-user"></i><span class="thanhben-nhan">Hồ sơ</span>
                             </a>
                             {% endif %}
                         </div>
 
                         <div class="mt-auto">
                             {% if auth.is_logged_in %}
-                            <div class="sb-user">
-                                <div class="sb-user-avatar bg-info text-white">{{ (auth.full_name or auth.username or
+                            <div class="thanhben-nguoidung">
+                                <div class="thanhben-nguoidung-anh bg-info text-white">{{ (auth.full_name or
+                                    auth.username or
                                     '?')[0] | upper }}</div>
-                                <div class="sb-user-info">
-                                    <div class="sb-user-name text-white">{{ auth.full_name or auth.username }}</div>
-                                    <div class="sb-user-role text-white-50">Khách hàng</div>
+                                <div class="thanhben-nguoidung-thongtin">
+                                    <div class="thanhben-nguoidung-ten text-white">{{ auth.full_name or auth.username }}
+                                    </div>
+                                    <div class="thanhben-nguoidung-vaitro text-white-50">Khách hàng</div>
                                 </div>
-                                <a href="/logout" class="sb-logout text-danger" title="Đăng xuất"><i
+                                <a href="/logout" class="thanhben-dangxuat text-danger" title="Đăng xuất"><i
                                         class="fas fa-sign-out-alt"></i></a>
                             </div>
                             {% else %}
@@ -228,10 +272,98 @@
 
                     {% if is_staff %}
                 </div>{# /px-4 #}
-            </div>{# /sb-content #}
-        </div>{# /sb-layout #}
+            </div>{# /thanhben-noidung #}
+        </div>{# /thanhben-bocuc #}
         {% else %}
     </div>{# /container-fluid #}
+    {% endif %}
+
+    {% if not is_staff %}
+    <!-- Footer Caocap -->
+    <footer class="chantrang">
+        <div class="container">
+            <div class="row">
+                <!-- Cột 1: Thông tin thương hiệu -->
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                    <h5 class="text-white fw-bold mb-3 d-flex align-items-center">
+                        <i class="fas fa-gem me-2" style="color: #E1B12C;"></i>
+                        SAIGON-CONDAO
+                    </h5>
+                    <p class="text-secondary mb-4" style="line-height: 1.6;">
+                        Trải nghiệm nghỉ dưỡng đẳng cấp giữa nhà cổ di sản và lòng bao dung thiên nhiên. Tự hào là điểm
+                        đến tuyệt hảo trên đảo Côn Sơn.
+                    </p>
+                    <div class="d-flex align-items-center mb-4 text-white-50">
+                        <i class="fas fa-award me-2" style="font-size: 1.5rem; color: #E1B12C;"></i>
+                        Thành viên tự hào của <br>Saigontourist Group
+                    </div>
+                </div>
+
+                <!-- Cột 2: Khám phá -->
+                <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                    <h5 class="chantrang-tieude">Khám phá</h5>
+                    <ul class="chantrang-cot-ul">
+                        <li><a href="/search"><i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Phòng
+                                nghỉ & Villa</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Nhà hàng Ẩm
+                                thực</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Dịch vụ Spa
+                                & Giải trí</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Khuyến mãi
+                                đặc biệt</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right me-2" style="font-size: 0.8rem;"></i>Cẩm nang du
+                                lịch</a></li>
+                    </ul>
+                </div>
+
+                <!-- Cột 3: Liên hệ -->
+                <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                    <h5 class="chantrang-tieude">Liên hệ</h5>
+                    <ul class="chantrang-cot-ul chantrang-thongtin">
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Số 18-24 Tôn Đức Thắng, Đặc Khu Côn Đảo, Việt Nam</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone-alt"></i>
+                            <span>(+84) 254 3830 336</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>booking@saigoncondao.com</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-fax"></i>
+                            <span>(+84) 254 3830 567</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Cột 4: Kết nối & Đăng ký -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="chantrang-tieude">Nhận Ưu Đãi</h5>
+                    <p class="text-secondary mb-4">Đăng ký Email để nhận những chương trình khuyến mãi độc quyền từ hệ
+                        thống.</p>
+                    <div class="input-group mb-4">
+                        <input type="email" class="form-control bg-dark border-secondary text-white shadow-none"
+                            placeholder="Email của bạn..." aria-label="Email">
+                        <button class="btn fw-bold px-3 border-0" type="button"
+                            style="background-color: #E1B12C; color: var(--mau-xanh-chinh);">Gửi</button>
+                    </div>
+                    <div class="chantrang-mangxahoi">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="chantrang-duoi">
+                &copy; 2011 - 2026 Khu nghỉ dưỡng Sài Gòn - Côn Đảo. Thành viên Saigontourist Group.
+            </div>
+        </div>
+    </footer>
     {% endif %}
 
     <!-- Toast Notifications -->
@@ -265,8 +397,155 @@
             {% endwith %}
         </div>
     </div>
+    {# ════════════ INFORMATION SLIDE-IN PANEL ════════════ #}
+    <div id="infoOverlay" class="info-overlay"></div>
+    <div id="infoPanel" class="info-panel">
+        <button id="closeInfoPanel" class="info-panel-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div id="infoPanelContent" class="info-panel-inner">
+            {# Nội dung sẽ được nạp động qua Javascript hoặc định nghĩa sẵn #}
+            <div id="content-resort" class="d-none panel-section">
+                <div class="panel-header-img mb-4"
+                    style="background-image: url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=800');">
+                </div>
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Khu Nghỉ Dưỡng Sài Gòn - Côn
+                    Đảo</h2>
+                <p class="lead opacity-75">Hành trình di sản từ năm 1920.</p>
+                <hr class="border-secondary opacity-25 my-4">
+                <div class="panel-body">
+                    <p>Tọa lạc tại vị trí đắc địa số 18-24 Tôn Đức Thắng, hướng trực diện biển xanh bao la, Saigon -
+                        Condao Resort là sự giao thoa hoàn hảo giữa quá khứ thịnh vượng và hiện đại sang trọng.</p>
+                    <div class="row g-4 mt-2">
+                        <div class="col-6">
+                            <div class="p-3 border border-secondary rounded-3 text-center">
+                                <i class="fas fa-history fa-2x mb-2" style="color: var(--mau-phu);"></i>
+                                <h6 class="mb-0">92 Biệt thự Pháp cổ</h6>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 border border-secondary rounded-3 text-center">
+                                <i class="fas fa-building fa-2x mb-2" style="color: var(--mau-phu);"></i>
+                                <h6 class="mb-0">Khu Building hiện đại</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="mt-4">Được thành lập từ năm 1996, khu nghỉ dưỡng tự hào bảo tồn những giá trị di sản qua
+                        bàn tay chăm sóc tận tâm của đội ngũ Saigontourist Group.</p>
+                </div>
+            </div>
+
+            <div id="content-dining" class="d-none panel-section">
+                <div class="panel-header-img mb-4"
+                    style="background-image: url('../static/images/dinner-left.jpg');">
+                </div>
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Tinh Hoa Ẩm Thực</h2>
+                <div class="panel-body">
+                    <div class="mb-4">
+                        <h4 class="fw-bold"><i class="fas fa-utensils me-2" style="color: var(--mau-phu);"></i>Nhà hàng
+                            Poulo Condore</h4>
+                        <p class="text-white-50">Không gian ẩm thực sang trọng với sức chứa 250 khách, phục vụ các món
+                            Âu - Á và đặc sản biển đảo tươi ngon nhất.</p>
+                    </div>
+                    <div class="mb-4">
+                        <h4 class="fw-bold"><i class="fas fa-leaf me-2" style="color: var(--mau-phu);"></i>Nhà hàng Hoa
+                            Biển</h4>
+                        <p class="text-white-50">Tận hưởng làn gió biển mát lành tại khu vực sân vườn, nơi diễn ra các
+                            bữa tiệc BBQ hải sản và bữa tối lãng mạn dưới ánh nến.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-services" class="panel-section d-none">
+                <div class="panel-header-img mb-4"
+                    style="background-image: url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800');">
+                </div>
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Dịch Vụ & Tiện Ích</h2>
+                <div class="panel-body">
+                    <ul class="list-unstyled">
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-swimming-pool me-3 fa-lg" style="color: var(--mau-phu);"></i>
+                            <span>Hồ bơi ngoài trời giữa khuôn viên xanh ngắt.</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-table-tennis me-3 fa-lg" style="color: var(--mau-phu);"></i>
+                            <span>Sân Tennis tiêu chuẩn quốc tế.</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-plane-arrival me-3 fa-lg" style="color: var(--mau-phu);"></i>
+                            <span>Đưa đón sân bay Cỏ Ông miễn phí.</span>
+                        </li>
+                        <li class="mb-3 d-flex align-items-center">
+                            <i class="fas fa-spa me-3 fa-lg" style="color: var(--mau-phu);"></i>
+                            <span>Dịch vụ Massage & Spa trị liệu truyền thống.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="content-promotions" class="panel-section d-none">
+                <div class="panel-header-img mb-4"
+                    style="background-image: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=800');">
+                </div>
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Ưu Đãi Đặc Biệt</h2>
+                <div class="panel-body">
+                    <div class="p-3 border-start border-4 border-warning bg-white bg-opacity-10 mb-4">
+                        <h5 class="fw-bold">Early Bird - Đặt sớm giá tốt</h5>
+                        <p class="mb-0 small">Giảm ngay 15% khi đặt phòng trước 30 ngày. Áp dụng cho mọi hạng phòng.</p>
+                    </div>
+                    <div class="p-3 border-start border-4 border-info bg-white bg-opacity-10 mb-4">
+                        <h5 class="fw-bold">Gói Nghỉ Dưỡng Gia Đình</h5>
+                        <p class="mb-0 small">Bao gồm bữa sáng Buffet, đưa đón sân bay và ưu đãi 20% dịch vụ Spa.</p>
+                    </div>
+                    <div class="p-3 border-start border-4 border-danger bg-white bg-opacity-10">
+                        <h5 class="fw-bold">Thành viên Saigontourist</h5>
+                        <p class="mb-0 small">Tận hưởng đặc quyền nâng hạng phòng miễn phí (tùy tình trạng phòng).</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-news" class="panel-section d-none">
+                <div class="panel-header-img mb-4"
+                    style="background-image: url('https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=800');">
+                </div>
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Tin Tức & Sự Kiện</h2>
+                <div class="panel-body">
+                    <div class="mb-4">
+                        <span class="badge bg-warning text-dark mb-2">Sự kiện</span>
+                        <h5 class="fw-bold">Lễ hội Ẩm thực Biển Đảo 2024</h5>
+                        <p class="small text-white-50">Diễn ra vào tháng 6 tới tại bãi biển trước resort với sự tham gia
+                            của các đầu bếp hàng đầu.</p>
+                    </div>
+                    <div class="mb-4">
+                        <span class="badge bg-info text-dark mb-2">Cẩm nang</span>
+                        <h5 class="fw-bold">Top 5 điểm checking không thể bỏ qua tại Côn Đảo</h5>
+                        <p class="small text-white-50">Cùng Condao Resort khám phá những cung đường biển đẹp hút hồn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-contact" class="panel-section d-none">
+                <h2 class="display-6 fw-bold mb-3" style="color: var(--mau-vang-chinh);">Liên Hệ</h2>
+                <div class="panel-body">
+                    <div class="p-4 bg-white bg-opacity-10 rounded-4">
+                        <p class="mb-2"><strong>Địa chỉ:</strong> Số 18-24 Tôn Đức Thắng, Côn Đảo</p>
+                        <p class="mb-2"><strong>Hotline:</strong> (+84) 254 3830 336</p>
+                        <p class="mb-0"><strong>Email:</strong> booking@saigoncondao.com</p>
+                    </div>
+                    <div class="mt-4" style="overflow: hidden; border-radius: 1rem; position: relative; height: 250px;">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3923.6!2d106.6!3d8.68!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOMKwNDAnNDguMCJOIDEwNsKwMzYnMDAuMCJF!5e0!3m2!1svi!2s!4v1!5m2!1svi!2s"
+                            style="border:0; position: absolute; top: -60px; left: 0; width: 100%; height: calc(100% + 110px);" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block extra_js %}{% endblock %}
 </body>

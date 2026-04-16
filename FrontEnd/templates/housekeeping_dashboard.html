@@ -18,27 +18,27 @@
 {% if ops %}
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
-        <div class="stat-box text-center">
+        <div class="thongke-hop text-center">
             <div class="fs-3 fw-bold text-danger">{{ ops.dirty_rooms or 0 }}</div>
-            <div class="extra-small text-muted text-uppercase">Phòng bẩn</div>
+            <div class="kichthuoc-nho-hon text-muted text-uppercase">Phòng bẩn</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-box text-center">
+        <div class="thongke-hop text-center">
             <div class="fs-3 fw-bold text-warning">{{ ops.maintenance_rooms or 0 }}</div>
-            <div class="extra-small text-muted text-uppercase">Bảo trì</div>
+            <div class="kichthuoc-nho-hon text-muted text-uppercase">Bảo trì</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-box text-center">
+        <div class="thongke-hop text-center">
             <div class="fs-3 fw-bold text-success">{{ ops.checkins_due or 0 }}</div>
-            <div class="extra-small text-muted text-uppercase">Nhận phòng hôm nay</div>
+            <div class="kichthuoc-nho-hon text-muted text-uppercase">Nhận phòng hôm nay</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="stat-box text-center">
-            <div class="fs-3 fw-bold text-booking">{{ ops.checkouts_due or 0 }}</div>
-            <div class="extra-small text-muted text-uppercase">Trả phòng hôm nay</div>
+        <div class="thongke-hop text-center">
+            <div class="fs-3 fw-bold chu-datphong">{{ ops.checkouts_due or 0 }}</div>
+            <div class="kichthuoc-nho-hon text-muted text-uppercase">Trả phòng hôm nay</div>
         </div>
     </div>
 </div>
@@ -46,13 +46,13 @@
 
 <!-- Rooms list -->
 {% if rooms %}
-<div class="main-card p-0 overflow-hidden">
-    <div class="card-header-clean px-4 py-3">
+<div class="the-chinh p-0 overflow-hidden">
+    <div class="the-tieude-sach px-4 py-3">
         <span class="fw-bold"><i class="fas fa-broom me-2"></i>Danh sách phòng cần xử lý</span>
         <span class="badge bg-danger ms-2">{{ rooms|length }}</span>
     </div>
     <div class="table-responsive">
-        <table class="table-clean">
+        <table class="bang-sach">
             <thead>
                 <tr>
                     <th>Phòng</th>
@@ -70,7 +70,7 @@
                     <td class="small">{{ r.room_type_code or '—' }}</td>
                     <td class="small text-muted">{{ r.hotel_name or '—' }}</td>
                     <td>
-                        <span class="badge-clean extra-small
+                        <span class="huyhieu-sach kichthuoc-nho-hon
                             {% if r.housekeeping_status == 'Dirty' %}bg-danger bg-opacity-10 text-danger border-danger
                             {% elif r.housekeeping_status == 'Maintenance' %}bg-secondary bg-opacity-10 text-secondary
                             {% else %}bg-warning bg-opacity-10 text-warning border-warning{% endif %} border">
@@ -88,7 +88,7 @@
                             </button>
                         </form>
                         {% else %}
-                        <span class="extra-small text-success"><i class="fas fa-check-circle me-1"></i>Sạch</span>
+                        <span class="kichthuoc-nho-hon text-success"><i class="fas fa-check-circle me-1"></i>Sạch</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -98,7 +98,7 @@
     </div>
 </div>
 {% else %}
-<div class="main-card p-5 text-center">
+<div class="the-chinh p-5 text-center">
     <i class="fas fa-check-circle fa-3x text-success opacity-50 mb-3 d-block"></i>
     <h5 class="fw-bold text-success">Tất cả phòng đã sạch!</h5>
     <p class="text-muted small">Không có phòng nào cần vệ sinh hoặc bảo trì lúc này.</p>

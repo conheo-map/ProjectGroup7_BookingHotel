@@ -1,76 +1,85 @@
 {% extends "base.html" %}
-{% block title %}Đánh giá đặt phòng - Hotel Booking{% endblock %}
-{% block content %}
-<div class="row mb-4">
-    <div class="col">
-        <h2 class="fw-bold mb-1">Gửi đánh giá</h2>
-        <p class="text-muted small">Chia sẻ trải nghiệm lưu trú của bạn.</p>
-    </div>
-    <div class="col-auto">
-        <a href="/history" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Quay lại</a>
-    </div>
-</div>
+{% block title %}Gửi Nhận Xét - Saigon-Condao Resort{% endblock %}
 
-<div class="row justify-content-center">
-    <div class="col-lg-7">
-        <div class="main-card p-4">
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Hero Banner -->
+<div class="profile-hero"></div>
+
+<div class="container profile-content mb-5">
+    <div class="profile-header">
+        <h1 class="fw-bold mb-2">Chia Sẻ Hành Trình</h1>
+        <p class="opacity-75 fs-5">Lòng mến khách của chúng tôi sẽ thêm trọn vẹn nhờ những lời chân thành từ bạn</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <!-- Booking Context Card -->
             {% if booking %}
-            <div class="alert alert-light border mb-4 py-3">
-                <div class="fw-bold small"><i class="fas fa-bed me-2 text-booking"></i>Đặt phòng #{{ booking.booking_id or booking_id }}</div>
-                {% if booking.room_type_code %}
-                <div class="extra-small text-muted mt-1">{{ booking.room_type_code }}
-                    {% if booking.hotel_name %} — {{ booking.hotel_name }}{% endif %}
+            <div class="review-post-context">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="small text-muted text-uppercase fw-bold mb-1">Đánh giá cho kỳ nghỉ</div>
+                        <h5 class="fw-bold mb-0 text-primary">{{ booking.hotel_name or 'Resort của chúng tôi' }}</h5>
+                        <div class="small text-muted">{{ booking.room_type_code }} • {{ booking.checkin_date }} → {{ booking.checkout_date }}</div>
+                    </div>
+                    <div class="text-end">
+                        <div class="badge bg-white text-dark border px-3 py-2 rounded-pill shadow-sm">#{{ booking.booking_id }}</div>
+                    </div>
                 </div>
-                {% endif %}
-                {% if booking.checkin_date and booking.checkout_date %}
-                <div class="extra-small text-muted">{{ booking.checkin_date }} → {{ booking.checkout_date }}</div>
-                {% endif %}
             </div>
             {% endif %}
 
-            <form method="POST" action="/booking/review/{{ booking_id }}">
-                <div class="mb-4">
-                    <label class="form-label-clean">Khách sạn <span class="text-danger">*</span></label>
-                    <select name="hotel_id" class="form-select form-control-clean" required>
-                        <option value="">-- Chọn khách sạn --</option>
-                        {% for h in hotels %}
-                        <option value="{{ h.hotel_id }}"
-                            {% if booking and booking.hotel_id == h.hotel_id %}selected{% endif %}>
-                            {{ h.hotel_name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label-clean">Điểm đánh giá <span class="text-danger">*</span></label>
-                    <div class="d-flex gap-2 flex-wrap mt-2">
-                        {% for i in range(1, 6) %}
-                        <div>
-                            <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" class="d-none" required>
-                            <label for="star{{ i }}" class="btn btn-outline-warning fw-bold px-3 py-2"
-                                   style="cursor:pointer;">
-                                {{ i }} <i class="fas fa-star"></i>
-                            </label>
+            <!-- Review Form -->
+            <div class="profile-glass-card shadow-lg">
+                <form method="POST" action="/booking/review/{{ booking_id }}">
+                    <div class="mb-5">
+                        <label class="caidat-nhan d-block text-center mb-4">Bạn đánh giá thế nào về trải nghiệm lần này?</label>
+                        <div class="star-rating">
+                            {% for i in range(5, 0, -1) %}
+                            <input type="radio" name="rating" value="{{ i }}" id="star{{ i }}" required>
+                            <label for="star{{ i }}" title="{{ i }} sao"></label>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+                        <div class="text-center mt-2 small text-muted">Vui lòng chọn từ 1 đến 5 ngôi sao</div>
                     </div>
-                    <div class="extra-small text-muted mt-1">1 = Tệ, 5 = Xuất sắc</div>
-                </div>
 
-                <div class="mb-4">
-                    <label class="form-label-clean">Nhận xét</label>
-                    <textarea name="comment" class="form-control form-control-clean" rows="5"
-                              placeholder="Chia sẻ trải nghiệm của bạn về phòng, dịch vụ, vị trí..."></textarea>
-                </div>
+                    <div class="mb-4">
+                        <label class="caidat-nhan">Điểm đến cụ thể</label>
+                        <select name="hotel_id" class="form-select caidat-input" required>
+                            <option value="">-- Xác nhận khách sạn lưu trú --</option>
+                            {% for h in hotels %}
+                            <option value="{{ h.hotel_id }}"
+                                {% if booking and booking.hotel_id == h.hotel_id %}selected{% endif %}>
+                                {{ h.hotel_name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <button type="submit" class="btn btn-blue-booking px-5 py-2 fw-bold w-100">
-                    <i class="fas fa-paper-plane me-2"></i>Gửi đánh giá
-                </button>
-            </form>
+                    <div class="mb-4">
+                        <label class="caidat-nhan">Lời tự sự của bạn</label>
+                        <textarea name="comment" class="form-control caidat-input" rows="6"
+                                  placeholder="Chia sẻ về không gian phòng, phong cách phục vụ, hay những khoảnh khắc đáng nhớ nhất..."></textarea>
+                    </div>
+
+                    <div class="pt-3">
+                        <button type="submit" class="btn nut-xanh-datphong w-100 py-3 fw-bold rounded-pill shadow">
+                            <i class="fas fa-paper-plane me-2"></i>Gửi lời cảm nhận
+                        </button>
+                        <div class="text-center mt-3">
+                            <a href="/history" class="text-muted small text-decoration-none">
+                                <i class="fas fa-times me-1"></i>Hủy bỏ và quay lại
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>
-
-<script src="{{ url_for('static', filename='js/pages/review_post.js') }}"></script>
 {% endblock %}
+

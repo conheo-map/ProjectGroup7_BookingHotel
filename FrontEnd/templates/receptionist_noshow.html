@@ -16,13 +16,13 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-6">
-        <div class="main-card p-4 mb-4">
+        <div class="the-chinh p-4 mb-4">
             <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fas fa-user-slash me-2 text-warning"></i>Thông tin đặt phòng</h6>
             {% if booking %}
             <div class="row g-2">
                 <div class="col-6">
                     <div class="small text-muted">Mã đặt phòng</div>
-                    <div class="fw-bold text-booking">#{{ booking.booking_id or booking_id }}</div>
+                    <div class="fw-bold chu-datphong">#{{ booking.booking_id or booking_id }}</div>
                 </div>
                 <div class="col-6">
                     <div class="small text-muted">Khách hàng</div>
@@ -32,7 +32,7 @@
                     <div class="small text-muted">Phòng</div>
                     <div class="fw-bold">{{ booking.room_type_code or '—' }}</div>
                     {% if booking.hotel_name %}
-                    <div class="extra-small text-muted">{{ booking.hotel_name }}</div>
+                    <div class="kichthuoc-nho-hon text-muted">{{ booking.hotel_name }}</div>
                     {% endif %}
                 </div>
                 <div class="col-6 mt-2">
@@ -41,7 +41,7 @@
                 </div>
                 <div class="col-6 mt-2">
                     <div class="small text-muted">Tổng tiền</div>
-                    <div class="fw-bold text-booking">{{ booking.total_price|vnd if booking.total_price else '—' }}</div>
+                    <div class="fw-bold chu-datphong">{{ booking.total_price|vnd if booking.total_price else '—' }}</div>
                 </div>
                 <div class="col-6 mt-2">
                     <div class="small text-muted">Đã cọc</div>
@@ -59,7 +59,7 @@
             Hành động này không thể hoàn tác.
         </div>
 
-        <div class="main-card p-4">
+        <div class="the-chinh p-4">
             <form method="POST" action="/receptionist/noshow/{{ booking_id }}">
                 <p class="text-muted small mb-4">Xác nhận rằng khách hàng <strong>{{ booking.customer_name or '(#'+booking_id|string+')' }}</strong>
                     đã không đến nhận phòng vào ngày <strong>{{ booking.checkin_date or '—' }}</strong>.</p>

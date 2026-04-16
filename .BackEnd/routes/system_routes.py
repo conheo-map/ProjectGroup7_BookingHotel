@@ -8,6 +8,10 @@ from services.api_auth import require_token
 from services.booking_service import get_user_role_from_db, cleanup_expired_locks, timedelta
 
 system_bp = Blueprint('system_bp', __name__)
+
+def invalidate_pricing_caches():
+    """Dummy function to avoid NameError if no local cache is defined yet."""
+    pass
 @system_bp.route('/api/funnel/event', methods=['POST'])
 def api_track_funnel_event():
     """Track hành vi conversion funnel (cho cả user chưa login)."""
@@ -82,12 +86,21 @@ def api_get_room_types_dim():
                COALESCE(drt.extra_bed_capacity, 0) AS extra_bed_capacity,
                COALESCE(drt.extra_adult_fee, 0.0) AS extra_adult_fee,
                COALESCE(drt.child_breakfast_fee, 0.0) AS child_breakfast_fee,
+               drt.main_image, drt.images,
                dh.hotel as hotel_name
         FROM Dim_RoomType drt
         LEFT JOIN Dim_Hotel dh ON drt.hotel_id = dh.hotel_id
         ORDER BY drt.room_type_code
     """)
-    room_types_list = [dict(r) for r in cursor.fetchall()]
+    room_types_list = []
+    import json
+    for r in cursor.fetchall():
+        rd = dict(r)
+        try:
+            rd['images'] = json.loads(rd.get('images') or '[]')
+        except:
+            rd['images'] = []
+        room_types_list.append(rd)
     conn.close()
     return jsonify({'success': True, 'room_types': room_types_list})
 

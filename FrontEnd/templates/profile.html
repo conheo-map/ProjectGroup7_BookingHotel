@@ -1,98 +1,140 @@
 {% extends "base.html" %}
-{% block title %}Hồ sơ cá nhân - Hotel Booking{% endblock %}
+{% block title %}Hội Viên Luxury - {{ full_name }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/profile.css') }}">
+{% endblock %}
+
 {% block content %}
-<div class="row mb-4 align-items-center">
-    <div class="col">
-        <h2 class="fw-bold mb-1">Hồ sơ cá nhân</h2>
-        <p class="text-muted small">Quản lý thông tin tài khoản và theo dõi chương trình loyalty.</p>
-    </div>
-</div>
+<!-- Hero Banner -->
+<div class="profile-hero"></div>
 
-<div class="row g-4">
-    <!-- Profile form -->
-    <div class="col-lg-7">
-        <div class="main-card p-4">
-            <h6 class="fw-bold mb-4 border-bottom pb-2"><i class="fas fa-user-edit me-2 text-primary"></i>Thông tin cá nhân</h6>
-            <form method="POST" action="/profile">
-                <div class="mb-3">
-                    <label class="form-label-clean">Email (không thể thay đổi)</label>
-                    <input type="email" class="form-control form-control-clean bg-light" value="{{ email }}" disabled>
+<div class="container profile-content">
+    <div class="profile-header">
+        <h1 class="fw-bold mb-2">Chào mừng trở lại, {{ full_name }}</h1>
+        <p class="opacity-75 fs-5">Tận hưởng những đặc quyền riêng biệt dành cho quý khách tại Saigon-Condao Resort</p>
+    </div>
+
+    <div class="row g-5">
+        <!-- Profile & Security Form -->
+        <div class="col-lg-7">
+            <div class="profile-glass-card">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3 text-primary">
+                        <i class="fas fa-user-cog fa-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="fw-bold mb-0">Thông tin cá nhân</h4>
+                        <p class="text-muted small mb-0">Cập nhật chi tiết tài khoản và bảo mật</p>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label-clean">Họ và tên <span class="text-danger">*</span></label>
-                    <input type="text" name="customer_name" class="form-control form-control-clean" value="{{ full_name }}" required>
-                </div>
-                <hr class="my-4">
-                <h6 class="fw-bold mb-3 small text-muted text-uppercase">Đổi mật khẩu (để trống nếu không muốn đổi)</h6>
-                <div class="mb-3">
-                    <label class="form-label-clean">Mật khẩu hiện tại</label>
-                    <input type="password" name="old_password" class="form-control form-control-clean" placeholder="Nhập mật khẩu hiện tại">
-                </div>
-                <div class="mb-4">
-                    <label class="form-label-clean">Mật khẩu mới</label>
-                    <input type="password" name="new_password" class="form-control form-control-clean" placeholder="Mật khẩu mới (tối thiểu 6 ký tự)" minlength="6">
-                </div>
-                <button type="submit" class="btn btn-blue-booking px-5 py-2 fw-bold">
-                    <i class="fas fa-save me-2"></i>Lưu thay đổi
-                </button>
-            </form>
+
+                <form method="POST" action="/profile">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="caidat-nhan">Địa chỉ Email</label>
+                            <input type="email" class="form-control caidat-input" value="{{ email }}" disabled>
+                            <small class="text-muted">Liên kết định danh vĩnh viễn với tài khoản của bạn.</small>
+                        </div>
+                        <div class="col-12">
+                            <label class="caidat-nhan">Họ và tên khách hàng</label>
+                            <input type="text" name="customer_name" class="form-control caidat-input" value="{{ full_name }}" required>
+                        </div>
+                        
+                        <div class="col-12 mt-4 pt-4 border-top">
+                            <h6 class="fw-bold text-uppercase small text-primary mb-3">Thay đổi mật khẩu</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="caidat-nhan">Mật khẩu hiện tại</label>
+                                    <input type="password" name="old_password" class="form-control caidat-input" placeholder="••••••••">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="caidat-nhan">Mật khẩu mới</label>
+                                    <input type="password" name="new_password" class="form-control caidat-input" placeholder="Tối thiểu 6 ký tự" minlength="6">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <button type="submit" class="btn nut-xanh-datphong w-100 py-3 fw-bold rounded-3 shadow">
+                                <i class="fas fa-check-circle me-2"></i>Cập nhật thông tin hội viên
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <!-- Loyalty sidebar -->
-    <div class="col-lg-5">
-        <div class="main-card p-4 mb-4" style="border-left: 4px solid #003580;">
-            <h6 class="fw-bold mb-3"><i class="fas fa-award me-2 text-booking"></i>Thành viên Loyalty</h6>
+        <!-- Loyalty & Quick Links Sidebar -->
+        <div class="col-lg-5">
+            <!-- Physical-style Loyalty Card -->
             {% set tier = loyalty.tier or 'Newbie' %}
             {% set points = loyalty.points or 0 %}
-            <div class="text-center py-3">
-                <div class="d-inline-block rounded-circle p-3 mb-2
-                    {% if tier == 'Gold' %}bg-warning{% elif tier == 'Silver' %}bg-secondary{% else %}bg-light{% endif %}">
-                    <i class="fas fa-medal fa-2x
-                        {% if tier == 'Gold' %}text-dark{% elif tier == 'Silver' %}text-white{% else %}text-muted{% endif %}"></i>
+            <div class="loyalty-the-vip vip-bg-{{ tier|lower }}">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="vip-tier-name">{{ tier }}</div>
+                        <div class="small opacity-75">Resort Luxury Member</div>
+                    </div>
+                    <i class="fas fa-gem fa-2x"></i>
                 </div>
-                <div class="fw-bold fs-5 mt-2">{{ tier }}</div>
-                <div class="extra-small text-muted">Hạng thành viên hiện tại</div>
-            </div>
-            <div class="border-top pt-3">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">Điểm tích lũy</span>
-                    <span class="fw-bold text-booking">{{ points }} điểm</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted small">Đêm lưu trú (ước tính)</span>
-                    <span class="fw-bold">{{ (points // 10) }} đêm</span>
-                </div>
-                {% if tier == 'Newbie' %}
-                <div class="progress mt-3 mb-1" style="height:6px;">
-                    <div class="progress-bar bg-success" style="width:{{ [points * 2, 100]|min }}%"></div>
-                </div>
-                <div class="extra-small text-muted">Cần {{ 50 - points }} điểm nữa để lên <strong>Silver</strong></div>
-                {% elif tier == 'Silver' %}
-                <div class="progress mt-3 mb-1" style="height:6px;">
-                    <div class="progress-bar bg-warning" style="width:{{ [(points - 50) * 100 // 160, 100]|min }}%"></div>
-                </div>
-                <div class="extra-small text-muted">Cần {{ 210 - points }} điểm nữa để lên <strong>Gold</strong></div>
-                {% else %}
-                <div class="alert alert-warning alert-sm border-0 py-2 extra-small mt-2 mb-0">
-                    <i class="fas fa-star me-1"></i> Bạn đang ở hạng cao nhất! Hưởng ưu đãi 5% mỗi đặt phòng.
-                </div>
-                {% endif %}
-            </div>
-        </div>
+                
+                <div class="vip-chip"></div>
 
-        <div class="main-card p-4">
-            <h6 class="fw-bold mb-3"><i class="fas fa-link me-2 text-muted"></i>Liên kết nhanh</h6>
-            <a href="/history" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
-                <i class="fas fa-list me-2 text-primary"></i>Lịch sử đặt phòng
-            </a>
-            <a href="/loyalty" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark mb-2">
-                <i class="fas fa-award me-2 text-warning"></i>Chi tiết chương trình Loyalty
-            </a>
-            <a href="/search" class="d-block p-2 rounded-8 hover-bg-light transition-base text-decoration-none text-dark">
-                <i class="fas fa-search me-2 text-success"></i>Tìm phòng mới
-            </a>
+                <div class="d-flex justify-content-between align-items-end">
+                    <div>
+                        <div class="vip-member-name">{{ full_name }}</div>
+                        <div class="small mt-1 opacity-75">Member since 2024</div>
+                    </div>
+                    <div class="text-end">
+                        <div class="small opacity-75">Total Points</div>
+                        <div class="fw-bold fs-4">{{ points }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loyalty Status Details -->
+            <div class="profile-glass-card mb-4">
+                <h5 class="fw-bold mb-4">Trạng thái tích lũy</h5>
+                
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Tiến trình hạng tiếp theo</span>
+                        <span class="fw-bold">{{ points }} / {% if tier == 'Newbie' %}50{% elif tier == 'Silver' %}210{% else %}Max{% endif %}</span>
+                    </div>
+                    <div class="progress-vip">
+                        {% if tier == 'Newbie' %}
+                            <div class="progress-vip-bar" style="width:{{ [points * 2, 100]|min }}%"></div>
+                        {% elif tier == 'Silver' %}
+                            <div class="progress-vip-bar" style="width:{{ [(points - 50) * 100 // 160, 100]|min }}%"></div>
+                        {% else %}
+                            <div class="progress-vip-bar" style="width: 100%"></div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if tier == 'Newbie' %}
+                        <p class="small text-muted mt-2">Cần thêm <strong>{{ 50 - points }}</strong> điểm để đạt hạng <strong>Silver</strong></p>
+                    {% elif tier == 'Silver' %}
+                        <p class="small text-muted mt-2">Cần thêm <strong>{{ 210 - points }}</strong> điểm để đạt hạng <strong>Gold</strong></p>
+                    {% else %}
+                        <p class="small text-success mt-2"><i class="fas fa-star me-1"></i> Bạn đang tận hưởng ưu đãi 5% cao nhất!</p>
+                    {% endif %}
+                </div>
+
+                <div class="d-flex align-items-center p-3 bg-light rounded-3 mb-3">
+                    <i class="fas fa-moon text-primary me-3 fa-lg"></i>
+                    <div>
+                        <div class="small text-muted">Đêm nghỉ tích lũy</div>
+                        <div class="fw-bold">{{ points // 10 }} đêm</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            
         </div>
     </div>
 </div>
 {% endblock %}
+
+

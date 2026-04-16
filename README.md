@@ -162,6 +162,7 @@ pip freeze > requirements.txt
 ---
 
 ## ▶️ Khởi chạy dự án
+VUI LÒNG CHẠY DỰ ÁN BẰNG PHIÊN BẢN PYTHON 3.13.x
 
 > ⚠️ **Quan trọng:** Phải mở **2 cửa sổ Terminal riêng biệt** và chạy đồng thời cả 2 server.
 

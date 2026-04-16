@@ -11,10 +11,10 @@
 
 {% if cart_items and cart_items|length > 0 %}
 <form action="/cart/checkout" method="POST">
-    <div class="dashboard-grid">
+    <div class="bangdieukhien-luoi">
         <!-- MAIN COLUMN: ITEMS -->
         <main>
-            <div class="alert alert-warning d-flex align-items-center shadow-sm small py-2 rounded-8 mb-4" id="countdown-banner">
+            <div class="alert alert-warning d-flex align-items-center shadow-sm small py-2 bo-goc-8 mb-4" id="countdown-banner">
                 <i class="fas fa-clock me-2 fs-4"></i>
                 <div>
                     <strong>Phòng đang được giữ!</strong>
@@ -22,12 +22,12 @@
                 </div>
             </div>
 
-            <div class="main-card overflow-hidden mb-4">
-                <div class="card-header-clean bg-light">
+            <div class="the-chinh overflow-hidden mb-4">
+                <div class="the-tieude-sach bg-light">
                     <h6 class="fw-bold mb-0">Danh sách phòng đang giữ</h6>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-clean mb-0">
+                    <table class="table table-hover bang-sach mb-0">
                         <thead>
                             <tr>
                                 <th>Chi tiết chỗ nghỉ</th>
@@ -44,7 +44,7 @@
                                     <td>
                                         <div class="fw-bold text-primary">{{ item.hotel_name }}</div>
                                         <div class="small text-muted">{{ item.room_name }} ({{ item.room_type_code }})</div>
-                                        <div class="extra-small text-dark mt-1">{{ item.adults }} người lớn, {{ item.children }} trẻ em</div>
+                                        <div class="kichthuoc-nho-hon text-dark mt-1">{{ item.adults }} người lớn, {{ item.children }} trẻ em</div>
                                     </td>
                                     <td class="small">
                                         {% if item.booking_type == 'continuous' %}
@@ -70,21 +70,21 @@
             </div>
 
             <!-- ADDITIONAL DETAILS -->
-            <div class="main-card p-4">
+            <div class="the-chinh p-4">
                 <h6 class="fw-bold mb-4 border-bottom pb-2">Thông tin bổ sung cho chuyến đi</h6>
                 
-                <div class="form-section-clean">
-                    <label class="form-label-clean d-block mb-3">Yêu cầu đặc biệt cho khách sạn:</label>
-                    <textarea name="special_requests" class="form-control form-control-clean" rows="3" placeholder="Ví dụ: Phòng không hút thuốc, Nhận phòng sớm..."></textarea>
-                    <p class="extra-small text-muted mt-2 italic">*Yêu cầu đặc biệt không được đảm bảo nhưng khách sạn sẽ cố gắng hết sức để hỗ trợ.</p>
+                <div class="bieumau-phan-sach">
+                    <label class="bieumau-nhan-sach d-block mb-3">Yêu cầu đặc biệt cho khách sạn:</label>
+                    <textarea name="special_requests" class="form-control bieumau-dieukhien-sach" rows="3" placeholder="Ví dụ: Phòng không hút thuốc, Nhận phòng sớm..."></textarea>
+                    <p class="kichthuoc-nho-hon text-muted mt-2 italic">*Yêu cầu đặc biệt không được đảm bảo nhưng khách sạn sẽ cố gắng hết sức để hỗ trợ.</p>
                 </div>
 
-                <div class="form-section-clean mb-0">
-                    <label class="form-label-clean d-block mb-3">Dịch vụ gia tăng (Tùy chọn):</label>
+                <div class="bieumau-phan-sach mb-0">
+                    <label class="bieumau-nhan-sach d-block mb-3">Dịch vụ gia tăng (Tùy chọn):</label>
                     <div class="row g-2">
                         {% for cat in catalog %}
                         <div class="col-md-6">
-                            <label class="d-flex align-items-center p-3 border rounded-8 cursor-pointer hover-bg-light transition-base">
+                            <label class="d-flex align-items-center p-3 border bo-goc-8 contro-chuot di-chuot-sangs hieuung-coban">
                                 <input type="checkbox" name="extra_services" value="{{ cat.catalog_id }}" class="me-3">
                                 <div class="small">
                                     <div class="fw-bold">{{ cat.item_name }}</div>
@@ -100,23 +100,23 @@
 
         <!-- SIDEBAR: SUMMARY -->
         <aside>
-            <div class="summary-card shadow-sm">
+            <div class="the-tomtat shadow-sm">
                 <h5 class="fw-bold mb-4">Chi tiết thanh toán</h5>
                 
                 <div class="mb-4">
-                    <label class="extra-small fw-bold text-muted text-uppercase mb-2 d-block">Mã giảm giá</label>
+                    <label class="kichthuoc-nho-hon fw-bold text-muted text-uppercase mb-2 d-block">Mã giảm giá</label>
                     <div class="d-flex gap-2">
-                        <input type="text" name="promo_code" class="form-control form-control-clean form-control-sm" placeholder="VD: SUMMER26">
+                        <input type="text" name="promo_code" class="form-control bieumau-dieukhien-sach form-control-sm" placeholder="VD: SUMMER26">
                         <button type="button" class="btn btn-outline-primary btn-sm px-3">Áp dụng</button>
                     </div>
                 </div>
 
                 <div class="mb-4 border-top border-bottom py-3">
-                    <label class="extra-small fw-bold text-muted text-uppercase mb-3 d-block">Tùy chọn thanh toán</label>
+                    <label class="kichthuoc-nho-hon fw-bold text-muted text-uppercase mb-3 d-block">Tùy chọn thanh toán</label>
                     
                     <div class="mb-3">
-                        <label class="form-label-clean extra-small">Phương thức</label>
-                        <select name="payment_method" class="form-select form-select-sm form-control-clean">
+                        <label class="bieumau-nhan-sach kichthuoc-nho-hon">Phương thức</label>
+                        <select name="payment_method" class="form-select form-select-sm bieumau-dieukhien-sach">
                             <option value="credit_card">Thẻ tín dụng (Quốc tế)</option>
                             <option value="bank_transfer">Chuyển khoản / VNPay</option>
                             <option value="cash">Thanh toán tại quầy</option>
@@ -124,8 +124,8 @@
                     </div>
 
                     <div class="mb-0">
-                        <label class="form-label-clean extra-small">Kế hoạch thanh toán</label>
-                        <select name="payment_type" class="form-select form-select-sm form-control-clean">
+                        <label class="bieumau-nhan-sach kichthuoc-nho-hon">Kế hoạch thanh toán</label>
+                        <select name="payment_type" class="form-select form-select-sm bieumau-dieukhien-sach">
                             <option value="full">Thanh toán 100% (Ưu tiên)</option>
                             <option value="deposit">Đặt cọc giữ chỗ (50%)</option>
                         </select>
@@ -148,7 +148,7 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-blue-booking w-100 py-3 fw-bold shadow-sm">
+                <button type="submit" class="btn nut-xanh-datphong w-100 py-3 fw-bold shadow-sm">
                     GỬI YÊU CẦU ĐẶT PHÒNG
                 </button>
                 
@@ -158,8 +158,8 @@
             </div>
 
             <!-- TRUST BADGES -->
-            <div class="mt-4 p-3 bg-white border-clean rounded-8 text-center">
-                <div class="extra-small text-muted mb-2"><i class="fas fa-shield-alt text-success me-1"></i> Giao dịch được bảo mật và mã hóa</div>
+            <div class="mt-4 p-3 bg-white vien-sach bo-goc-8 text-center">
+                <div class="kichthuoc-nho-hon text-muted mb-2"><i class="fas fa-shield-alt text-success me-1"></i> Giao dịch được bảo mật và mã hóa</div>
                 <div class="d-flex justify-content-center gap-3 opacity-50 grayscale">
                     <i class="fab fa-cc-visa fa-2x"></i>
                     <i class="fab fa-cc-mastercard fa-2x"></i>
@@ -171,13 +171,13 @@
 </form>
 
 {% else %}
-    <div class="main-card p-5 text-center shadow-sm">
+    <div class="the-chinh p-5 text-center shadow-sm">
         <div class="mb-4 text-muted">
             <i class="fas fa-shopping-cart fa-4x opacity-25"></i>
         </div>
         <h3 class="fw-bold mb-2">Giỏ hàng của bạn đang trống</h3>
         <p class="text-muted mb-4">Hãy nhanh tay chọn cho mình một căn phòng tuyệt vời cho kỳ nghỉ sắp tới.</p>
-        <a href="/search" class="btn btn-blue-booking px-5 py-2 fw-bold">Tìm phòng trống ngay</a>
+        <a href="/search" class="btn nut-xanh-datphong px-5 py-2 fw-bold">Tìm phòng trống ngay</a>
     </div>
 {% endif %}
 

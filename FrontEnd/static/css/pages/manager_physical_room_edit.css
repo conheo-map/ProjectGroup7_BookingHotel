@@ -1,9 +1,9 @@
-.re-gallery {
+.suaphong-thuvien {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
     gap: 10px;
 }
-.re-gallery__item {
+.suaphong-thuvien-muc {
     position: relative;
     border-radius: 10px;
     overflow: hidden;
@@ -12,43 +12,43 @@
     box-shadow: 0 2px 8px rgba(0,0,0,.08);
     transition: transform .2s, box-shadow .2s;
 }
-.re-gallery__item:hover {
+.suaphong-thuvien-muc:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,.15);
 }
-.re-gallery__img {
+.suaphong-thuvien-anh {
     width: 100%; height: 100%; object-fit: cover;
 }
-.re-gallery__overlay {
+.suaphong-thuvien-phu {
     position: absolute; inset: 0;
     background: linear-gradient(135deg, rgba(0,0,0,.0) 50%, rgba(0,0,0,.5) 100%);
     opacity: 0; transition: opacity .2s;
     display: flex; align-items: flex-start; justify-content: flex-end; padding: 8px;
 }
-.re-gallery__item:hover .re-gallery__overlay { opacity: 1; }
-.re-gallery__del {
+.suaphong-thuvien-muc:hover .suaphong-thuvien-phu { opacity: 1; }
+.suaphong-thuvien-xoa {
     width: 28px; height: 28px; padding: 0;
     display: flex; align-items: center; justify-content: center; font-size: 11px;
 }
-.re-gallery__idx {
+.suaphong-thuvien-chi {
     position: absolute; bottom: 6px; left: 8px;
     background: rgba(0,0,0,.6); color: #fff;
     font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px;
 }
-.re-upload-zone {
+.suaphong-tai-khu {
     border: 2px dashed #cbd5e1; border-radius: 12px;
     transition: border-color .2s, background .2s; overflow: hidden;
 }
-.re-upload-zone:hover, .re-upload-zone.dragover {
-    border-color: #2563eb; background: rgba(37,99,235,.04);
+.suaphong-tai-khu:hover, .suaphong-tai-khu.dragover {
+    border-color: var(--mau-xanh-chinh); background: rgba(37,99,235,.04);
 }
-.re-upload-zone__content {
+.suaphong-tai-khu-noidung {
     display: flex; flex-direction: column; align-items: center;
     justify-content: center; padding: 28px 16px; cursor: pointer;
 }
-.re-upload-preview { padding: 12px; text-align: center; }
-.re-upload-preview img {
+.suaphong-tai-xemtruoc { padding: 12px; text-align: center; }
+.suaphong-tai-xemtruoc img {
     max-height: 200px; max-width: 100%; object-fit: contain;
     border-radius: 8px; margin-bottom: 10px;
 }
-.re-upload-preview__actions { display: flex; gap: 8px; justify-content: center; }
+.suaphong-tai-xemtruoc-hanhdong { display: flex; gap: 8px; justify-content: center; }

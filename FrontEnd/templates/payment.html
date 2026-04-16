@@ -2,6 +2,17 @@
 {% block title %}Thanh toán - Hotel Booking{% endblock %}
 {% block extra_head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/payment.css') }}">
+<style>
+  header, footer, .thanhben-chunha { display: none !important; }
+  body { margin: 0; padding: 0; background: #fff !important; }
+  #main-content {
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -9,103 +20,108 @@
 {% set pm = choices.payment_method %}
 {% set pt = choices.payment_type %}
 
-<div class="pay-layout">
+<div class="thanhtoan-bocuc">
 
   {# ═══ CỘT TRÁI: ORDER SUMMARY (dark) ═══ #}
-  <div class="pay-summary">
-    <a href="/booking/checkout" class="pay-back">
-      <i class="fas fa-arrow-left me-2"></i>Quay lại
-    </a>
-
-    <div class="pay-summary__title">Đặt phòng khách sạn</div>
-    <div class="pay-summary__amount" id="pay-total-display">
-      {{ "{:,.0f}".format(total_due) }}<span class="pay-currency">đ</span>
+  <div class="thanhtoan-tomtat">
+    <div style="width: 100%; text-align: left;">
+      <a href="/booking/checkout" class="thanhtoan-quaylai">
+        <i class="fas fa-arrow-left me-2"></i>Quay lại
+      </a>
     </div>
-    <div class="pay-summary__note">
+    <div class="thanhtoan-tomtat-inner">
+
+    <div class="thanhtoan-tomtat-tieude">Đặt phòng khách sạn</div>
+    <div class="thanhtoan-tomtat__amount" id="pay-total-display">
+      {{ "{:,.0f}".format(total_due) }}<span class="thanhtoan-tiente">đ</span>
+    </div>
+    <div class="thanhtoan-tomtat-ghichu">
       {% if pt == 'deposit' %}Đặt cọc 50%{% else %}Thanh toán toàn bộ{% endif %}
     </div>
 
     {# Chi tiết phòng #}
-    <div class="pay-product-card">
-      <div class="pay-product-card__icon">
+    <div class="thanhtoan-sanpham-the">
+      <div class="thanhtoan-sanpham-the-bieutuong">
         <i class="fas fa-hotel fa-lg"></i>
       </div>
-      <div class="pay-product-card__info">
-        <div class="pay-product-card__name">{{ lock.room_type_code }}</div>
-        <div class="pay-product-card__desc">
+      <div class="thanhtoan-sanpham-the__info">
+        <div class="thanhtoan-sanpham-the-ten">{{ lock.room_type_code }}</div>
+        <div class="thanhtoan-sanpham-the-mota">
           {{ lock.hotel_name }} · Phòng {{ lock.room_name }}
         </div>
-        <div class="pay-product-card__meta">
+        <div class="thanhtoan-sanpham-the-thongtin">
           {{ lock.checkin_date }} → {{ lock.checkout_date }} · {{ num_nights }} đêm
         </div>
       </div>
-      <div class="pay-product-card__price">
+      <div class="thanhtoan-sanpham-the-gia">
         {{ "{:,.0f}".format(subtotal) }}đ
       </div>
     </div>
 
     {# Toggle cọc/đủ #}
     {% if pt == 'deposit' %}
-    <div class="pay-deposit-badge">
+    <div class="thanhtoan-datcoc-huyhieu">
       <i class="fas fa-piggy-bank me-2"></i>
       Đặt cọc 50% · Còn nợ: {{ "{:,.0f}".format(total_due) }}đ
     </div>
     {% endif %}
 
     {# Bảng giá #}
-    <div class="pay-breakdown">
-      <div class="pay-breakdown__row">
+    <div class="thanhtoan-chitiet">
+      <div class="thanhtoan-chitiet-hang">
         <span>Giá phòng ({{ num_nights }} đêm × {{ "{:,.0f}".format(base_price) }}đ)</span>
         <span>{{ "{:,.0f}".format(subtotal) }}đ</span>
       </div>
-      <div class="pay-breakdown__row">
+      <div class="thanhtoan-chitiet-hang">
         <span>Thuế VAT (10%)</span>
         <span>{{ "{:,.0f}".format(tax) }}đ</span>
       </div>
       {% if pt == 'deposit' %}
-      <div class="pay-breakdown__row pay-breakdown__row--sub">
+      <div class="thanhtoan-chitiet-hang thanhtoan-chitiet-hang-phu">
         <span>Tổng giá trị</span>
         <span>{{ "{:,.0f}".format(subtotal + tax) }}đ</span>
       </div>
-      <div class="pay-breakdown__row pay-breakdown__row--sub">
+      <div class="thanhtoan-chitiet-hang thanhtoan-chitiet-hang-phu">
         <span>Đặt cọc (50%)</span>
         <span>-{{ "{:,.0f}".format((subtotal + tax) * 0.5) }}đ</span>
       </div>
       {% endif %}
-      <div class="pay-breakdown__total">
+      <div class="thanhtoan-chitiet-tong">
         <span>Tổng tiền phải trả hôm nay</span>
         <span>{{ "{:,.0f}".format(total_due) }}đ</span>
       </div>
     </div>
+    </div>
   </div>
 
   {# ═══ CỘT PHẢI: PAYMENT FORM (white) ═══ #}
-  <div class="pay-form-side">
+  <div class="thanhtoan-bieumau-trai">
+    <div class="thanhtoan-bieumau-trai-inner">
     <form action="/booking/payment" method="POST" id="payment-form" novalidate>
 
       {# ── Thông tin liên hệ ── #}
-      <div class="pay-section">
-        <h6 class="pay-section__title">Thông tin liên hệ</h6>
-        <div class="pay-input-box">
-          <span class="pay-input-label">Email</span>
-          <input type="email" name="email" class="pay-input"
+      <div class="thanhtoan-phan">
+        <h6 class="thanhtoan-phan-tieude">Thông tin liên hệ</h6>
+        <div class="thanhtoan-nhap-hop">
+          <span class="thanhtoan-nhap-nhan">Email</span>
+          <input type="email" name="email" class="thanhtoan-nhap"
                  value="{{ auth.username }}" readonly>
         </div>
       </div>
 
       {# ── Phương thức thanh toán ── #}
-      <div class="pay-section">
-        <h6 class="pay-section__title">Phương thức thanh toán</h6>
+      <div class="thanhtoan-phan">
+        <h6 class="thanhtoan-phan-tieude">Phương thức thanh toán</h6>
 
-        <div class="pay-method-list">
+        <div class="thanhtoan-phuongthuc-danhsach">
           {# Thẻ #}
-          <label class="pay-method-item {% if pm == 'credit_card' %}active{% endif %}">
+          <label class="thanhtoan-phuongthuc-muc {% if pm == 'credit_card' %}active{% endif %}">
             <input type="radio" name="method_display" value="credit_card"
                    {% if pm == 'credit_card' %}checked{% endif %}
                    onchange="switchPaymentMethod('credit_card')">
             <i class="fas fa-credit-card me-2"></i>
             <span>Thẻ tín dụng / Ghi nợ</span>
-            <span class="pay-method-brands ms-auto">
+            <span class="thanhtoan-phuongthuc-thuonghieu ms-auto">
               <img src="https://img.icons8.com/color/24/visa.png" alt="Visa">
               <img src="https://img.icons8.com/color/24/mastercard-logo.png" alt="MC">
               <img src="https://img.icons8.com/color/24/jcb.png" alt="JCB">
@@ -113,7 +129,7 @@
           </label>
 
           {# Chuyển khoản #}
-          <label class="pay-method-item {% if pm == 'bank_transfer' %}active{% endif %}">
+          <label class="thanhtoan-phuongthuc-muc {% if pm == 'bank_transfer' %}active{% endif %}">
             <input type="radio" name="method_display" value="bank_transfer"
                    {% if pm == 'bank_transfer' %}checked{% endif %}
                    onchange="switchPaymentMethod('bank_transfer')">
@@ -122,7 +138,7 @@
           </label>
 
           {# Tiền mặt #}
-          <label class="pay-method-item {% if pm == 'cash' %}active{% endif %}">
+          <label class="thanhtoan-phuongthuc-muc {% if pm == 'cash' %}active{% endif %}">
             <input type="radio" name="method_display" value="cash"
                    {% if pm == 'cash' %}checked{% endif %}
                    onchange="switchPaymentMethod('cash')">
@@ -132,53 +148,53 @@
         </div>
 
         {# ── Form chi tiết THẺ ── #}
-        <div id="form-credit_card" class="pay-method-detail {% if pm != 'credit_card' %}d-none{% endif %}">
+        <div id="form-credit_card" class="thanhtoan-phuongthuc-chitiet {% if pm != 'credit_card' %}d-none{% endif %}">
           <div class="pay-field-group mb-3">
-            <label class="pay-field-label">Thông tin thẻ</label>
-            <div class="pay-card-row">
-              <input type="text" name="card_number" class="pay-input pay-input--card"
+            <label class="thanhtoan-truong-nhan">Thông tin thẻ</label>
+            <div class="thanhtoan-the-hang">
+              <input type="text" name="card_number" class="thanhtoan-nhap thanhtoan-nhap-the"
                      placeholder="1234 1234 1234 1234" maxlength="19"
                      oninput="formatCardNumber(this)">
-              <span class="pay-card-brands">
+              <span class="thanhtoan-the-thuonghieu">
                 <i class="fab fa-cc-visa"></i>
                 <i class="fab fa-cc-mastercard"></i>
                 <i class="fab fa-cc-jcb"></i>
               </span>
             </div>
-            <div class="pay-card-row-split">
-              <input type="text" name="card_expiry" class="pay-input"
+            <div class="thanhtoan-the-hang-chia">
+              <input type="text" name="card_expiry" class="thanhtoan-nhap"
                      placeholder="MM / YY" maxlength="7"
                      oninput="formatExpiry(this)">
-              <input type="text" name="card_cvc" class="pay-input"
+              <input type="text" name="card_cvc" class="thanhtoan-nhap"
                      placeholder="CVC" maxlength="4">
             </div>
           </div>
           <div class="pay-field-group mb-3">
-            <label class="pay-field-label">Tên chủ thẻ</label>
-            <input type="text" name="card_holder" class="pay-input" placeholder="Họ và tên trên thẻ">
+            <label class="thanhtoan-truong-nhan">Tên chủ thẻ</label>
+            <input type="text" name="card_holder" class="thanhtoan-nhap" placeholder="Họ và tên trên thẻ">
           </div>
           <div class="pay-field-group">
-            <label class="pay-field-label">Địa chỉ thanh toán</label>
-            <select name="card_country" class="pay-input">
+            <label class="thanhtoan-truong-nhan">Địa chỉ thanh toán</label>
+            <select name="card_country" class="thanhtoan-nhap">
               <option selected>Việt Nam</option>
               <option>United States</option>
               <option>Japan</option>
               <option>South Korea</option>
               <option>Other</option>
             </select>
-            <input type="text" name="card_address" class="pay-input mt-1" placeholder="Địa chỉ">
+            <input type="text" name="card_address" class="thanhtoan-nhap mt-1" placeholder="Địa chỉ">
             <div class="d-flex gap-1 mt-1">
-              <input type="text" name="card_city" class="pay-input" placeholder="Thành phố">
-              <input type="text" name="card_zip" class="pay-input" placeholder="Mã bưu điện" style="max-width:140px">
+              <input type="text" name="card_city" class="thanhtoan-nhap" placeholder="Thành phố">
+              <input type="text" name="card_zip" class="thanhtoan-nhap" placeholder="Mã bưu điện" style="max-width:140px">
             </div>
           </div>
         </div>
 
         {# ── Form chi tiết CHUYỂN KHOẢN ── #}
-        <div id="form-bank_transfer" class="pay-method-detail {% if pm != 'bank_transfer' %}d-none{% endif %}">
+        <div id="form-bank_transfer" class="thanhtoan-phuongthuc-chitiet {% if pm != 'bank_transfer' %}d-none{% endif %}">
           <div class="pay-field-group mb-3">
-            <label class="pay-field-label">Ngân hàng</label>
-            <select name="bank_name" class="pay-input">
+            <label class="thanhtoan-truong-nhan">Ngân hàng</label>
+            <select name="bank_name" class="thanhtoan-nhap">
               <option value="">-- Chọn ngân hàng --</option>
               <option>Vietcombank</option>
               <option>Techcombank</option>
@@ -194,18 +210,18 @@
             </select>
           </div>
           <div class="pay-field-group mb-3">
-            <label class="pay-field-label">Tên người chuyển</label>
-            <input type="text" name="transfer_name" class="pay-input" placeholder="Họ và tên">
+            <label class="thanhtoan-truong-nhan">Tên người chuyển</label>
+            <input type="text" name="transfer_name" class="thanhtoan-nhap" placeholder="Họ và tên">
           </div>
-          <div class="pay-bank-notice">
+          <div class="thanhtoan-nganhang-luuy">
             <i class="fas fa-info-circle me-2 text-primary"></i>
             Sau khi xác nhận, hệ thống sẽ tạo mã đơn hàng. Vui lòng chuyển khoản trong vòng <strong>30 phút</strong>.
           </div>
         </div>
 
         {# ── Form chi tiết TIỀN MẶT ── #}
-        <div id="form-cash" class="pay-method-detail {% if pm != 'cash' %}d-none{% endif %}">
-          <div class="pay-cash-notice">
+        <div id="form-cash" class="thanhtoan-phuongthuc-chitiet {% if pm != 'cash' %}d-none{% endif %}">
+          <div class="thanhtoan-tienmat-luuy">
             <i class="fas fa-store me-2 text-success"></i>
             Bạn sẽ thanh toán trực tiếp tại quầy lễ tân khi nhận phòng. Đặt phòng sẽ được giữ trong <strong>24 giờ</strong>.
           </div>
@@ -213,7 +229,7 @@
       </div>
 
       {# ── Checkbox lưu thông tin ── #}
-      <div class="pay-save-info mb-4">
+      <div class="thanhtoan-luu-thongtin mb-4">
         <label class="d-flex align-items-start gap-2">
           <input type="checkbox" name="save_info" class="mt-1">
           <div>
@@ -224,7 +240,7 @@
       </div>
 
       {# ── Nút xác nhận ── #}
-      <button type="submit" id="btn-pay" class="pay-submit-btn">
+      <button type="submit" id="btn-pay" class="thanhtoan-xacnhan-nut">
         <i class="fas fa-lock me-2"></i>Xác nhận thanh toán
       </button>
 
@@ -239,18 +255,19 @@
       </div>
 
       {# ── Trust badges ── #}
-      <div class="pay-trust">
-        <div class="pay-trust__badges">
+      <div class="thanhtoan-uytin">
+        <div class="thanhtoan-uytin-huyhieu">
           <span><i class="fas fa-shield-alt text-success me-1"></i>Bảo mật SSL</span>
           <span><i class="fas fa-lock text-primary me-1"></i>Mã hóa 256-bit</span>
           <span><i class="fas fa-check-circle text-success me-1"></i>PCI DSS</span>
         </div>
-        <div class="pay-trust__text">
+        <div class="thanhtoan-uytin-chu">
           Thanh toán được bảo vệ bởi Hotel Booking Payment Gateway
         </div>
       </div>
     </form>
     <form id="release-form" action="/booking/release" method="POST" class="d-none"></form>
+    </div>
   </div>
 </div>
 

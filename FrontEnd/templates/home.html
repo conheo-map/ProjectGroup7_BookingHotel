@@ -3,117 +3,557 @@
 {% block content %}
 
 <!-- Hero -->
-<div class="rounded-10 overflow-hidden mb-5 shadow-sm position-relative" style="background:linear-gradient(135deg,#003580 0%,#0ea5e9 100%);min-height:340px;">
-    <div class="position-absolute top-0 start-0 w-100 h-100" style="background:url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1440 320\'%3E%3Cpath fill=\'rgba(255,255,255,.05)\' d=\'M0,96L80,112C160,128,320,160,480,154.7C640,149,800,107,960,96C1120,85,1280,107,1360,117.3L1440,128L1440,320L0,320Z\'/%3E%3C/svg%3E') bottom/cover no-repeat;opacity:.3"></div>
-    <div class="container py-5 position-relative">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8 text-white mb-5">
-                <div class="badge bg-white text-booking fw-bold mb-3 px-3 py-2 rounded-pill shadow-sm">
-                    <i class="fas fa-award me-1"></i> Hệ thống đặt phòng hàng đầu
-                </div>
-                <h1 class="fw-bold display-5 mb-3">Tìm phòng khách sạn ưng ý của bạn</h1>
-                <p class="text-white-75 mb-0 fs-5">Giá tốt nhất mỗi ngày · Tích điểm loyalty · Đặt phòng tức thì</p>
+<div class="bo-goc-10 overflow-hidden shadow-sm position-relative" style="min-height: 400px; margin-bottom: 0;">
+    <!-- Carousel Background -->
+    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute top-0 start-0 w-100 h-100"
+        data-bs-ride="carousel" data-bs-interval="5000" style="z-index: 0;">
+        <div class="carousel-inner h-100">
+            <div class="carousel-item active h-100">
+                <img src="./static/images/tropical-swimming-pool.jpg" class="d-block w-100 h-100"
+                    style="object-fit: cover;" alt="Khách sạn 1">
             </div>
-            <div class="col-lg-10">
-                <div class="bg-white rounded-10 p-4 shadow-lg text-start">
-                    <h6 class="fw-bold mb-3 text-booking"><i class="fas fa-search me-2"></i>Tìm kiếm phòng trống</h6>
-                    <form action="/search" method="GET">
-                        <div class="row g-3">
-                            <div class="col-md-4">
-                                <label class="form-label-clean">Chọn khách sạn</label>
-                                <select name="hotel_id" class="form-select form-control-clean">
-                                    <option value="">-- Tất cả khách sạn --</option>
-                                    {% for h in hotels %}
-                                        <option value="{{ h.hotel_id }}">{{ h.hotel_name }}</option>
-                                    {% endfor %}
+            <div class="carousel-item h-100">
+                <img src="./static/images/home_1.jpg" class="d-block w-100 h-100" style="object-fit: cover;"
+                    alt="Khách sạn 2">
+            </div>
+            <div class="carousel-item h-100">
+                <img src="./static/images/condao.png" class="d-block w-100 h-100" style="object-fit: cover;"
+                    alt="Khách sạn 3">
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="container py-5 position-relative" style="z-index: 2;">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8 text-white mb-5 pb-4">
+                <!-- <h1 class="fw-bold display-5 mb-3">Đánh Thức Mọi Giác Quan Giữa
+                    Lòng Đại Dương Tĩnh Lặng</h1> -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Khối Tìm Kiếm Nhô Lên Nửa Yêu Cầu -->
+<div class="container position-relative" style="z-index: 10; margin-top: -55px; margin-bottom: 2rem;">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="thanh-timkiem-vang">
+                <form action="/search" method="GET"
+                    class="d-flex w-100 flex-column flex-md-row m-0 p-0 text-start align-items-stretch">
+                    <!-- Chọn khách sạn -->
+                    <div class="timkiem-muc flex-grow-1 position-relative d-flex align-items-center"
+                        style="flex-basis: 30%;">
+                        <i class="fas fa-bed timkiem-icon"></i>
+                        <select name="hotel_id" class="timkiem-input text-truncate"
+                            style="padding-left: 2.5rem !important;">
+                            <option value="">Chọn khách sạn...</option>
+                            {% for h in hotels %}
+                            <option value="{{ h.hotel_id }}">{{ h.hotel_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="timkiem-gach-doc d-none d-md-block"></div>
+
+                    <!-- Ngày nhận - trả -->
+                    <div class="timkiem-muc flex-grow-1 position-relative d-flex align-items-center"
+                        style="flex-basis: 35%;">
+                        <i class="far fa-calendar-alt timkiem-icon"></i>
+                        <div class="d-flex w-100 flex-column flex-sm-row align-items-start align-items-sm-center gap-1" style="padding-left: 2.5rem; padding-right: 1rem;">
+                            <input type="date" name="checkin_date" class="timkiem-input form-control p-0 border-0 bg-transparent"
+                                style="font-weight: 600;" value="{{ today }}" min="{{ today }}"
+                                required>
+                            <span class="mx-1 text-muted d-none d-sm-inline" style="font-weight: 300;">—</span>
+                            <input type="date" name="checkout_date" class="timkiem-input form-control p-0 border-0 bg-transparent"
+                                style="font-weight: 600;" value="{{ tomorrow }}" min="{{ tomorrow }}"
+                                required>
+                        </div>
+                    </div>
+
+                    <div class="timkiem-gach-doc d-none d-md-block"></div>
+
+                    <!-- Người lớn và Trẻ em -->
+                    <div class="timkiem-muc flex-grow-1 position-relative d-flex align-items-center dropdown"
+                        style="flex-basis: 25%;">
+                        <i class="far fa-user timkiem-icon"></i>
+                        <div class="w-100 d-flex align-items-center justify-content-between dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false"
+                            style="padding-left: 2.5rem; cursor: pointer;">
+                            <span id="guest-summary" class="fw-bold text-truncate" style="color: var(--mau-xanh-dam);">2
+                                người lớn ·
+                                0 trẻ em</span>
+                        </div>
+                        <div class="dropdown-menu p-3 shadow-lg bo-goc-10 dropdown-menu-end"
+                            style="min-width: 250px; border: none;">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="fw-bold">Người lớn</span>
+                                <select name="adults" class="form-select w-50 fw-bold" id="select-adults"
+                                    onchange="updateGuestSummary()">
+                                    {% for i in range(1, 6) %}<option value="{{ i }}" {% if i==2 %}selected{% endif %}>
+                                        {{ i }}</option>{% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-4">
-                                <label class="form-label-clean">Ngày nhận phòng</label>
-                                <input type="date" name="checkin_date" class="form-control form-control-clean" value="{{ today }}" min="{{ today }}" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label-clean">Ngày trả phòng</label>
-                                <input type="date" name="checkout_date" class="form-control form-control-clean" value="{{ tomorrow }}" min="{{ tomorrow }}" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label-clean">Người lớn</label>
-                                <select name="adults" class="form-select form-control-clean">
-                                    {% for i in range(1, 6) %}<option value="{{ i }}" {% if i == 2 %}selected{% endif %}>{{ i }}</option>{% endfor %}
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label-clean">Trẻ em</label>
-                                <select name="children" class="form-select form-control-clean">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold">Trẻ em</span>
+                                <select name="children" class="form-select w-50 fw-bold" id="select-children"
+                                    onchange="updateGuestSummary()">
                                     {% for i in range(0, 4) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
                                 </select>
                             </div>
-                            <div class="col-md-4 mt-auto">
-                                <button type="submit" class="btn btn-blue-booking w-100 py-2 fw-bold" style="height: 42px;">
-                                    <i class="fas fa-search me-2"></i>TÌM
-                                </button>
-                            </div>
                         </div>
-                    </form>
+                    </div>
+
+                    <!-- Nút Tìm -->
+                    <button type="submit" class="timkiem-nut-tim text-white fw-bold border-0 flex-shrink-0"
+                        style="flex-basis: 10%;">
+                        Tìm
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="text-center mx-auto mb-5 pb-3" style="max-width: 800px;">
+        <h2 class="fw-bold display-5 mb-4" style="color: var(--mau-xanh-dam); letter-spacing: -0.5px;">Sài Gòn - Côn Đảo Resort</h2>
+        <p class="text-muted fs-5 mb-4" style="line-height: 1.6;">Nơi di sản giao thoa cùng nhịp sống hiện đại.</p>
+        <a href="#ve-chung-toi" class="btn nut-xanh-datphong btn-lg rounded-pill px-5 py-3 fw-bold shadow">
+            Về chúng tôi
+        </a>
+    </div>
+
+<!-- Lịch sử & Số liệu (Về Saigon-Condao) -->
+<div class="container py-5 mt-2" id = "ve-chung-toi">
+    <div class="gioithieu-khoi row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0 pe-lg-5">
+            <div class="text-uppercase fw-bold text-muted mb-3" style="letter-spacing: 2px;">Di Sản & Nghỉ Dưỡng</div>
+            <div class="gioithieu-noidung">
+                <h2>Saigon-Condao<br>Khơi nguồn cảm hứng<br>từ những năm 1920</h2>
+                <p class="fs-5 text-secondary mt-4 lh-base" style="text-align: justify;">Tọa lạc ngay trung tâm đảo Côn
+                    Sơn và bao quanh bởi thiên nhiên nhiệt đới. Khu nghỉ ngơi của chúng tôi bao gồm các quần thể Villa
+                    di sản được phục dựng từ năm 1920 của người Pháp, cùng tòa building hiện đại. Nơi đây là chứng nhân
+                    lịch sử và cũng là điểm tĩnh lặng lý tưởng.</p>
+                <p class="fs-6 fw-bold text-dark mt-3">Sài Gòn Côn Đảo Resort là một điểm đến lý tưởng cho du khách
+                    muốn khám phá vẻ đẹp hoang sơ và lịch sử của Côn Đảo.</p>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="row g-4 text-center">
+                <div class="col-6">
+                    <div class="gioithieu-so">
+                        <h3 class="gsap-counter" data-target="117">0</h3>
+                        <p>Phòng & Villa</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="gioithieu-so">
+                        <h3 class="gsap-counter" data-target="25">0</h3>
+                        <p>Phút Tới Sân Bay</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="gioithieu-so">
+                        <h3><span class="gsap-counter" data-target="10">0</span>+</h3>
+                        <p>Điểm Du Lịch</p>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="gioithieu-so">
+                        <h3 class="gsap-counter" data-target="1920">1800</h3>
+                        <p>Năm Di Sản</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Why us -->
-<div class="row g-4 mb-5">
-    <div class="col-md-4">
-        <div class="main-card p-4 text-center h-100">
-            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-primary bg-opacity-10" style="width:56px;height:56px">
-                <i class="fas fa-shield-alt fa-lg text-primary"></i>
-            </div>
-            <h6 class="fw-bold">Đặt phòng an toàn</h6>
-            <p class="text-muted small mb-0">Hệ thống khóa phòng tức thì · Thanh toán được mã hóa · Hoàn tiền minh bạch</p>
-        </div>
+<!-- Dịch Vụ & Trải Nghiệm -->
+<div class="container py-5 mt-4">
+    <!-- Header section -->
+    <div class="text-center mx-auto mb-5 pb-3" style="max-width: 1000px;">
+        <h2 class="fw-bold display-5 mb-4" style="color: var(--mau-xanh-dam); letter-spacing: -0.5px;">Đánh Thức Mọi
+            Giác Quan Giữa Lòng Đại Dương Tĩnh Lặng</h2>
+        <p class="text-muted fs-5 mb-4" style="line-height: 1.6;">Saigon-Condao là một bệ phóng hoàn hảo được thiết kế cho những du khách<br>
+            <span style="white-space: nowrap;">muốn không gian nghỉ dưỡng tuyệt vời, dịch vụ tận tâm và có trách nhiệm với Mẹ Thiên nhiên.</span></p>
     </div>
-    <div class="col-md-4">
-        <div class="main-card p-4 text-center h-100">
-            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-success bg-opacity-10" style="width:56px;height:56px">
-                <i class="fas fa-award fa-lg text-success"></i>
-            </div>
-            <h6 class="fw-bold">Chương trình Loyalty</h6>
-            <p class="text-muted small mb-0">Tích điểm mỗi đêm lưu trú · 3 hạng thành viên · Ưu đãi độc quyền</p>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="main-card p-4 text-center h-100">
-            <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-warning bg-opacity-10" style="width:56px;height:56px">
-                <i class="fas fa-headset fa-lg text-warning"></i>
-            </div>
-            <h6 class="fw-bold">Hỗ trợ 24/7</h6>
-            <p class="text-muted small mb-0">Đội ngũ lễ tân chuyên nghiệp · Xử lý yêu cầu nhanh chóng</p>
-        </div>
-    </div>
-</div>
 
-<!-- Hotels -->
-{% if hotels %}
-<div class="mb-4">
-    <h5 class="fw-bold mb-3"><i class="fas fa-building me-2 text-booking"></i>Các khách sạn đối tác</h5>
-    <div class="row g-3">
-        {% for h in hotels %}
-        <div class="col-md-4">
-            <a href="/search?hotel_id={{ h.hotel_id }}&checkin_date={{ today }}&checkout_date={{ tomorrow }}&adults=2" class="text-decoration-none">
-                <div class="main-card p-4 d-flex align-items-center gap-3 hover-bg-light transition-base cursor-pointer">
-                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width:48px;height:48px;background:rgba(0,53,128,.1)">
-                        <i class="fas fa-hotel text-booking"></i>
-                    </div>
-                    <div>
-                        <div class="fw-bold text-dark">{{ h.hotel_name }}</div>
-                        <div class="extra-small text-muted">Xem phòng trống →</div>
+    <!-- Cards Grid -->
+    <div class="row g-4 justify-content-center">
+        <!-- 1: Khu nghỉ dưỡng -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="../static/images/about-khihau.png" alt="Khu nghỉ dưỡng" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Tận hưởng<br>Không gian xanh</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Khu nghỉ dưỡng</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Khám phá không gian lý
+                        tưởng giữa thiên nhiên hùng vĩ của Saigon-Condao. Hồ bơi vô cực và bãi biển riêng đang chờ đón
+                        bạn.</p>
+                    <button class="btn btn-outline-light rounded-pill px-4 mx-auto btn-dong-thongtin"
+                        style="width: fit-content;">Đóng lại</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2: Phòng nghỉ -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="../static/images/BUILDING-SUP-DBL-604-570x360.jpg" alt="Phòng nghỉ" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Phòng nghỉ<br>Sang trọng</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Hệ thống phòng nghỉ</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Đa dạng từ Deluxe, Suite
+                        đến Villa cao cấp. Tất cả được trang bị nội thất sang trọng với tầm nhìn hướng biển ngoạn mục.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="/search" class="btn nut-vang-thuonghieu rounded-pill px-3">Đặt ngay</a>
+                        <button class="btn btn-outline-light rounded-pill px-3 btn-dong-thongtin">Đóng</button>
                     </div>
                 </div>
-            </a>
+            </div>
         </div>
-        {% endfor %}
+
+        <!-- 3: Ẩm thực -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="../static/images/dinner-right.jpg" alt="Ẩm thực" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Trải nghiệm<br>Ẩm thực tinh hoa</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Nhà hàng & Bar</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Thưởng thức các món hải sản
+                        tươi sống và tinh hoa ẩm thực quốc tế do các đầu bếp hạng sao chế biến trọn vẹn vị giác.</p>
+                    <button class="btn btn-outline-light rounded-pill px-4 mx-auto btn-dong-thongtin"
+                        style="width: fit-content;">Đóng lại</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4: Dịch vụ -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
+                    alt="Dịch vụ & Spa" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Dịch vụ Spa<br>& Thư giãn</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Spa Trị liệu</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Đánh thức mọi giác quan tại
+                        trung tâm Spa của chúng tôi, cùng các phòng tập thể hình và sân yoga đón bình minh.</p>
+                    <button class="btn btn-outline-light rounded-pill px-4 mx-auto btn-dong-thongtin"
+                        style="width: fit-content;">Đóng lại</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5: Khuyến mãi -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="https://images.unsplash.com/photo-1580237072617-771c3ecc4a24?auto=format&fit=crop&w=800&q=80"
+                    alt="Khuyến mãi" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Nhận gói<br>Ưu đãi VIP</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Ưu đãi độc quyền</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Đăng ký sớm để nhận ngay ưu
+                        đãi giảm giá lên tới 30%, tặng kèm dịch vụ đưa đón sân bay và miễn phí bữa sáng buffet.</p>
+                    <button class="btn btn-outline-light rounded-pill px-4 mx-auto btn-dong-thongtin"
+                        style="width: fit-content;">Đóng lại</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6: Tin tức & Liên hệ -->
+        <div class="col-lg-4 col-md-6">
+            <div class="khampha-the" style="cursor: pointer;">
+                <img src="../static/images/download.jpg" alt="Tin tức & Sự kiện" class="khampha-the-anh">
+                <div class="khampha-the-phu"></div>
+                <div
+                    class="khampha-hien-thi position-absolute bottom-0 start-0 w-100 p-4 d-flex justify-content-between align-items-end">
+                    <h3 class="text-white fw-bold mb-0 w-75 lh-base">Cẩm nang<br>Hành trình</h3>
+                    <div class="khampha-the-nut btn-mo-thongtin"><i class="fas fa-arrow-right"></i></div>
+                </div>
+                <!-- Overlay ẩn -->
+                <div class="khampha-overlay-thongtin position-absolute w-100 h-100 top-0 start-0 d-flex flex-column justify-content-center p-4 text-center"
+                    style="background: rgba(0, 51, 128, 0.92); backdrop-filter: blur(8px); transform: translateY(100%); z-index: 10;">
+                    <h4 class="text-white fw-bold mb-3">Tin tức sự kiện</h4>
+                    <p class="text-white mb-4" style="font-size: 0.95rem; line-height: 1.6;">Cập nhật liên tục các sự
+                        kiện địa phương lớn, điểm vui chơi tham quan tại biển đảo và cẩm nang du lịch.</p>
+                    <button class="btn btn-outline-light rounded-pill px-4 mx-auto btn-dong-thongtin"
+                        style="width: fit-content;">Đóng lại</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-{% endif %}
 
+<!-- Phòng nổi bật (GSAP Horizontal Scroll) -->
+<div class="truot-phong-baoboc mt-5">
+    <div class="text-center mx-auto mb-5 pb-2 px-3" style="max-width: 100%;">
+        <h2 class="fw-bold display-5" style="color: var(--mau-xanh-dam); letter-spacing: -0.5px; line-height: 1.4;">
+            Mỗi Gian Phòng Là Một Câu Chuyện<br><span style="white-space: nowrap;">Mỗi Giấc Ngủ Là Một Hành Trình Di Sản.</span>
+        </h2><br>
+        <a href="/search" class="btn nut-xanh-datphong btn-lg rounded-pill px-5 py-3 fw-bold shadow">
+            Đặt phòng ngay
+        </a>
+    </div>
+    <div class="truot-phong-khe">
+
+        <!-- Room 1 -->
+        <div class="the-phong-noibat" onclick="window.location.href='/search'">
+            <img src="https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80"
+                alt="King Suite">
+            <div class="the-phong-thongtin">
+                <h3>Resort Suite</h3>
+                <div class="gia-tien">2.500.000 đ <span
+                        style="font-size: 0.9rem; font-weight: normal; color:rgba(255,255,255,0.6)">/
+                        đêm</span></div>
+                <div class="thongso-phong">
+                    <span><i class="fas fa-vector-square"></i> 75 m²</span>
+                    <span><i class="fas fa-bed"></i> 1 Giường King</span>
+                    <span><i class="fas fa-water"></i> Hướng Biển</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room 2 -->
+        <div class="the-phong-noibat" onclick="window.location.href='/search'">
+            <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80"
+                alt="President Villa">
+            <div class="the-phong-thongtin">
+                <h3>President Pool Villa</h3>
+                <div class="gia-tien">3.200.000 đ <span
+                        style="font-size: 0.9rem; font-weight: normal; color:rgba(255,255,255,0.6)">/
+                        đêm</span></div>
+                <div class="thongso-phong">
+                    <span><i class="fas fa-vector-square"></i> 250 m²</span>
+                    <span><i class="fas fa-bed"></i> 3 Giường</span>
+                    <span><i class="fas fa-swimming-pool"></i> Hồ Bơi Riêng</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room 3 -->
+        <div class="the-phong-noibat" onclick="window.location.href='/search'">
+            <img src="https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&w=1200&q=80"
+                alt="Family Deluxe">
+            <div class="the-phong-thongtin">
+                <h3>Resort Deluxe</h3>
+                <div class="gia-tien">3.100.000 đ <span
+                        style="font-size: 0.9rem; font-weight: normal; color:rgba(255,255,255,0.6)">/
+                        đêm</span></div>
+                <div class="thongso-phong">
+                    <span><i class="fas fa-vector-square"></i> 90 m²</span>
+                    <span><i class="fas fa-bed"></i> 2 Giường Queen</span>
+                    <span><i class="fas fa-tree"></i> Hướng Vườn</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room 4 -->
+        <div class="the-phong-noibat" onclick="window.location.href='/search'">
+            <img src="https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=1200&q=80"
+                alt="Classic Pháp">
+            <div class="the-phong-thongtin">
+                <h3>Resort French Villa</h3>
+                <div class="gia-tien">4.500.000 đ <span
+                        style="font-size: 0.9rem; font-weight: normal; color:rgba(255,255,255,0.6)">/
+                        đêm</span></div>
+                <div class="thongso-phong">
+                    <span><i class="fas fa-vector-square"></i> 120 m²</span>
+                    <span><i class="fas fa-bed"></i> 1 Giường King</span>
+                    <span><i class="fas fa-landmark"></i> Kiến trúc 1920</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function updateGuestSummary() {
+        var adults = document.getElementById('select-adults').value;
+        var children = document.getElementById('select-children').value;
+        document.getElementById('guest-summary').innerText = adults + ' người lớn · ' + children + ' trẻ em';
+    }
+
+    // ── Hiệu ứng GSAP Animation ──
+    document.addEventListener("DOMContentLoaded", function () {
+        // Đăng ký ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 1. Hiệu ứng xuất hiện cho chữ ở phần Hero (nếu có)
+        gsap.from(".chu-datphong", {
+            y: 40,
+            opacity: 0,
+            duration: 1.2,
+            stagger: 0.2,
+            ease: "power3.out",
+            delay: 0.2
+        });
+
+        // 1.5 Hiệu ứng trượt hiện chữ (Reveal Text) cho các Tiêu đề & Mô tả khi cuộn trang
+        gsap.utils.toArray(".display-5, .text-muted.fs-5").forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: "top 85%", // Khi cạnh trên của phần tử chạm mép 85% màn hình dưới
+                    toggleActions: "play none none none"
+                },
+                y: 40,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out"
+            });
+        });
+
+        // 2. Hiệu ứng trượt lên cho thanh Tìm Kiếm
+        gsap.from(".thanh-timkiem-vang", {
+            y: 60,
+            opacity: 0,
+            duration: 1,
+            ease: "back.out(1.2)",
+            delay: 0.8
+        });
+
+        // 3. Hiệu ứng hiện từng thẻ (Cards) khi cuộn chuột tới
+        gsap.from(".khampha-the", {
+            scrollTrigger: {
+                trigger: ".khampha-the",
+                start: "top 85%",
+                toggleActions: "play none none none"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: "power2.out"
+        });
+
+        // 4. Tương tác nhấn: Hiệu ứng trượt hiển thị nội dung (Overlay) cho thẻ Khám phá
+        const cards = document.querySelectorAll('.khampha-the');
+        cards.forEach(card => {
+            const overlay = card.querySelector('.khampha-overlay-thongtin');
+            const hienThi = card.querySelector('.khampha-hien-thi');
+            const btnDong = card.querySelector('.btn-dong-thongtin');
+
+            if (overlay && hienThi) {
+                // Loại bỏ thuộc tính nhảy trang mặc định nếu được bọc thẻ <a> cũ
+                const linkTag = card.closest('a');
+                if (linkTag && linkTag.getAttribute('href') === '#') {
+                    linkTag.addEventListener('click', e => e.preventDefault());
+                }
+
+                card.addEventListener('click', function (e) {
+                    // Cho phép click các thẻ <a> liên kết thực thụ chuyển trang bình thường
+                    if (e.target.tagName.toLowerCase() === 'a' && e.target.getAttribute('href') !== '#') {
+                        return;
+                    }
+
+                    // Nếu nhấn nút Đóng lại
+                    if (e.target === btnDong || btnDong.contains(e.target)) {
+                        e.stopPropagation();
+                        gsap.to(overlay, { y: "100%", duration: 0.5, ease: "power3.inOut" });
+                        gsap.to(hienThi, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
+                        return;
+                    }
+
+                    // Mặc định nhấn vào vùng bất kì trên card sẽ trượt Overlay lên
+                    gsap.to(overlay, { y: "0%", duration: 0.5, ease: "power3.out" });
+                    gsap.to(hienThi, { opacity: 0, y: 30, duration: 0.3, ease: "power2.in" });
+                });
+            }
+        });
+
+        // 5. Hiệu ứng đếm số (Counters) cho phần Lịch sử & Số liệu
+        const counters = document.querySelectorAll('.gsap-counter');
+        if (counters.length > 0) {
+            ScrollTrigger.create({
+                trigger: ".gioithieu-khoi",
+                start: "top 80%",
+                once: true,
+                onEnter: () => {
+                    counters.forEach(counter => {
+                        const target = parseInt(counter.getAttribute('data-target'));
+                        let formatFunc = (v) => v; // Default no formatting
+
+                        // Nếu là năm 1920 (bắt đầu từ 1800 để đếm cho đẹp)
+                        const startVal = target > 1500 ? 1800 : 0;
+                        counter.innerHTML = startVal;
+
+                        gsap.to(counter, {
+                            innerHTML: target,
+                            duration: 2.5,
+                            snap: { innerHTML: 1 },
+                            ease: "power3.out"
+                        });
+                    });
+                }
+            });
+        }
+
+        // 6. Hiệu ứng Cuộn Ngang (Horizontal Scroll) cho khối "Phòng Nổi Bật"
+        const khonggianTruot = document.querySelector(".truot-phong-baoboc");
+        const bangChuyen = document.querySelector(".truot-phong-khe");
+
+        if (khonggianTruot && bangChuyen) {
+            // Lấy tổng chiều dài mà thanh cần trượt đi để chạm tới đầu của tấm ảnh cuối cùng
+            function getScrollAmount() {
+                let bangChuyenWidth = bangChuyen.scrollWidth;
+                return -(bangChuyenWidth - window.innerWidth);
+            }
+
+            const tween = gsap.to(bangChuyen, {
+                x: getScrollAmount,
+                duration: 3,
+                ease: "none"
+            });
+
+            ScrollTrigger.create({
+                trigger: khonggianTruot,
+                start: "top 80%", // Bắt đầu trượt ngang khi khối vừa xuất hiện 20%
+                end: "bottom 20%", // Kết thúc trượt ngang khi khối sắp sửa khuất
+                pin: false, // KHÔNG GHIM màn hình
+                animation: tween,
+                scrub: 1.5, // Mượt hơn
+                invalidateOnRefresh: true,
+                markers: false
+            });
+        }
+    });
+</script>
 {% endblock %}

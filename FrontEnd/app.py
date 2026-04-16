@@ -2,6 +2,10 @@ import os
 import uuid
 from datetime import timedelta
 from flask import Flask, session, render_template
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 
 def create_app():

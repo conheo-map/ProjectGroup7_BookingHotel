@@ -1,21 +1,21 @@
-.pricing-bubble {
+.gia-bongbong {
         min-height: 52px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         transition: all 0.2s ease;
     }
-    .pricing-bubble:hover {
+    .gia-bongbong:hover {
         background-color: #f8f9fa !important;
-        border-color: #003580 !important;
+        border-color: var(--mau-xanh-chinh) !important;
         transform: translateY(-2px);
     }
-    .text-booking {
-        color: #003580;
+    .chu-datphong {
+        color: var(--mau-xanh-chinh);
     }
     .hover-scale:hover {
         transform: scale(1.05);
     }
-    .extra-small {
+    .kichthuoc-nho-hon {
         font-size: 0.75rem;
     }
