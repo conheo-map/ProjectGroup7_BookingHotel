@@ -76,14 +76,14 @@ Hệ thống quản lý đặt phòng khách sạn trực tuyến được xây 
 ### Bước 1: Cài đặt Python
 
 1. Truy cập [python.org/downloads](https://www.python.org/downloads/)
-2. Tải bản **Python 3.12** (hoặc mới hơn) phù hợp với hệ điều hành
+2. Tải bản **Python 3.13.x** phù hợp với hệ điều hành
 3. Khi cài đặt, **bắt buộc tích vào ô** ✅ `Add Python to PATH`
 4. Nhấn **Install Now** và chờ hoàn tất
 
 **Kiểm tra cài đặt thành công:**
 ```bash
 python --version
-# Kết quả mong đợi: Python 3.12.x
+# Kết quả mong đợi: Python 3.13.x
 ```
 
 ### Bước 2: Cài đặt Git
